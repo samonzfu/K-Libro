@@ -1,6 +1,6 @@
 -- CREAR BD
-DROP DATABASE IF EXISTS k_libro;
 CREATE DATABASE k_libro CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 USE k_libro;
 
 
@@ -9,7 +9,7 @@ CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(50) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
+    contrasena VARCHAR(255) NOT NULL,
     rol ENUM('user', 'admin') DEFAULT 'user',
     avatar VARCHAR(255) DEFAULT 'default_avatar.png',
     fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -104,5 +104,5 @@ INSERT INTO logros (nombre, descripcion, icono, criterio) VALUES
 -- Contraseña '1234' hasheada para que puedas entrar directo a probar
 -- El hash es: $2y$10$buM/.k/Nl5u8.gG8E.j/..wN.M/n.M/n.M/n.M/n.M/n.M/n.M/n
 -- (Nota: Para este ejemplo, asegúrate de crear tu propio hash en PHP o usar un registro nuevo)
-INSERT INTO usuarios (nombre, email, password, rol) VALUES 
+INSERT INTO usuarios (nombre, email, contrasena, rol) VALUES 
 ('Admin K-Libro', 'admin@klibro.com', '$2y$10$eE.Y.Z.P.H.P.H.P.H.P.H.P.H.P.H.P.H.P.H.P.H.P.H.P.H.P.H.', 'admin');
