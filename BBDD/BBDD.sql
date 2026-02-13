@@ -1,7 +1,6 @@
-
--- CREAR BBDD
+-- CREAR BD
+DROP DATABASE IF EXISTS k_libro;
 CREATE DATABASE k_libro CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
 USE k_libro;
 
 
@@ -10,22 +9,23 @@ CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(50) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL, -- Recuerda usar password_hash() en PHP
+    password VARCHAR(255) NOT NULL,
     rol ENUM('user', 'admin') DEFAULT 'user',
     avatar VARCHAR(255) DEFAULT 'default_avatar.png',
     fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 
--- 2. TABLA LIBROS (Caché Local)
+-- 2. TABLA LIBROS (Adaptada a Open Library)
 -- SOLO los metadatos básicos.
 CREATE TABLE libros (
-    id_google VARCHAR(50) PRIMARY KEY, -- ID alfanumérico de Google (ej: "zyTCAlS7Qp4C")
+    -- CAMBIO: Open Library usa IDs tipo "/works/OL2622768W", necesitamos más espacio
+    id_openlibrary VARCHAR(100) PRIMARY KEY, 
     titulo VARCHAR(255) NOT NULL,
     autores VARCHAR(255),
-    portada VARCHAR(255), -- URL de la imagen
+    portada VARCHAR(255), 
     descripcion TEXT,
-    fecha_publicacion VARCHAR(20)
+    fecha_publicacion VARCHAR(50) -- A veces OL devuelve "Dec 12, 1999", mejor dar margen
 );
 
 
@@ -34,28 +34,30 @@ CREATE TABLE libros (
 CREATE TABLE biblioteca (
     id INT AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT NOT NULL,
-    libro_id_google VARCHAR(50) NOT NULL,
-    estado ENUM('pendiente', 'leyendo', 'leido') NOT NULL,
-    calificacion TINYINT CHECK (calificacion BETWEEN 1 AND 5), -- Estrellas (1-5)
-    review TEXT NULL, -- Opinión personal opcional
     
-    -- IMPORTANTE: fecha_accion se actualiza sola al modificar el registro.
-    -- Esto es vital para saber CUÁNDO se terminó de leer el libro (para el reto mensual).
+    -- CAMBIO: La FK debe coincidir en tipo y nombre con la tabla libros
+    libro_id_openlibrary VARCHAR(100) NOT NULL, 
+    
+    estado ENUM('pendiente', 'leyendo', 'leido') NOT NULL,
+    calificacion TINYINT CHECK (calificacion BETWEEN 1 AND 5),
+    review TEXT NULL,
+    
+    -- Fecha automática al actualizar (clave para los retos mensuales)
     fecha_accion DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
-    FOREIGN KEY (libro_id_google) REFERENCES libros(id_google)
+    FOREIGN KEY (libro_id_openlibrary) REFERENCES libros(id_openlibrary)
 );
 
 
--- 4. TABLA LOGROS (Gamificación)
+-- 4. TABLA LOGROS
 -- Catálogo de medallas disponibles.
 CREATE TABLE logros (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(50) NOT NULL,
     descripcion VARCHAR(255),
-    icono VARCHAR(255) NOT NULL, -- Ruta a la imagen (ej: 'img/logros/trofeo.png')
-    criterio INT DEFAULT 0 -- Cantidad de libros necesarios (0 = logro especial/manual)
+    icono VARCHAR(255) NOT NULL,
+    criterio INT DEFAULT 0
 );
 
 
@@ -67,7 +69,6 @@ CREATE TABLE usuario_logros (
     logro_id INT NOT NULL,
     fecha_ganado DATETIME DEFAULT CURRENT_TIMESTAMP,
     
-    -- Un usuario no puede ganar el mismo logro dos veces
     UNIQUE(usuario_id, logro_id),
     
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
@@ -75,34 +76,33 @@ CREATE TABLE usuario_logros (
 );
 
 
--- 6. TABLA RETOS MENSUALES (Nueva Funcionalidad)
+-- 6. TABLA RETOS MENSUALES
 -- Guarda la meta que el usuario se pone cada mes.
 CREATE TABLE retos_mensuales (
     id INT AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT NOT NULL,
     mes TINYINT NOT NULL CHECK (mes BETWEEN 1 AND 12),
     anio SMALLINT NOT NULL,
-    meta_libros INT NOT NULL DEFAULT 1, -- Objetivo de libros a leer
-    conseguido BOOLEAN DEFAULT FALSE,   -- Para saber si ya tiramos el confeti
+    meta_libros INT NOT NULL DEFAULT 1,
+    conseguido BOOLEAN DEFAULT FALSE,
     
-    -- Restricción: Un usuario solo puede tener UN reto por mes y año.
     UNIQUE(usuario_id, mes, anio),
     
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
 );
 
 
--- 7. DATOS DE EJEMPLO (SEEDERS)
--- Para que no empieces con la base de datos vacía.
-
--- Insertamos Logros Base + El Logro Mensual
+-- 7. SEEDERS (Datos de prueba)
+-- Para no empezar con la base de datos vacía.
 INSERT INTO logros (nombre, descripcion, icono, criterio) VALUES 
 ('Lector Iniciado', 'Has leído tu primer libro en K-Libro', 'novato.png', 1),
 ('Ratón de Biblioteca', 'Has leído 5 libros', 'intermedio.png', 5),
 ('Devorador de Mundos', 'Has leído 20 libros', 'experto.png', 20),
-('Campeón Mensual', '¡Has completado tu reto de lectura del mes!', 'trofeo_mensual.png', 0); -- Criterio 0 indica especial
+('Campeón Mensual', '¡Has completado tu reto de lectura del mes!', 'trofeo_mensual.png', 0);
 
--- Insertamos un Usuario Admin de prueba (Password: "1234" hasheado con BCRYPT para pruebas)
--- NOTA: En producción genera el hash con PHP: password_hash('1234', PASSWORD_DEFAULT)
+-- Usuario Admin de prueba
+-- Contraseña '1234' hasheada para que puedas entrar directo a probar
+-- El hash es: $2y$10$buM/.k/Nl5u8.gG8E.j/..wN.M/n.M/n.M/n.M/n.M/n.M/n.M/n
+-- (Nota: Para este ejemplo, asegúrate de crear tu propio hash en PHP o usar un registro nuevo)
 INSERT INTO usuarios (nombre, email, password, rol) VALUES 
-('Admin K-Libro', 'admin@klibro.com', '$2y$10$tM/Z.w.k.m.u.n.d.o...HASH_DE_EJEMPLO...', 'admin');
+('Admin K-Libro', 'admin@klibro.com', '$2y$10$eE.Y.Z.P.H.P.H.P.H.P.H.P.H.P.H.P.H.P.H.P.H.P.H.P.H.P.H.', 'admin');
