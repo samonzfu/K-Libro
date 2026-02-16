@@ -1,0 +1,281 @@
+<?php
+session_start();
+require 'config/db.php'; // Asegúrate de tener este archivo creado
+
+// 1. SEGURIDAD
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit;
+}
+
+$user_id = $_SESSION['user_id'];
+
+// 2. CONSULTA SQL (USANDO JOIN)
+// Traemos los datos de la tabla 'biblioteca' Y los detalles del libro de la tabla 'libros'
+// en una sola consulta eficiente.
+$sql = "SELECT b.*, l.titulo, l.portada, l.autores 
+        FROM biblioteca b
+        JOIN libros l ON b.libro_id_openlibrary = l.id_openlibrary
+        WHERE b.usuario_id = :uid
+        ORDER BY b.fecha_accion DESC";
+
+$stmt = $pdo->prepare($sql);
+$stmt->execute(['uid' => $user_id]);
+$resultados = $stmt->fetchAll();
+
+// 3. ORGANIZAR LIBROS POR ESTADO
+// Creamos 3 arrays vacíos para clasificar los libros
+$biblioteca = [
+    'leyendo' => [],
+    'pendiente' => [],
+    'leido' => []
+];
+
+foreach ($resultados as $libro) {
+    // Clasificamos cada libro en su cajita correspondiente
+    $biblioteca[$libro['estado']][] = $libro;
+}
+?>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>K-Libro | Mi Biblioteca</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- ESTILOS BASE (Heredados) --- */
+        :root {
+            --color-fondo: #0f0c29;
+            --color-magia: #302b63;
+            --color-dorado: #d4af37;
+            --color-texto: #e0e0e0;
+            --glass: rgba(0, 0, 0, 0.6);
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Lato', sans-serif;
+            background: linear-gradient(135deg, var(--color-fondo), var(--color-magia));
+            color: var(--color-texto);
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        /* Navbar simplificada para el ejemplo */
+        .navbar {
+            background: rgba(15, 12, 41, 0.95);
+            padding: 1rem 2rem;
+            border-bottom: 2px solid var(--color-dorado);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .logo { font-family: 'Cinzel', serif; color: var(--color-dorado); text-decoration: none; font-size: 1.5rem; }
+        .nav-links a { color: white; text-decoration: none; margin-left: 20px; }
+
+        /* --- CONTENEDOR BIBLIOTECA --- */
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            text-align: center;
+            color: var(--color-dorado);
+            margin-bottom: 2rem;
+        }
+
+        /* --- PESTAÑAS MÁGICAS (TABS) --- */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: 1px solid var(--color-dorado);
+            color: var(--color-dorado);
+            padding: 10px 25px;
+            font-family: 'Cinzel', serif;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab-btn:hover, .tab-btn.active {
+            background: var(--color-dorado);
+            color: #0f0c29;
+            box-shadow: 0 0 15px var(--color-dorado);
+        }
+
+        /* --- CONTENIDO DE LAS PESTAÑAS --- */
+        .tab-content {
+            display: none; /* Ocultos por defecto */
+            animation: fadeIn 0.5s ease;
+        }
+        .tab-content.active {
+            display: grid; /* Grid solo cuando está activo */
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        /* --- TARJETA DE LIBRO (GRIMORIO) --- */
+        .book-card {
+            background: var(--glass);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 5px;
+            padding: 10px;
+            text-align: center;
+            transition: transform 0.3s;
+            position: relative;
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            border-color: var(--color-dorado);
+            z-index: 10;
+        }
+
+        .book-cover {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            border-radius: 3px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        .book-info h3 {
+            font-size: 1rem;
+            margin: 10px 0 5px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .book-info p {
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+
+        /* Estrellas de calificación */
+        .stars { color: #ffd700; font-size: 0.9rem; margin-top: 5px; }
+
+        /* Mensaje vacío */
+        .empty-state {
+            text-align: center;
+            grid-column: 1 / -1; /* Ocupa todo el ancho */
+            padding: 3rem;
+            border: 1px dashed var(--color-dorado);
+            color: #aaa;
+        }
+        .empty-state a { color: var(--color-dorado); }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="home.php" class="logo">K-Libro</a>
+        <div class="nav-links">
+            <a href="buscador.php">🔍 Buscar Libros</a>
+            <a href="perfil.php">👤 Perfil</a>
+            <a href="logout.php">Salir</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Grimorio Personal</h1>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="openTab(event, 'leyendo')">📖 Leyendo</button>
+            <button class="tab-btn" onclick="openTab(event, 'pendientes')">⏳ Pendientes</button>
+            <button class="tab-btn" onclick="openTab(event, 'leidos')">✅ Leídos</button>
+        </div>
+
+        <div id="leyendo" class="tab-content active">
+            <?php if (empty($biblioteca['leyendo'])): ?>
+                <div class="empty-state">
+                    <p>No estás leyendo nada actualmente.</p>
+                    <a href="buscador.php">Ir al buscador para empezar una aventura</a>
+                </div>
+            <?php else: ?>
+                <?php foreach ($biblioteca['leyendo'] as $libro): ?>
+                    <div class="book-card">
+                        <img src="<?= htmlspecialchars($libro['portada']) ?>" class="book-cover" onerror="this.src='assets/img/default_book.png'">
+                        <div class="book-info">
+                            <h3><?= htmlspecialchars($libro['titulo']) ?></h3>
+                            <p><?= htmlspecialchars($libro['autores']) ?></p>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
+
+        <div id="pendientes" class="tab-content">
+            <?php if (empty($biblioteca['pendiente'])): ?>
+                <div class="empty-state"><p>Tu lista de deseos está vacía.</p></div>
+            <?php else: ?>
+                <?php foreach ($biblioteca['pendiente'] as $libro): ?>
+                    <div class="book-card">
+                        <img src="<?= htmlspecialchars($libro['portada']) ?>" class="book-cover">
+                        <div class="book-info">
+                            <h3><?= htmlspecialchars($libro['titulo']) ?></h3>
+                            <p><?= htmlspecialchars($libro['autores']) ?></p>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
+
+        <div id="leidos" class="tab-content">
+            <?php if (empty($biblioteca['leido'])): ?>
+                <div class="empty-state"><p>Aún no has terminado ningún libro.</p></div>
+            <?php else: ?>
+                <?php foreach ($biblioteca['leido'] as $libro): ?>
+                    <div class="book-card">
+                        <img src="<?= htmlspecialchars($libro['portada']) ?>" class="book-cover">
+                        <div class="book-info">
+                            <h3><?= htmlspecialchars($libro['titulo']) ?></h3>
+                            <div class="stars">
+                                <?php 
+                                    $estrellas = $libro['calificacion'] ?? 0;
+                                    echo str_repeat('★', $estrellas) . str_repeat('☆', 5 - $estrellas);
+                                ?>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
+
+    </div>
+
+    <script>
+        // JAVASCRIPT PARA CAMBIAR PESTAÑAS
+        function openTab(evt, tabName) {
+            // 1. Ocultar todos los contenidos
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+                tabcontent[i].classList.remove("active");
+            }
+
+            // 2. Quitar la clase "active" de todos los botones
+            tablinks = document.getElementsByClassName("tab-btn");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+
+            // 3. Mostrar el contenido actual y activar el botón pulsado
+            document.getElementById(tabName).style.display = "grid"; // Usamos grid para las cartas
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.className += " active";
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K-Libro | Portal de Acceso</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- VARIABLES MÁGICAS --- */
+        :root {
+            --color-fondo: #0f0c29;
+            --color-magia: #302b63;
+            --color-oscuridad: #24243e;
+            --color-dorado: #d4af37; /* El color del oro */
+            --color-texto: #e0e0e0;
+            --brillo-dorado: 0 0 10px #d4af37, 0 0 20px #d4af37;
+        }
+
+        /* --- RESET BÁSICO --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            /* Degradado místico de fondo */
+            background: linear-gradient(135deg, var(--color-fondo), var(--color-magia), var(--color-oscuridad));
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--color-texto);
+            overflow: hidden;
+        }
+
+        /* --- CONTENEDOR PRINCIPAL (LA CARTA) --- */
+        .login-card {
+            background: rgba(0, 0, 0, 0.6); /* Fondo semitransparente */
+            padding: 3rem;
+            border-radius: 15px;
+            border: 2px solid var(--color-dorado);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+            /* Efecto cristal */
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(212, 175, 55, 0.1);
+        }
+
+        /* Elementos decorativos (Esquinas) */
+        .login-card::before, .login-card::after {
+            content: "✨";
+            position: absolute;
+            font-size: 1.5rem;
+            color: var(--color-dorado);
+        }
+        .login-card::before { top: 10px; left: 10px; }
+        .login-card::after { bottom: 10px; right: 10px; }
+
+        /* --- TIPOGRAFÍA --- */
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            color: var(--color-dorado);
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px black;
+        }
+
+        p.subtitle {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 2rem;
+            letter-spacing: 1px;
+        }
+
+        /* --- FORMULARIO --- */
+        .input-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.8rem;
+            color: var(--color-dorado);
+            font-family: 'Cinzel', serif;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-bottom: 1px solid var(--color-dorado);
+            box-shadow: 0 10px 10px -10px rgba(212, 175, 55, 0.5);
+        }
+
+        /* --- BOTÓN ÉPICO --- */
+        .btn-magic {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid var(--color-dorado);
+            color: var(--color-dorado);
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .btn-magic:hover {
+            background: var(--color-dorado);
+            color: #000;
+            box-shadow: var(--brillo-dorado);
+        }
+
+        /* Enlaces */
+        .links {
+            margin-top: 1.5rem;
+            font-size: 0.8rem;
+        }
+        .links a {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .links a:hover {
+            color: var(--color-dorado);
+            text-decoration: underline;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <h1>K-Libro</h1>
+        <p class="subtitle">Tu biblioteca infinita te espera</p>
+
+        <form action="actions/login.php" method="POST">
+            
+            <div class="input-group">
+                <label for="email">Pergamino de Identidad (Email)</label>
+                <input type="email" id="email" name="email" required placeholder="usuario@ejemplo.com">
+            </div>
+
+            <div class="input-group">
+                <label for="password">Palabra de Paso</label>
+                <input type="password" id="password" name="contrasena" required placeholder="••••••••">
+            </div>
+
+            <button type="submit" class="btn-magic">Abrir el Portal</button>
+
+            <div class="links">
+                <a href="registro.php">¿Aún no tienes cuenta? Regístrate</a>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>

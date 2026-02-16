@@ -1,0 +1,262 @@
+<?php
+// 1. PROTECCIÓN DE LA PÁGINA
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    // Si no hay sesión, al calabozo (login)
+    header('Location: login.php');
+    exit;
+}
+
+// 2. DATOS DE EJEMPLO (MOCKUP)
+// Esto simula lo que luego traeremos del RSS o la Base de Datos
+$noticias = [
+    [
+        'titulo' => 'Brandon Sanderson anuncia nuevo libro',
+        'imagen' => 'https://images.unsplash.com/photo-1512820790803-83ca734da794?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+        'resumen' => 'El autor de El Archivo de las Tormentas revela detalles sobre su próxima obra maestra...',
+        'fecha' => 'Hace 2 horas'
+    ],
+    [
+        'titulo' => 'Los mejores clásicos para leer en Otoño',
+        'imagen' => 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+        'resumen' => 'Desde Poe hasta Bécquer, una selección de lecturas atmosféricas para tardes de lluvia...',
+        'fecha' => 'Ayer'
+    ],
+    [
+        'titulo' => 'Entrevista exclusiva a Laura Gallego',
+        'imagen' => 'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
+        'resumen' => 'La autora valenciana nos cuenta sobre el proceso creativo detrás de su última saga...',
+        'fecha' => 'Hace 3 días'
+    ]
+];
+?>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K-Libro | El Gran Salón</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- ESTILOS GENERALES (Heredados del Login) --- */
+        :root {
+            --color-fondo: #0f0c29;
+            --color-magia: #302b63;
+            --color-oscuridad: #24243e;
+            --color-dorado: #d4af37;
+            --color-texto: #e0e0e0;
+            --glass: rgba(0, 0, 0, 0.6);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background: linear-gradient(135deg, var(--color-fondo), var(--color-magia));
+            color: var(--color-texto);
+            min-height: 100vh;
+        }
+
+        /* --- NAVBAR (Barra de Navegación) --- */
+        .navbar {
+            background: rgba(15, 12, 41, 0.95);
+            border-bottom: 2px solid var(--color-dorado);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        .logo {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            color: var(--color-dorado);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: var(--color-texto);
+            text-decoration: none;
+            font-size: 1rem;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--color-dorado);
+        }
+
+        /* Efecto de subrayado mágico al pasar el ratón */
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--color-dorado);
+            transition: width 0.3s;
+        }
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Botón de Salir */
+        .btn-logout {
+            border: 1px solid var(--color-dorado);
+            padding: 5px 15px;
+            border-radius: 20px;
+            color: var(--color-dorado);
+        }
+        .btn-logout:hover {
+            background: var(--color-dorado);
+            color: #000;
+        }
+
+        /* --- CONTENIDO PRINCIPAL --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Banner de Bienvenida */
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeIn 1s ease-in;
+        }
+
+        .hero h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            color: var(--color-dorado);
+            margin-bottom: 10px;
+        }
+
+        /* Grid de Noticias */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive automático */
+            gap: 2rem;
+        }
+
+        /* Tarjeta de Noticia (Estilo Carta Mágica) */
+        .news-card {
+            background: var(--glass);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            backdrop-filter: blur(5px);
+        }
+
+        .news-card:hover {
+            transform: translateY(-10px); /* Flota al pasar el mouse */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5), 0 0 15px rgba(212, 175, 55, 0.2);
+            border-color: var(--color-dorado);
+        }
+
+        .news-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .news-content {
+            padding: 1.5rem;
+        }
+
+        .news-date {
+            font-size: 0.8rem;
+            color: var(--color-dorado);
+            opacity: 0.8;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .news-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .news-excerpt {
+            font-size: 0.9rem;
+            color: #ccc;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .btn-read {
+            display: inline-block;
+            color: var(--color-dorado);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        .btn-read:hover {
+            text-decoration: underline;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="home.php" class="logo">K-Libro</a>
+        <div class="nav-links">
+            <a href="home.php">Noticias</a>
+            <a href="buscador.php">Buscador</a>
+            <a href="biblioteca.php">Mi Biblioteca</a>
+            <a href="perfil.php">Perfil y Logros</a>
+            <a href="logout.php" class="btn-logout">Cerrar Sesión</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        
+        <div class="hero">
+            <h1>Crónicas del Reino</h1>
+            <p>Las últimas novedades del mundo literario, seleccionadas para ti.</p>
+        </div>
+
+        <div class="news-grid">
+            
+            <?php foreach($noticias as $noticia): ?>
+                <article class="news-card">
+                    <img src="<?php echo $noticia['imagen']; ?>" alt="Imagen noticia" class="news-img">
+                    <div class="news-content">
+                        <span class="news-date"><?php echo $noticia['fecha']; ?></span>
+                        <h3 class="news-title"><?php echo $noticia['titulo']; ?></h3>
+                        <p class="news-excerpt"><?php echo $noticia['resumen']; ?></p>
+                        <a href="#" class="btn-read">Leer pergamino completo &rarr;</a>
+                    </div>
+                </article>
+            <?php endforeach; ?>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
