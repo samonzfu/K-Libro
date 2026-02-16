@@ -19,13 +19,12 @@ CREATE TABLE usuarios (
 -- 2. TABLA LIBROS (Adaptada a Open Library)
 -- SOLO los metadatos básicos.
 CREATE TABLE libros (
-    -- CAMBIO: Open Library usa IDs tipo "/works/OL2622768W", necesitamos más espacio
     id_openlibrary VARCHAR(100) PRIMARY KEY, 
     titulo VARCHAR(255) NOT NULL,
     autores VARCHAR(255),
     portada VARCHAR(255), 
     descripcion TEXT,
-    fecha_publicacion VARCHAR(50) -- A veces OL devuelve "Dec 12, 1999", mejor dar margen
+    fecha_publicacion VARCHAR(50)
 );
 
 
@@ -35,7 +34,7 @@ CREATE TABLE biblioteca (
     id INT AUTO_INCREMENT PRIMARY KEY,
     usuario_id INT NOT NULL,
     
-    -- CAMBIO: La FK debe coincidir en tipo y nombre con la tabla libros
+    -- La FK debe coincidir en tipo y nombre con la tabla libros
     libro_id_openlibrary VARCHAR(100) NOT NULL, 
     
     estado ENUM('pendiente', 'leyendo', 'leido') NOT NULL,
