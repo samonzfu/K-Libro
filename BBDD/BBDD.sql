@@ -11,7 +11,6 @@ CREATE TABLE usuarios (
     email VARCHAR(100) NOT NULL UNIQUE,
     contrasena VARCHAR(255) NOT NULL,
     rol ENUM('user', 'admin') DEFAULT 'user',
-    avatar VARCHAR(255) DEFAULT 'default_avatar.png',
     fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
