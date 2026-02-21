@@ -4,8 +4,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro | K-Libro</title>
+    <link rel="stylesheet" href="css/estilo.css">
 </head>
 <body>
+    <h1>K-Libro</h1>
+    <div class="formulario">
+        <h2>Crar una cuenta</h2>
+        <form method="post" action="../../procesar/procesa.php">
+            <div class="nombre campo">
+                <input type="text" name="nombre" placeholder="Usuario" required>
+            </div>
+            <div class="contrasena campo">
+                <input type="password" name="contrasena" id="contrasena" placeholder="Contraseña" required oninput="validarContrasena()">
+                <div id="requisitos" style="display: none;font-size: 0.9em; margin-top: 10px; color: black;">
+                    <p><strong>Requisitos de contraseña:</strong></p>
+                    <ul style="margin: 5px 0; padding-left: 20px;">
+                        <li id="req-longitud" style="color: white;">Mínimo 8 caracteres</li>
+                        <li id="req-mayuscula" style="color: white;">Una mayúscula</li>
+                        <li id="req-minuscula" style="color: white;">Una minúscula</li>
+                        <li id="req-numero" style="color: white;">Un número</li>
+                        <li id="req-especial" style="color: white;">Un carácter especial (!@#$%^&*)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="correo campo">
+                <input type="text" name="correo" placeholder="Correo" required>
+            </div>
+            <div class="telefono campo">
+                <input type="text" name="telefono" placeholder="Teléfono" required>
+            </div>
+            <input type="hidden" name="accion" value="registro">
+            <input type="submit" value="Insertar">
+        </form>
+    </div>
+    <script>
+        function validarContrasena(){
+            const contrasena = document.getElementById('contrasena').value;
+            const requisitos = document.getElementById('requisitos');
+
+            // Mostrar requisitos si hay algo escrito:
+            if(contrasena.length > 0){
+                requisitos.style.display = 'block';
+            }else{
+                requisitos.style.display = 'none';
+            }
+
+            // Validar cada requisito:
+            const validaciones = {
+                'req-longitud' : contrasena.length >=8,
+                'req-mayuscula' : /[A-Z]/.test(contrasena),
+                'req-minuscula' : /[a-z]/.test(contrasena),
+                'req-numero' : /[0-9]/.test(contrasena),
+                'req-especial' : /[!@#$%^&*\-_=+\[\]{};:\'",.<>?\/\\|`~]/.test(contrasena)
+            };
+
+            // Actualizar colores de requisitos:
+            for (const [id, valido] of Object.entries(validaciones)){
+                const elemento = document.getElementById(id);
+                if (valido){
+                    elemento.style.color = 'green';
+                }else{
+                    elemento.style.color = 'gray';
+                }
+            }
+
+            // Habilitar/deshabilitar botón de envío:
+            const allValid = Object.values(validaciones).every(v => v);
+            document.querySelector('input[type="submit"]').disabled = !allValid;
+        }
+    </script>
     
 </body>
 </html>
