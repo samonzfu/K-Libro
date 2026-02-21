@@ -105,3 +105,26 @@ INSERT INTO logros (nombre, descripcion, icono, criterio) VALUES
 -- (Nota: Para este ejemplo, asegúrate de crear tu propio hash en PHP o usar un registro nuevo)
 INSERT INTO usuarios (nombre, email, contrasena, rol) VALUES 
 ('Admin K-Libro', 'admin@klibro.com', '$2y$10$eE.Y.Z.P.H.P.H.P.H.P.H.P.H.P.H.P.H.P.H.P.H.P.H.P.H.P.H.', 'admin');
+
+
+-- CREAR USUARIO:
+CREATE USER 
+'k_libro'@'localhost' 
+IDENTIFIED  BY 'k_libro123$';
+
+GRANT USAGE ON *.* TO 'k_libro'@'localhost';
+
+
+ALTER USER 'k_libro'@'localhost' 
+REQUIRE NONE 
+WITH MAX_QUERIES_PER_HOUR 0 
+MAX_CONNECTIONS_PER_HOUR 0 
+MAX_UPDATES_PER_HOUR 0 
+MAX_USER_CONNECTIONS 0;
+
+-- dale acceso a la base de datos retroplay
+GRANT ALL PRIVILEGES ON k_libro.* 
+TO 'k_libro'@'localhost';
+
+-- recarga la tabla de privilegios
+FLUSH PRIVILEGES;
