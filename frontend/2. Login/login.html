@@ -6,6 +6,23 @@
     <title>Login | K-Libro</title>
 </head>
 <body>
-    <h1> ESTO ES EL LOGIN</h1>
+    <h1> K-LIBRO</h1>
+    <div class="formulario">
+        <h2>Inicia Sesión</h2>
+        <form method="post" action="../../procesar/procesa.php">
+            <div class="usuario campo">
+                <input type="text" name="nombre" placeholder="Nombre de usuario" required>
+            </div>
+            <div class="contrasena campo">
+                <input type="password" name="contrasena" placeholder="Contraseña" required>
+            </div>
+            <input type="hidden" name="accion" value="login">
+            <input type="submit" value="Entrar">
+            <div class="recordar">¿No tienes cuenta?</div>
+            <div class="registrarse">
+                <a href="../1. Registro/registro.html">Crear una cuenta</a>
+            </div>
+        </form>
+    </div>
 </body>
 </html>
