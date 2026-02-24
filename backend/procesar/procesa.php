@@ -54,9 +54,17 @@ if(isset($_POST['accion'])){
         }else{
             echo "Error al preparar la consulta: " . htmlspecialchars($conexion->error);
         }
+
+    // LOGIN
+    }elseif($accion == 'login'){
+        // Recogemos datos del formulario del login:
+        $nombre = $_POST['nombre'];
+        $contrasena = $_POST['contrasena'];
     }
 
 }
+
+    
 
 
 
