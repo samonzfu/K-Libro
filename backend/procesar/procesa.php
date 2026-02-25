@@ -1,8 +1,8 @@
 <?php
 // Conexión a la BBDD.
-include '../backend/conexionBD.php';
+include '../conexionBD.php';
 // Incluir función de validación de contraseña
-include '../back/Validadores/validar_contrasena.php';
+include '../Validadores/validar_contrasena.php';
 
 // VERIFICAR DATOS RECIBIDOS:
 if(isset($_POST['accion'])){
@@ -44,8 +44,8 @@ if(isset($_POST['accion'])){
         if ($stmt){
             $stmt->bind_param("sss", $nombre, $correo, $contrasena);
             if($stmt->execute()){
-                // Registro exitoso - Redirigir al login:
-                header('Location: ../frontend/2. Login/login.html');
+                // Registro exitoso - Redirigir al login (carpeta renombrada a 2_Login):
+                header('Location: ../../frontend/2_Login/login.html');
                 exit;
             }else{
                 echo "Error al registrar: " .htmlspecialchars($conexion->error);
@@ -57,9 +57,42 @@ if(isset($_POST['accion'])){
 
     // LOGIN
     }elseif($accion == 'login'){
-        // Recogemos datos del formulario del login:
-        $nombre = $_POST['nombre'];
-        $contrasena = $_POST['contrasena'];
+        // Recogemos y saneamos datos del formulario del login:
+        $nombre = trim($_POST['nombre'] ?? '');
+        $contrasena = $_POST['contrasena'] ?? '';
+
+        if ($nombre === '' || $contrasena === ''){
+            echo "<script>alert('Por favor completa todos los campos'); window.history.back();</script>";
+            exit;
+        }
+
+        // Buscar usuario por nombre y comprobar contraseña:
+        $stmt = $conexion->prepare("SELECT id, nombre, contrasena FROM usuarios WHERE nombre = ?");
+        if ($stmt) {
+            $stmt->bind_param("s", $nombre);
+            $stmt->execute();
+            $res = $stmt->get_result();
+            if ($res && $res->num_rows > 0) {
+                $row = $res->fetch_assoc();
+                if (password_verify($contrasena, $row['contrasena'])) {
+                    session_start();
+                    $_SESSION['user_id'] = $row['id'];
+                    $_SESSION['nombre'] = $row['nombre'];
+                    header('Location: ../../frontend/3_Inicio/inicio.html');
+                    exit;
+                } else {
+                    echo "<script>alert('Usuario o contraseña incorrectos.'); window.history.back();</script>";
+                    exit;
+                }
+            } else {
+                echo "<script>alert('Usuario o contraseña incorrectos.'); window.history.back();</script>";
+                exit;
+            }
+            $stmt->close();
+        } else {
+            echo "Error en el servidor. Inténtalo más tarde.";
+            exit;
+        }
     }
 
 }
