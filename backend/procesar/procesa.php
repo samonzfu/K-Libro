@@ -1,4 +1,10 @@
 <?php
+// debug: mostrar todos los errores en pantalla
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+session_start();   // si hace falta
+
 // Conexión a la BBDD.
 include '../conexionBD.php';
 // Incluir función de validación de contraseña
