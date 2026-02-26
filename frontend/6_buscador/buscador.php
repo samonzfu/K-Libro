@@ -11,20 +11,20 @@ if (!isset($_SESSION['user_id'])) {
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>K-Libro | Buscador Mágico</title>
+    <title>K-Libro | Buscador</title>
     <link rel="stylesheet" href="css/estilo.css">
 </head>
 <body>
 
     <div class="container">
-        <h1>Buscar en los Archivos</h1>
+        <h1>Busca un libro</h1>
         
         <div class="search-box">
-            <input type="text" id="inputBusqueda" placeholder="Ej: El nombre del viento..." onkeypress="manejarEnter(event)">
+            <input type="text" id="inputBusqueda" placeholder="Ej: Reino de Sombras..." onkeypress="manejarEnter(event)">
             <button onclick="buscarLibros()">Buscar</button>
         </div>
 
-        <div id="loader"><h2>Consultando los pergaminos... ⏳</h2></div>
+        <div id="loader"><h2>Consultando los archivos... ⏳</h2></div>
 
         <div id="contenedorResultados" class="results-grid">
             </div>
