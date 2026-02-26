@@ -1,15 +1,15 @@
 /* --- IMPORTAMOS LAS FUENTES MÁGICAS --- */
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap');
 
-/* --- VARIABLES MAGIA OSCURA Y ROMANCE --- */
+/* --- VARIABLES --- */
 :root {
-    --color-fondo: #111814;       /* Verde bosque casi negro */
-    --color-magia: #3a1f28;       /* Borgoña/Rosa muy oscuro */
-    --color-oscuridad: #0a0e0c;   /* Sombra total */
-    --color-dorado: #d96c82;      /* Rosa rubor vibrante (magia) */
-    --color-texto: #f2ebeb;       /* Crema muy claro */
+    --color-fondo: #111814;       
+    --color-magia: #3a1f28; 
+    --color-oscuridad: #0a0e0c;  
+    --color-dorado: #d96c82;  
+    --color-texto: #f2ebeb;    
     --brillo-dorado: 0 4px 20px rgba(217, 108, 130, 0.3);
-    --fondo-tarjeta: rgba(20, 28, 24, 0.85); /* Cristal oscuro ahumado */
+    --fondo-tarjeta: rgba(20, 28, 24, 0.85);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -26,7 +26,7 @@ body {
     padding: 20px;
 }
 
-/* --- TÍTULO PRINCIPAL (FLOTANTE) --- */
+/* --- TÍTULO PRINCIPAL --- */
 h1 {
     font-family: 'Cinzel', serif;
     font-size: 3.5rem;
@@ -135,7 +135,7 @@ input[type="submit"]:hover:not(:disabled) {
     transform: scale(1.03);
 }
 
-/* ESTADO DESHABILITADO DEL BOTÓN (Controlado por tu JS) */
+/* ESTADO DESHABILITADO DEL BOTÓN (Controlado por el JS) */
 input[type="submit"]:disabled {
     background: rgba(255, 255, 255, 0.05);
     color: rgba(242, 235, 235, 0.3);
@@ -171,15 +171,13 @@ input[type="submit"]:disabled {
     color: inherit;
 }
 
-/* Aquí interceptamos los colores que inyecta tu JS */
-
 /* Estado inicial (blanco) y estado inválido (gris) */
 #requisitos li[style*="white"], 
 #requisitos li[style*="gray"] {
     color: rgba(242, 235, 235, 0.4) !important;
 }
 
-/* Estado válido (verde inyectado por JS) lo cambiamos a nuestro Rosa Mágico */
+/* Estado válido (verde inyectado por JS) lo cambiamos al rosa*/
 #requisitos li[style*="green"] {
     color: var(--color-dorado) !important;
     text-shadow: 0 0 8px rgba(217, 108, 130, 0.6) !important;
