@@ -14,27 +14,27 @@ K-Libro/
 │
 ├── frontend/                             # Interfaz de usuario (HTML, CSS)
 │   ├── 1_Registro/                      # Página de registro
-│   │   ├── registro.html                # Formulario de registro
+│   │   ├── registro.php                # Formulario de registro
 │   │   └── css/
 │   │       └── estilo.css               # Estilos del registro
 │   │
 │   ├── 2_Login/                         # Página de inicio de sesión
-│   │   ├── login.html                   # Formulario de login
+│   │   ├── login.php                   # Formulario de login
 │   │   └── css/
 │   │       └── estilo.css               # Estilos del login
 │   │
 │   ├── 3_Inicio/                        # Página principal (dashboard)
-│   │   ├── inicio.html                  # Dashboard del usuario
+│   │   ├── inicio.php                  # Dashboard del usuario
 │   │   └── css/
 │   │       └── estilo.css               # Estilos del inicio
 │   │
 │   ├── 4_Biblioteca/                    # Catálogo de libros
-│   │   ├── biblioteca.html              # Listado de libros
+│   │   ├── biblioteca.php              # Listado de libros
 │   │   └── css/
 │   │       └── estilo.css               # Estilos de la biblioteca
 │   │
 │   ├── 5_Mi_cuenta/                     # Perfil del usuario
-│   │   ├── mi_cuenta.html               # Gestión de cuenta
+│   │   ├── mi_cuenta.php               # Gestión de cuenta
 │   │   └── css/
 │   │       └── estilo.css               # Estilos de mi cuenta
 │   │
@@ -57,7 +57,7 @@ K-Libro/
 ## 🔄 Flujo de Autenticación
 
 ```
-Usuario accede a login.html
+Usuario accede a login.php
          ↓
 Completa formulario y envía POST
          ↓
@@ -65,14 +65,14 @@ backend/procesar/procesa.php recibe acción='login'
          ↓
 Valida credenciales en BBDD
          ↓
-✓ Correcto: Crea sesión y redirige a → frontend/3_Inicio/inicio.html
+✓ Correcto: Crea sesión y redirige a → frontend/3_Inicio/inicio.php
 ✗ Incorrecto: Muestra alerta y vuelve al login
 ```
 
 ## 🔄 Flujo de Registro
 
 ```
-Usuario accede a registro.html
+Usuario accede a registro.php
          ↓
 Completa formulario y envía POST
          ↓
@@ -82,7 +82,7 @@ Valida contraseña (backend/Validadores/validar_contrasena.php)
          ↓
 Verifica email único en BBDD
          ↓
-✓ Exitoso: Inserta usuario y redirige a → frontend/2_Login/login.html
+✓ Exitoso: Inserta usuario y redirige a → frontend/2_Login/login.php
 ✗ Error: Muestra alerta y vuelve al registro
 ```
 
@@ -100,11 +100,11 @@ Verifica email único en BBDD
 
 | Página | URL | Función |
 |--------|-----|---------|
-| Registro | `/frontend/1_Registro/registro.html` | Crear nueva cuenta |
-| Login | `/frontend/2_Login/login.html` | Acceder con credenciales |
-| Inicio | `/frontend/3_Inicio/inicio.html` | Dashboard principal (requiere sesión) |
-| Biblioteca | `/frontend/4_Biblioteca/biblioteca.html` | Catálogo de libros |
-| Mi Cuenta | `/frontend/5_Mi_cuenta/mi_cuenta.html` | Perfil del usuario |
+| Registro | `/frontend/1_Registro/registro.php` | Crear nueva cuenta |
+| Login | `/frontend/2_Login/login.php` | Acceder con credenciales |
+| Inicio | `/frontend/3_Inicio/inicio.php` | Dashboard principal (requiere sesión) |
+| Biblioteca | `/frontend/4_Biblioteca/biblioteca.php` | Catálogo de libros |
+| Mi Cuenta | `/frontend/5_Mi_cuenta/mi_cuenta.php` | Perfil del usuario |
 | Buscador | `/frontend/6_buscador/buscador.php` | Búsqueda de libros |
 
 ## 🔐 Seguridad Implementada

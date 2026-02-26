@@ -1,3 +1,10 @@
+<?php
+session_start();
+if (empty($_SESSION['user_id'])) {
+    header('Location: ../2_Login/login.php');
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>

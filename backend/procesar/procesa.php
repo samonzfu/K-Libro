@@ -51,7 +51,7 @@ if(isset($_POST['accion'])){
             $stmt->bind_param("sss", $nombre, $correo, $contrasena);
             if($stmt->execute()){
                 // Registro exitoso - Redirigir al login (carpeta renombrada a 2_Login):
-                header('Location: ../../frontend/2_Login/login.html');
+                header('Location: ../../frontend/2_Login/login.php');
                 exit;
             }else{
                 echo "Error al registrar: " .htmlspecialchars($conexion->error);
@@ -84,7 +84,7 @@ if(isset($_POST['accion'])){
                     session_start();
                     $_SESSION['user_id'] = $row['id'];
                     $_SESSION['nombre'] = $row['nombre'];
-                    header('Location: ../../frontend/3_Inicio/inicio.html');
+                    header('Location: ../../frontend/3_Inicio/inicio.php');
                     exit;
                 } else {
                     echo "<script>alert('Usuario o contraseña incorrectos.'); window.history.back();</script>";

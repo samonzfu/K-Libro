@@ -1,3 +1,10 @@
+<?php
+session_start();
+if (!empty($_SESSION['user_id'])) {
+    header('Location: ../3_Inicio/inicio.php');
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -20,7 +27,7 @@
             <input type="submit" value="Entrar">
             <div class="recordar">¿No tienes cuenta?</div>
             <div class="registrarse">
-                <a href="../1_Registro/registro.html">Crear una cuenta</a>
+                <a href="../1_Registro/registro.php">Crear una cuenta</a>
             </div>
         </form>
     </div>
