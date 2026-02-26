@@ -69,7 +69,7 @@ if (!isset($_SESSION['user_id'])) {
             } catch (error) {
                 // Si algo sale mal (ej: no hay internet), entra aquí
                 console.error("Error capturado:", error);
-                contenedor.innerHTML = `<p style="color: red;">Error: Los pergaminos son ilegibles ahora mismo.</p>`;
+                contenedor.innerHTML = `<p style="color: red;">Error: Ha habido un error, prueba otra vez.</p>`;
             } finally {
                 // Esto se ejecuta SIEMPRE, haya ido bien o mal. Ideal para ocultar el "Cargando..."
                 loader.style.display = 'none';
@@ -84,7 +84,7 @@ if (!isset($_SESSION['user_id'])) {
             const primerosResultados = libros.slice(0, 12);
 
             if (primerosResultados.length === 0) {
-                contenedor.innerHTML = '<p>No se encontraron tomos con ese nombre.</p>';
+                contenedor.innerHTML = '<p>No se encontraron libros con ese nombre.</p>';
                 return;
             }
 
@@ -106,8 +106,8 @@ if (!isset($_SESSION['user_id'])) {
                         <img src="${urlPortada}" alt="Portada de ${libro.title}">
                         <h3>${libro.title}</h3>
                         <p>${autor}</p>
-                        <button onclick="guardarLibro('${libro.key}', '${libro.title}', 'leyendo')" style="width:100%; padding:5px; margin-top:5px; background:transparent; border:1px solid #d4af37; color:#d4af37; cursor:pointer;">📖 Leer ahora</button>
-                        <button onclick="guardarLibro('${libro.key}', '${libro.title}', 'pendiente')" style="width:100%; padding:5px; margin-top:5px; background:transparent; border:1px solid #aaa; color:#aaa; cursor:pointer;">⏳ Guardar para luego</button>
+                        <button onclick="guardarLibro('${libro.key}', '${libro.title}', 'leído')" style="width:100%; padding:5px; margin-top:5px; background:transparent; border:1px solid #d4af37; color:#d4af37; cursor:pointer;">✔️ Marcar como leído</button>
+                        <button onclick="guardarLibro('${libro.key}', '${libro.title}', 'añadir')" style="width:100%; padding:5px; margin-top:5px; background:transparent; border:1px solid #aaa; color:#aaa; cursor:pointer;">➕ Añadir a la biblioteca</button>
                     </div>
                 `;
 
