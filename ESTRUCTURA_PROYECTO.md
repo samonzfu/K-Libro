@@ -9,6 +9,7 @@ K-Libro/
 │   ├── conexionBD.php                   # Conexión a la base de datos
 │   ├── procesar/
 │   │   └── procesa.php                  # Procesador de formularios (registro, login)
+│   ├── noticias.php                     # Función que devuelve noticias/recomendaciones
 │   └── Validadores/
 │       └── validar_contrasena.php       # Validación de contraseñas
 │
@@ -122,6 +123,7 @@ Verifica email único en BBDD
 |---------|-------------|-----------------|
 | `backend/conexionBD.php` | Conexión a MySQL | Manejo de BBDD |
 | `backend/procesar/procesa.php` | Servidor | Lógica de registro y login |
+| `backend/noticias.php` | Contenido | Devuelve arreglo de noticias/recomendaciones |
 | `backend/Validadores/validar_contrasena.php` | Validación | Reglas de contraseña |
 | `frontend/*/estilo.css` | Estilos | Diseño visual |
 | `BBDD/BBDD.sql` | SQL script | Estructura de datos |
