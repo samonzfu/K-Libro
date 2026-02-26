@@ -1,36 +1,3 @@
-<?php
-// 1. PROTECCIÓN DE LA PÁGINA
-session_start();
-if (!isset($_SESSION['user_id'])) {
-    // Si no hay sesión, al calabozo (login)
-    header('Location: login.php');
-    exit;
-}
-
-// 2. DATOS DE EJEMPLO (MOCKUP)
-// Esto simula lo que luego traeremos del RSS o la Base de Datos
-$noticias = [
-    [
-        'titulo' => 'Brandon Sanderson anuncia nuevo libro',
-        'imagen' => 'https://images.unsplash.com/photo-1512820790803-83ca734da794?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-        'resumen' => 'El autor de El Archivo de las Tormentas revela detalles sobre su próxima obra maestra...',
-        'fecha' => 'Hace 2 horas'
-    ],
-    [
-        'titulo' => 'Los mejores clásicos para leer en Otoño',
-        'imagen' => 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-        'resumen' => 'Desde Poe hasta Bécquer, una selección de lecturas atmosféricas para tardes de lluvia...',
-        'fecha' => 'Ayer'
-    ],
-    [
-        'titulo' => 'Entrevista exclusiva a Laura Gallego',
-        'imagen' => 'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80',
-        'resumen' => 'La autora valenciana nos cuenta sobre el proceso creativo detrás de su última saga...',
-        'fecha' => 'Hace 3 días'
-    ]
-];
-?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -40,29 +7,31 @@ $noticias = [
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     
     <style>
-        /* --- ESTILOS GENERALES (Heredados del Login) --- */
+        /* --- VARIABLES MAGIA OSCURA Y ROMANCE --- */
         :root {
-            --color-fondo: #0f0c29;
-            --color-magia: #302b63;
-            --color-oscuridad: #24243e;
-            --color-dorado: #d4af37;
-            --color-texto: #e0e0e0;
-            --glass: rgba(0, 0, 0, 0.6);
+            --color-fondo: #111814;       /* Verde bosque casi negro */
+            --color-magia: #3a1f28;       /* Borgoña/Rosa muy oscuro */
+            --color-oscuridad: #0a0e0c;   /* Sombra total */
+            --color-dorado: #d96c82;      /* Rosa rubor vibrante (magia) */
+            --color-texto: #f2ebeb;       /* Crema muy claro */
+            --brillo-dorado: 0 4px 20px rgba(217, 108, 130, 0.3);
+            --glass: rgba(20, 28, 24, 0.85); /* Cristal oscuro ahumado */
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Lato', sans-serif;
-            background: linear-gradient(135deg, var(--color-fondo), var(--color-magia));
+            background: linear-gradient(135deg, var(--color-fondo), var(--color-magia), var(--color-oscuridad));
+            background-attachment: fixed; /* Hace que el fondo no se mueva al hacer scroll */
             color: var(--color-texto);
             min-height: 100vh;
         }
 
-        /* --- NAVBAR (Barra de Navegación) --- */
+        /* --- NAVBAR (Barra de Navegación Mágica) --- */
         .navbar {
-            background: rgba(15, 12, 41, 0.95);
-            border-bottom: 2px solid var(--color-dorado);
+            background: rgba(17, 24, 20, 0.95); /* Verde bosque oscuro casi opaco */
+            border-bottom: 1px solid rgba(217, 108, 130, 0.4); /* Línea rosa sutil */
             padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
@@ -70,28 +39,33 @@ $noticias = [
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
         }
 
         .logo {
             font-family: 'Cinzel', serif;
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             color: var(--color-dorado);
             text-decoration: none;
             font-weight: bold;
+            text-shadow: 0 0 10px rgba(217, 108, 130, 0.4);
+            letter-spacing: 1px;
         }
 
         .nav-links {
             display: flex;
-            gap: 20px;
+            gap: 25px;
+            align-items: center;
         }
 
         .nav-links a {
-            color: var(--color-texto);
+            color: rgba(242, 235, 235, 0.8);
             text-decoration: none;
-            font-size: 1rem;
+            font-size: 0.95rem;
             transition: color 0.3s;
             position: relative;
+            letter-spacing: 0.5px;
         }
 
         .nav-links a:hover {
@@ -103,103 +77,125 @@ $noticias = [
             content: '';
             position: absolute;
             width: 0;
-            height: 2px;
+            height: 1px;
             bottom: -5px;
             left: 0;
             background-color: var(--color-dorado);
-            transition: width 0.3s;
+            box-shadow: 0 0 5px var(--color-dorado);
+            transition: width 0.3s ease;
         }
-        .nav-links a:hover::after {
+        /* Excepto para el botón de salir */
+        .nav-links a:not(.btn-logout):hover::after {
             width: 100%;
         }
 
         /* Botón de Salir */
         .btn-logout {
             border: 1px solid var(--color-dorado);
-            padding: 5px 15px;
-            border-radius: 20px;
-            color: var(--color-dorado);
+            padding: 6px 18px;
+            border-radius: 30px;
+            color: var(--color-dorado) !important;
+            transition: all 0.3s ease;
         }
+        
         .btn-logout:hover {
-            background: var(--color-dorado);
-            color: #000;
+            background: #23362a;
+            box-shadow: var(--brillo-dorado);
+            transform: scale(1.05);
         }
 
         /* --- CONTENIDO PRINCIPAL --- */
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 3rem 2rem;
         }
 
         /* Banner de Bienvenida */
         .hero {
             text-align: center;
-            margin-bottom: 3rem;
+            margin-bottom: 4rem;
             animation: fadeIn 1s ease-in;
         }
 
         .hero h1 {
             font-family: 'Cinzel', serif;
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             color: var(--color-dorado);
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+        }
+        
+        .hero p {
+            font-size: 1.1rem;
+            color: rgba(242, 235, 235, 0.7);
+            font-style: italic;
         }
 
         /* Grid de Noticias */
         .news-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive automático */
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            gap: 2.5rem;
         }
 
         /* Tarjeta de Noticia (Estilo Carta Mágica) */
         .news-card {
             background: var(--glass);
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            border-radius: 10px;
+            border: 1px solid rgba(217, 108, 130, 0.2);
+            border-radius: 12px;
             overflow: hidden;
-            transition: transform 0.3s, box-shadow 0.3s;
-            backdrop-filter: blur(5px);
+            transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
         }
 
         .news-card:hover {
-            transform: translateY(-10px); /* Flota al pasar el mouse */
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5), 0 0 15px rgba(212, 175, 55, 0.2);
+            transform: translateY(-8px); 
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8), inset 0 0 15px rgba(217, 108, 130, 0.1);
             border-color: var(--color-dorado);
         }
 
         .news-img {
             width: 100%;
-            height: 200px;
+            height: 220px;
             object-fit: cover;
-            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+            border-bottom: 1px solid rgba(217, 108, 130, 0.3);
+            filter: brightness(0.85); /* Oscurece un poco las fotos para que encajen en el tono */
+            transition: filter 0.4s ease;
+        }
+        
+        .news-card:hover .news-img {
+            filter: brightness(1); /* Se iluminan al pasar el ratón */
         }
 
         .news-content {
-            padding: 1.5rem;
+            padding: 1.8rem;
         }
 
         .news-date {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: var(--color-dorado);
-            opacity: 0.8;
-            margin-bottom: 5px;
+            opacity: 0.9;
+            margin-bottom: 8px;
             display: block;
+            font-weight: bold;
+            letter-spacing: 0.5px;
         }
 
         .news-title {
             font-family: 'Cinzel', serif;
-            font-size: 1.2rem;
-            margin-bottom: 10px;
-            color: white;
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+            color: var(--color-texto);
+            line-height: 1.3;
         }
 
         .news-excerpt {
-            font-size: 0.9rem;
-            color: #ccc;
-            line-height: 1.5;
-            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            color: rgba(242, 235, 235, 0.6);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
         }
 
         .btn-read {
@@ -208,9 +204,14 @@ $noticias = [
             text-decoration: none;
             font-weight: bold;
             font-size: 0.9rem;
+            transition: all 0.3s ease;
+            border-bottom: 1px dashed transparent;
         }
+        
         .btn-read:hover {
-            text-decoration: underline;
+            color: #fff;
+            border-bottom: 1px solid var(--color-dorado);
+            text-shadow: 0 0 8px var(--color-dorado);
         }
 
         @keyframes fadeIn {

@@ -7,15 +7,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400&display=swap" rel="stylesheet">
     
     <style>
-        /* --- MISMAS VARIABLES MÁGICAS --- */
+        /* --- PALETA MAGIA OSCURA Y ROMANCE --- */
         :root {
-            --color-fondo: #0f0c29;
-            --color-magia: #302b63;
-            --color-oscuridad: #24243e;
-            --color-dorado: #d4af37;
-            --color-texto: #e0e0e0;
-            --brillo-dorado: 0 0 10px #d4af37, 0 0 20px #d4af37;
-            --error: #ff4d4d;
+            /* Inspiración "El Norte Magnífico" en su versión más oscura */
+            --color-fondo: #111814;       /* Verde bosque casi negro (noche) */
+            --color-magia: #3a1f28;       /* Borgoña/Rosa muy oscuro y profundo */
+            --color-oscuridad: #0a0e0c;   /* Sombra total */
+            --color-dorado: #d96c82;      /* Rosa rubor vibrante / Manzana encantada */
+            --color-texto: #f2ebeb;       /* Crema muy claro para que se lea perfecto */
+            --brillo-dorado: 0 4px 20px rgba(217, 108, 130, 0.3);
+            --error: #ff4d4d;             
+            --fondo-tarjeta: rgba(20, 28, 24, 0.85); /* Cristal oscuro ahumado */
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -23,7 +25,7 @@
         body {
             font-family: 'Lato', sans-serif;
             background: linear-gradient(135deg, var(--color-fondo), var(--color-magia), var(--color-oscuridad));
-            min-height: 100vh; /* Usamos min-height por si el formulario es alto */
+            min-height: 100vh; 
             display: flex;
             justify-content: center;
             align-items: center;
@@ -32,15 +34,15 @@
         }
 
         .register-card {
-            background: rgba(0, 0, 0, 0.6);
+            background: var(--fondo-tarjeta);
             padding: 2.5rem;
-            border-radius: 15px;
-            border: 2px solid var(--color-dorado);
+            border-radius: 15px; 
+            border: 1px solid rgba(217, 108, 130, 0.4); /* Borde rosa brillante sutil */
             width: 100%;
-            max-width: 450px; /* Un poco más ancho que el login */
+            max-width: 450px; 
             text-align: center;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(15px); /* Efecto cristal más opaco */
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7); /* Sombra dramática */
             animation: aparecer 1s ease-out;
         }
 
@@ -54,13 +56,15 @@
             font-size: 2.2rem;
             color: var(--color-dorado);
             margin-bottom: 0.5rem;
-            text-shadow: 2px 2px 4px black;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8); /* Sombra para resaltar el brillo */
         }
 
         p.subtitle {
-            font-size: 0.9rem;
-            opacity: 0.8;
+            font-size: 0.95rem;
+            color: var(--color-texto);
+            opacity: 0.7;
             margin-bottom: 2rem;
+            font-style: italic; 
         }
 
         .input-group {
@@ -72,64 +76,83 @@
         .input-group label {
             display: block;
             margin-bottom: 5px;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: var(--color-dorado);
             font-family: 'Cinzel', serif;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
         .input-group input {
             width: 100%;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.05); /* Un poco más oscuro */
+            padding: 12px 10px;
+            background: rgba(255, 255, 255, 0.05); /* Fondo casi transparente */
             border: none;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
+            border-bottom: 1px solid rgba(217, 108, 130, 0.3);
+            border-radius: 4px 4px 0 0;
+            color: var(--color-texto);
             font-size: 1rem;
-            transition: 0.3s;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input::placeholder {
+            color: rgba(242, 235, 235, 0.3); /* Texto de ejemplo tenue */
+            font-style: italic;
         }
 
         .input-group input:focus {
             outline: none;
-            border-bottom: 1px solid var(--color-dorado);
+            border-bottom: 2px solid var(--color-dorado);
             background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 10px rgba(217, 108, 130, 0.1);
         }
 
         /* Clase para error visual en JS */
         .input-error {
-            border-bottom: 1px solid var(--error) !important;
+            border-bottom: 2px solid var(--error) !important;
             color: var(--error);
         }
 
         .btn-magic {
             width: 100%;
-            padding: 12px;
-            background: transparent;
-            border: 1px solid var(--color-dorado);
-            color: var(--color-dorado);
+            padding: 14px;
+            background: var(--color-dorado); /* Botón rosa intenso */
+            border: none;
+            border-radius: 30px; 
+            color: #111814; /* Texto oscuro para contrastar con el botón claro */
             font-family: 'Cinzel', serif;
             font-size: 1.1rem;
             font-weight: bold;
+            letter-spacing: 1px;
             cursor: pointer;
             transition: all 0.4s ease;
             margin-top: 1rem;
+            box-shadow: var(--brillo-dorado);
         }
 
         .btn-magic:hover {
-            background: var(--color-dorado);
-            color: #000;
-            box-shadow: var(--brillo-dorado);
+            background: #23362a; /* Cambia a un verde bosque mágico al pasar el ratón */
+            color: var(--color-dorado);
+            transform: scale(1.03);
+            box-shadow: 0 8px 25px rgba(35, 54, 42, 0.6);
+            border: 1px solid var(--color-dorado);
         }
 
         .links {
             margin-top: 1.5rem;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
         }
+        
         .links a {
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(242, 235, 235, 0.6);
             text-decoration: none;
+            border-bottom: 1px dashed transparent;
+            transition: all 0.3s ease;
         }
+        
         .links a:hover {
             color: var(--color-dorado);
+            border-bottom: 1px solid var(--color-dorado);
         }
 
     </style>
@@ -172,14 +195,13 @@
 
     <script>
         // --- VALIDACIÓN DE CLIENTE (JAVASCRIPT) ---
-        // Pequeño script para comprobar que las contraseñas coinciden antes de enviar
         const form = document.getElementById('registroForm');
         const pass1 = document.getElementById('password');
         const pass2 = document.getElementById('confirm_password');
 
         form.addEventListener('submit', function(e) {
             if (pass1.value !== pass2.value) {
-                e.preventDefault(); // Detiene el envío
+                e.preventDefault(); 
                 alert("¡Las palabras secretas no coinciden!");
                 pass2.classList.add('input-error');
             } else {
