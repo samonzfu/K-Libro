@@ -1,0 +1,161 @@
+/* --- IMPORTAMOS LAS FUENTES MÁGICAS --- */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap');
+
+/* --- VARIABLES MAGIA OSCURA Y ROMANCE --- */
+:root {
+    --color-fondo: #111814;       /* Verde bosque casi negro */
+    --color-magia: #3a1f28;       /* Borgoña/Rosa muy oscuro */
+    --color-oscuridad: #0a0e0c;   /* Sombra total */
+    --color-dorado: #d96c82;      /* Rosa rubor vibrante (magia) */
+    --color-texto: #f2ebeb;       /* Crema muy claro */
+    --brillo-dorado: 0 4px 20px rgba(217, 108, 130, 0.3);
+    --fondo-tarjeta: rgba(20, 28, 24, 0.85); /* Cristal oscuro ahumado */
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Lato', sans-serif;
+    background: linear-gradient(135deg, var(--color-fondo), var(--color-magia), var(--color-oscuridad));
+    min-height: 100vh;
+    /* Flexbox para alinear el título H1 y la tarjeta en el centro */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: var(--color-texto);
+    padding: 20px;
+}
+
+/* --- TÍTULO PRINCIPAL (FLOTANTE) --- */
+h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 3.5rem;
+    color: var(--color-dorado);
+    margin-bottom: 2rem;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(217, 108, 130, 0.5);
+    letter-spacing: 3px;
+    animation: aparecer 1s ease-out;
+    text-align: center;
+}
+
+/* --- CONTENEDOR DEL FORMULARIO --- */
+.formulario {
+    background: var(--fondo-tarjeta);
+    padding: 3rem 2.5rem;
+    border-radius: 15px;
+    border: 1px solid rgba(217, 108, 130, 0.4);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    position: relative;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7), inset 0 0 20px rgba(217, 108, 130, 0.05);
+    animation: aparecer 1.2s ease-out; /* Aparece un poquito después que el H1 */
+}
+
+/* Estrellitas mágicas en las esquinas */
+.formulario::before, .formulario::after {
+    content: "✨";
+    position: absolute;
+    font-size: 1.5rem;
+    color: var(--color-dorado);
+    text-shadow: 0 0 10px var(--color-dorado);
+}
+.formulario::before { top: 15px; left: 15px; }
+.formulario::after { bottom: 15px; right: 15px; }
+
+@keyframes aparecer {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- TÍTULO INTERNO --- */
+h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.6rem;
+    color: var(--color-texto);
+    margin-bottom: 2rem;
+    font-weight: 400;
+    letter-spacing: 1px;
+    opacity: 0.9;
+}
+
+/* --- INPUTS --- */
+.campo {
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.campo input {
+    width: 100%;
+    padding: 12px 15px;
+    background: rgba(255, 255, 255, 0.05); /* Fondo casi transparente */
+    border: none;
+    border-bottom: 1px solid rgba(217, 108, 130, 0.3);
+    border-radius: 4px 4px 0 0;
+    color: var(--color-texto);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.campo input::placeholder {
+    color: rgba(242, 235, 235, 0.4);
+    font-style: italic;
+}
+
+.campo input:focus {
+    outline: none;
+    border-bottom: 2px solid var(--color-dorado);
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 10px rgba(217, 108, 130, 0.1);
+}
+
+/* --- BOTÓN DE ENTRAR --- */
+input[type="submit"] {
+    width: 100%;
+    padding: 14px;
+    background: var(--color-dorado);
+    border: 1px solid transparent;
+    border-radius: 30px;
+    color: #111814;
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--brillo-dorado);
+}
+
+input[type="submit"]:hover {
+    background: #23362a; /* Verde bosque */
+    color: var(--color-dorado);
+    border: 1px solid var(--color-dorado);
+    box-shadow: 0 8px 25px rgba(35, 54, 42, 0.6);
+    transform: scale(1.03);
+}
+
+/* --- ENLACES INFERIORES --- */
+.recordar {
+    font-size: 0.85rem;
+    color: rgba(242, 235, 235, 0.6);
+    margin-bottom: 0.5rem;
+}
+
+.registrarse a {
+    color: var(--color-dorado);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: bold;
+    border-bottom: 1px dashed transparent;
+    transition: all 0.3s ease;
+}
+
+.registrarse a:hover {
+    color: #fff;
+    border-bottom: 1px solid var(--color-dorado);
+    text-shadow: 0 0 8px var(--color-dorado);
+}

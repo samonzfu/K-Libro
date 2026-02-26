@@ -84,7 +84,7 @@ if(isset($_POST['accion'])){
                     session_start();
                     $_SESSION['user_id'] = $row['id'];
                     $_SESSION['nombre'] = $row['nombre'];
-                    header('Location: ../../frontend/3_Inicio/inicio.php');
+                    header('Location: /GitHub/K-Libro/frontend/3_Inicio/inicio.php');
                     exit;
                 } else {
                     echo "<script>alert('Usuario o contraseña incorrectos.'); window.history.back();</script>";
@@ -102,9 +102,4 @@ if(isset($_POST['accion'])){
     }
 
 }
-
-    
-
-
-
 ?>
