@@ -1,7 +1,4 @@
 <?php
-// Devuelve un array de noticias/recomendaciones de libros.
-// En un proyecto real estas podrían sacarse de una API externa o de la base de datos.
-
 function obtenerNoticias(): array
 {
     return [
