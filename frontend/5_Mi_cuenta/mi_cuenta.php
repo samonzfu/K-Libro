@@ -15,5 +15,6 @@ if (empty($_SESSION['user_id'])) {
 </head>
 <body>
     <h1>Mi cuenta de usuario</h1>
+    <p>Aquí podremos cerrar sesión, ver la info de nuestra cuenta y los logros.</p>
 </body>
 </html>

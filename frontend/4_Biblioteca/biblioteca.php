@@ -15,5 +15,6 @@ if (empty($_SESSION['user_id'])) {
 </head>
 <body>
     <h1>ESTO ES TU BIBLIOTECA</h1>
+    <p>Aquí aparecerán los libros que hayas añadido desde el buscador y el estado :)</p>
 </body>
 </html>

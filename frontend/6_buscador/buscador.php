@@ -1,5 +1,4 @@
 <?php
-// Mantenemos la protección de la sesión
 session_start();
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
@@ -54,7 +53,7 @@ if (!isset($_SESSION['user_id'])) {
             const url = `https://openlibrary.org/search.json?q=${encodeURIComponent(termino)}&language=spa`;
 
             try {
-                // 3. HACEMOS LA LLAMADA A LA API (Aquí ocurre la magia)
+                // 3. HACEMOS LA LLAMADA A LA API 
                 const respuesta = await fetch(url);
                 
                 // Si el servidor falla (ej: error 500), lanzamos un error que captura el bloque 'catch'
