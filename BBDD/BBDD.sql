@@ -10,6 +10,7 @@ CREATE TABLE usuarios (
     nombre VARCHAR(50) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     contrasena VARCHAR(255) NOT NULL,
+    avatar VARCHAR(255) DEFAULT 'default.png',
     rol ENUM('user', 'admin') DEFAULT 'user',
     fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP
 );

@@ -1,0 +1,184 @@
+/*ARREGLAR EL BOTON DE FIJAR RETO*/
+
+
+/* --- IMPORTAMOS LAS FUENTES MÁGICAS --- */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap');
+
+/* --- VARIABLES MAGIA OSCURA Y ROMANCE (Idénticas al Inicio) --- */
+:root {
+    --color-fondo: #111814;       /* Verde bosque casi negro */
+    --color-magia: #3a1f28;       /* Borgoña/Rosa muy oscuro */
+    --color-oscuridad: #0a0e0c;   /* Sombra total */
+    --color-dorado: #d96c82;      /* Rosa rubor vibrante */
+    --color-texto: #f2ebeb;       /* Crema muy claro */
+    --brillo-dorado: 0 4px 20px rgba(217, 108, 130, 0.3);
+    --glass: rgba(20, 28, 24, 0.85); /* Cristal oscuro ahumado */
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Lato', sans-serif;
+    background: linear-gradient(135deg, var(--color-fondo), var(--color-magia), var(--color-oscuridad));
+    background-attachment: fixed;
+    color: var(--color-texto);
+    min-height: 100vh;
+    padding: 3rem 2rem;
+    display: flex;
+    justify-content: center; /* Centra el contenedor principal */
+}
+
+/* --- CONTENEDOR PRINCIPAL --- */
+.container {
+    width: 100%;
+    max-width: 1000px;
+    animation: fadeInUp 1s ease-out;
+}
+
+/* --- TÍTULOS DE SECCIÓN --- */
+h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 2.2rem;
+    color: var(--color-dorado);
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(217, 108, 130, 0.3);
+    padding-bottom: 15px;
+    letter-spacing: 1px;
+}
+
+/* --- TARJETA DE PERFIL (Glassmorphism) --- */
+.profile-card {
+    background: var(--glass);
+    border: 1px solid rgba(217, 108, 130, 0.3);
+    border-radius: 15px;
+    padding: 3rem;
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+    margin-bottom: 4rem; /* Separación con la siguiente sección */
+    backdrop-filter: blur(12px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+}
+
+.avatar {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    border: 3px solid var(--color-dorado);
+    box-shadow: 0 0 20px rgba(217, 108, 130, 0.4);
+    object-fit: cover;
+}
+
+.user-info h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 2.5rem;
+    color: var(--color-dorado);
+    margin-bottom: 0.8rem;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+.user-info p {
+    font-size: 1.1rem;
+    color: rgba(242, 235, 235, 0.8);
+    margin: 8px 0;
+}
+
+/* --- TARJETA DEL RETO MENSUAL --- */
+.reto-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(217, 108, 130, 0.15);
+    border-left: 5px solid var(--color-dorado); /* Acento visual a la izquierda */
+    border-radius: 10px;
+    padding: 2rem;
+    margin-bottom: 4rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.reto-card p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+/* Botón de fijar reto */
+.reto-card button {
+    background: transparent;
+    border: 1px solid var(--color-dorado);
+    color: var(--color-dorado);
+    padding: 10px 25px;
+    font-family: 'Cinzel', serif;
+    font-weight: bold;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    margin-top: 15px;
+    font-size: 1rem;
+}
+
+.reto-card button:hover {
+    background: var(--color-dorado);
+    color: var(--color-fondo);
+    box-shadow: var(--brillo-dorado);
+    transform: translateY(-2px);
+}
+
+/* --- GRID DE LOGROS (Estilo Cuadrícula de Inicio) --- */
+.logros-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+    margin-bottom: 3rem;
+}
+
+/* Tarjeta individual de logro */
+.logro-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(217, 108, 130, 0.15);
+    border-radius: 10px;
+    padding: 1.8rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+}
+
+.logro-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--color-dorado);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(217, 108, 130, 0.1);
+}
+
+.logro-icono {
+    font-size: 2.5rem;
+    filter: drop-shadow(0 0 8px rgba(217, 108, 130, 0.4));
+}
+
+.logro-info h3 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.25rem;
+    color: var(--color-texto);
+    margin-bottom: 8px;
+}
+
+.logro-info p {
+    font-size: 0.95rem;
+    color: rgba(242, 235, 235, 0.7);
+    line-height: 1.4;
+}
+
+/* Mensaje de estado vacío */
+.empty-state {
+    text-align: center;
+    color: rgba(242, 235, 235, 0.6);
+    font-style: italic;
+    font-size: 1.1rem;
+    padding: 2.5rem;
+    border: 1px dashed rgba(217, 108, 130, 0.3);
+    border-radius: 10px;
+}
+
+/* --- ANIMACIONES --- */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}

@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap');
+
+:root {
+	--color-fondo: #111814;
+	--color-magia: #3a1f28;
+	--color-oscuridad: #0a0e0c;
+	--color-dorado: #d96c82;
+	--color-texto: #f2ebeb;
+	--glass: rgba(20, 28, 24, 0.85);
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	font-family: 'Lato', sans-serif;
+	background: linear-gradient(135deg, var(--color-fondo), var(--color-magia), var(--color-oscuridad));
+	background-attachment: fixed;
+	color: var(--color-texto);
+	min-height: 100vh;
+	padding: 2rem 1rem 3rem;
+}
+
+.container {
+	max-width: 1100px;
+	margin: 0 auto;
+}
+
+h1 {
+	font-family: 'Cinzel', serif;
+	color: var(--color-dorado);
+	font-size: 2.2rem;
+	margin-bottom: 0.5rem;
+	text-align: center;
+}
+
+.subtitulo {
+	text-align: center;
+	margin-bottom: 2rem;
+	opacity: 0.9;
+}
+
+.error {
+	max-width: 700px;
+	margin: 1rem auto;
+	color: #ffd2d2;
+	text-align: center;
+}
+
+.seccion-estado {
+	background: var(--glass);
+	border: 1px solid rgba(217, 108, 130, 0.25);
+	border-radius: 12px;
+	padding: 1rem;
+	margin-bottom: 1.5rem;
+}
+
+.seccion-estado h2 {
+	font-family: 'Cinzel', serif;
+	color: var(--color-dorado);
+	margin-bottom: 1rem;
+	font-size: 1.4rem;
+}
+
+.vacio {
+	opacity: 0.85;
+}
+
+.grid-libros {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+	gap: 1rem;
+}
+
+.book-card {
+	background: rgba(8, 12, 10, 0.9);
+	border: 1px solid rgba(217, 108, 130, 0.2);
+	border-radius: 10px;
+	padding: 0.8rem;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+}
+
+.book-card img {
+	width: 120px;
+	height: 175px;
+	object-fit: cover;
+	border-radius: 6px;
+	margin-bottom: 0.7rem;
+}
+
+.book-card h3 {
+	font-family: 'Cinzel', serif;
+	font-size: 1rem;
+	margin-bottom: 0.4rem;
+}
+
+.book-card p {
+	font-size: 0.9rem;
+	color: #e3c2c9;
+}

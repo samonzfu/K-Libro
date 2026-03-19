@@ -35,30 +35,26 @@ if(isset($_POST['accion'])){
         $contrasena = password_hash($contrasena, PASSWORD_DEFAULT);
 
         // Comprobar si el email ya existe:
-        $checkEmail = $conexion->prepare("SELECT email FROM usuarios WHERE email = ?");
-        $checkEmail->bind_param("s", $correo);
-        $checkEmail->execute();
-        $resultado = $checkEmail->get_result();
-        if($resultado->num_rows > 0){
+        $checkEmail = $pdo->prepare("SELECT email FROM usuarios WHERE email = ?");
+        $checkEmail->execute([$correo]);
+        $resultado = $checkEmail->fetchAll();
+        if(count($resultado) > 0){
             echo "<script>alert('El email ya está registrado'); window.history.back();</script>";
             exit;
         }
-        $checkEmail->close();
 
         // Usar prepared statement para insertar de forma segura.
-        $stmt = $conexion->prepare("INSERT INTO usuarios (nombre, email, contrasena) VALUES (?,?,?)");
+        $stmt = $pdo->prepare("INSERT INTO usuarios (nombre, email, contrasena) VALUES (?,?,?)");
         if ($stmt){
-            $stmt->bind_param("sss", $nombre, $correo, $contrasena);
-            if($stmt->execute()){
+            if($stmt->execute([$nombre, $correo, $contrasena])){
                 // Registro exitoso - Redirigir al login (carpeta renombrada a 2_Login):
                 header('Location: /GitHub/K-Libro/frontend/2_Login/login.php');
                 exit;
             }else{
-                echo "Error al registrar: " .htmlspecialchars($conexion->error);
+                echo "Error al registrar: " . htmlspecialchars($stmt->errorInfo()[2]);
             }
-            $stmt->close();
         }else{
-            echo "Error al preparar la consulta: " . htmlspecialchars($conexion->error);
+            echo "Error al preparar la consulta.";
         }
 
     // LOGIN
@@ -73,13 +69,12 @@ if(isset($_POST['accion'])){
         }
 
         // Buscar usuario por nombre y comprobar contraseña:
-        $stmt = $conexion->prepare("SELECT id, nombre, contrasena FROM usuarios WHERE nombre = ?");
+        $stmt = $pdo->prepare("SELECT id, nombre, contrasena FROM usuarios WHERE nombre = ?");
         if ($stmt) {
-            $stmt->bind_param("s", $nombre);
-            $stmt->execute();
-            $res = $stmt->get_result();
-            if ($res && $res->num_rows > 0) {
-                $row = $res->fetch_assoc();
+            $stmt->execute([$nombre]);
+            $res = $stmt->fetchAll();
+            if (count($res) > 0) {
+                $row = $res[0];
                 if (password_verify($contrasena, $row['contrasena'])) {
                     session_start();
                     $_SESSION['user_id'] = $row['id'];
@@ -94,7 +89,6 @@ if(isset($_POST['accion'])){
                 echo "<script>alert('Usuario o contraseña incorrectos.'); window.history.back();</script>";
                 exit;
             }
-            $stmt->close();
         } else {
             echo "Error en el servidor. Inténtalo más tarde.";
             exit;

@@ -99,14 +99,23 @@ if (!isset($_SESSION['user_id'])) {
                     ? `https://covers.openlibrary.org/b/id/${libro.cover_i}-M.jpg` 
                     : 'assets/img/default_book.png'; // <-- ¡Asegúrate de tener esta imagen en tu carpeta!
 
+                const idSeguro = encodeURIComponent(libro.key || '');
+                const tituloSeguro = encodeURIComponent(libro.title || 'Sin título');
+                const autorSeguro = encodeURIComponent(autor);
+                const portadaSegura = encodeURIComponent(urlPortada);
+
                 // Creamos el HTML de la tarjeta (Usamos Template Literals con el símbolo ` `)
                 const tarjetaHTML = `
                     <div class="book-card">
                         <img src="${urlPortada}" alt="Portada de ${libro.title}">
                         <h3>${libro.title}</h3>
                         <p>${autor}</p>
-                        <button onclick="guardarLibro('${libro.key}', '${libro.title}', 'leído')" style="width:100%; padding:5px; margin-top:5px; background:transparent; border:1px solid #d4af37; color:#d4af37; cursor:pointer;">✔️ Marcar como leído</button>
-                        <button onclick="guardarLibro('${libro.key}', '${libro.title}', 'añadir')" style="width:100%; padding:5px; margin-top:5px; background:transparent; border:1px solid #aaa; color:#aaa; cursor:pointer;">➕ Añadir a la biblioteca</button>
+                        <select id="estado-${idSeguro}" style="width:100%; padding:8px; margin-top:8px; background:transparent; border:1px solid #d4af37; color:#f2ebeb; cursor:pointer; border-radius:20px;">
+                            <option value="pendiente">Pendiente de leer</option>
+                            <option value="leyendo">Leyendo</option>
+                            <option value="leido">Leído</option>
+                        </select>
+                        <button onclick="guardarLibro('${idSeguro}', '${tituloSeguro}', '${autorSeguro}', '${portadaSegura}')" style="width:100%; padding:5px; margin-top:10px; background:transparent; border:1px solid #d4af37; color:#d4af37; cursor:pointer;">➕ Guardar en mi biblioteca</button>
                     </div>
                 `;
 
@@ -115,10 +124,42 @@ if (!isset($_SESSION['user_id'])) {
             });
         }
 
-        // Función "Placeholder" (La programaremos en el siguiente paso)
-        function guardarLibro(idOpenLibrary, titulo, estado) {
-            console.log(`Petición para guardar el libro ID: ${idOpenLibrary} (${titulo}) en estado: ${estado}`);
-            alert(`Imagina que aquí hemos guardado "${titulo}" en tu base de datos. ¡Ese será el siguiente paso!`);
+        async function guardarLibro(idOpenLibraryCod, tituloCod, autorCod, portadaCod) {
+            const idOpenLibrary = decodeURIComponent(idOpenLibraryCod);
+            const titulo = decodeURIComponent(tituloCod);
+            const autor = decodeURIComponent(autorCod);
+            const portada = decodeURIComponent(portadaCod);
+
+            const selectEstado = document.getElementById(`estado-${idOpenLibraryCod}`);
+            const estado = selectEstado ? selectEstado.value : 'pendiente';
+
+            try {
+                const datos = new URLSearchParams();
+                datos.append('id_openlibrary', idOpenLibrary);
+                datos.append('titulo', titulo);
+                datos.append('autor', autor);
+                datos.append('portada', portada);
+                datos.append('estado', estado);
+
+                const respuesta = await fetch('/GitHub/K-Libro/backend/procesar/guardar_libro.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                    },
+                    body: datos.toString()
+                });
+
+                const resultado = await respuesta.json();
+
+                if (!respuesta.ok || !resultado.ok) {
+                    throw new Error(resultado.mensaje || 'No se pudo guardar el libro');
+                }
+
+                alert(`"${titulo}" guardado como "${estado}".`);
+            } catch (error) {
+                console.error('Error al guardar libro:', error);
+                alert('No se pudo guardar el libro. Inténtalo de nuevo.');
+            }
         }
     </script>
 
