@@ -1,12 +1,17 @@
+/* ==========================================================================
+   K-Libro - Estilo de Inicio y Noticias
+   Temática: Magia Oscura y Romance (Grimorio Antiguo)
+   ========================================================================== */
+
 /* --- IMPORTAMOS LAS FUENTES MÁGICAS --- */
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap');
 
-/* --- VARIABLES MAGIA OSCURA Y ROMANCE --- */
+/* --- VARIABLES DE COLORES --- */
 :root {
     --color-fondo: #111814;       /* Verde bosque casi negro */
     --color-magia: #3a1f28;       /* Borgoña/Rosa muy oscuro */
     --color-oscuridad: #0a0e0c;   /* Sombra total */
-    --color-dorado: #d96c82;      /* Rosa rubor vibrante (magia) */
+    --color-dorado: #d96c82;      /* Rosa rubor vibrante */
     --color-texto: #f2ebeb;       /* Crema muy claro */
     --brillo-dorado: 0 4px 20px rgba(217, 108, 130, 0.3);
     --glass: rgba(20, 28, 24, 0.85); /* Cristal oscuro ahumado */
@@ -38,9 +43,8 @@ h1 {
     animation: fadeInDown 0.8s ease-out;
 }
 
-/* --- MENÚ DE NAVEGACIÓN (TRUCO MÁGICO) --- */
+/* --- MENÚ DE NAVEGACIÓN --- */
 nav {
-    /* Hacemos el texto transparente para ocultar los "|" del HTML */
     color: transparent; 
     margin-bottom: 3.5rem;
     display: flex;
@@ -48,12 +52,15 @@ nav {
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
+    /* Limitamos el ancho para que el botón de idioma se alinee bien a la derecha */
+    width: 100%;
+    max-width: 1000px; 
 }
 
 nav a {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(217, 108, 130, 0.3);
-    color: rgba(242, 235, 235, 0.8); /* Le devolvemos el color solo a los enlaces */
+    color: rgba(242, 235, 235, 0.8);
     padding: 10px 25px;
     text-decoration: none;
     font-family: 'Cinzel', serif;
@@ -66,7 +73,32 @@ nav a {
 
 nav a:hover {
     background: var(--color-dorado);
-    color: #111814;
+    color: var(--color-fondo);
+    border-color: transparent;
+    box-shadow: var(--brillo-dorado);
+    transform: translateY(-3px);
+}
+
+/* --- BOTÓN DE IDIOMA --- */
+.btn-lang {
+    background: transparent;
+    border: 1px solid rgba(217, 108, 130, 0.5);
+    color: rgba(242, 235, 235, 0.8);
+    padding: 10px 20px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    font-weight: bold;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    backdrop-filter: blur(5px);
+    letter-spacing: 1px;
+    margin-left: auto; /* Truco de flexbox: Empuja el botón al extremo derecho */
+}
+
+.btn-lang:hover {
+    background: var(--color-dorado);
+    color: var(--color-fondo);
     border-color: transparent;
     box-shadow: var(--brillo-dorado);
     transform: translateY(-3px);
@@ -95,9 +127,8 @@ nav a:hover {
     padding-bottom: 15px;
 }
 
-/* Convertimos la lista plana en una cuadrícula elegante */
 ul {
-    list-style: none; /* Quitamos los puntos de la lista */
+    list-style: none; 
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 25px;
@@ -119,7 +150,6 @@ li:hover {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(217, 108, 130, 0.1);
 }
 
-/* Título de la noticia (El tag <strong>) */
 li strong {
     font-family: 'Cinzel', serif;
     font-size: 1.25rem;
@@ -129,17 +159,15 @@ li strong {
     line-height: 1.3;
 }
 
-/* Descripción de la noticia (El tag <span>) */
 li span {
     font-size: 0.95rem;
     color: rgba(242, 235, 235, 0.7);
     margin-bottom: 1.5rem;
     display: block;
-    flex-grow: 1; /* Empuja el enlace "Leer más" hacia abajo */
+    flex-grow: 1; 
     line-height: 1.6;
 }
 
-/* Enlace "Leer más" */
 li a {
     color: var(--color-dorado);
     text-decoration: none;
@@ -156,7 +184,6 @@ li a:hover {
     text-shadow: 0 0 8px var(--color-dorado);
 }
 
-/* Mensaje de "No hay noticias" */
 #noticias > p {
     text-align: center;
     color: rgba(242, 235, 235, 0.6);
@@ -167,7 +194,7 @@ li a:hover {
     border-radius: 10px;
 }
 
-/* Animaciones suaves de entrada */
+/* Animaciones suaves */
 @keyframes fadeInDown {
     from { opacity: 0; transform: translateY(-20px); }
     to { opacity: 1; transform: translateY(0); }

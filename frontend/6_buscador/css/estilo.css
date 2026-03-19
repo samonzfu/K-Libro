@@ -1,18 +1,28 @@
+/* ==========================================================================
+   K-Libro - Estilo del Buscador
+   Temática: Magia Oscura y Romance (Grimorio Antiguo)
+   ========================================================================== */
+
 /* --- IMPORTAMOS LAS FUENTES MÁGICAS --- */
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap');
 
-/* --- VARIABLES MAGIA OSCURA Y ROMANCE --- */
+/* --- VARIABLES DE COLORES --- */
 :root {
     --color-fondo: #111814;       /* Verde bosque casi negro */
     --color-magia: #3a1f28;       /* Borgoña/Rosa muy oscuro */
     --color-oscuridad: #0a0e0c;   /* Sombra total */
-    --color-dorado: #d96c82;      /* Rosa rubor vibrante (magia) */
+    --color-dorado: #d96c82;      /* Rosa rubor vibrante (Accent color) */
     --color-texto: #f2ebeb;       /* Crema muy claro */
-    --brillo-dorado: 0 4px 20px rgba(217, 108, 130, 0.3);
     --glass: rgba(20, 28, 24, 0.85); /* Cristal oscuro ahumado */
+    --brillo-dorado: 0 4px 20px rgba(217, 108, 130, 0.3);
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+/* --- RESET BÁSICO --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
 body {
     font-family: 'Lato', sans-serif;
@@ -25,127 +35,165 @@ body {
 
 /* --- CONTENEDOR PRINCIPAL --- */
 .container {
-    max-width: 1100px;
+    width: 100%;
+    max-width: 1200px;
     margin: 0 auto;
-    text-align: center;
+    animation: fadeInUp 1s ease-out;
 }
 
-h1 {
+/* --- MENÚ DE NAVEGACIÓN --- */
+nav {
+    color: transparent;
+    margin-bottom: 3rem;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+nav a {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(217, 108, 130, 0.3);
+    color: rgba(242, 235, 235, 0.8);
+    padding: 10px 25px;
+    text-decoration: none;
     font-family: 'Cinzel', serif;
-    font-size: 2.8rem;
-    color: var(--color-dorado);
-    margin-bottom: 2rem;
-    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+    font-weight: bold;
+    border-radius: 30px;
+    transition: all 0.4s ease;
+    backdrop-filter: blur(5px);
     letter-spacing: 1px;
 }
 
-/* --- CAJA DE BÚSQUEDA --- */
+nav a:hover {
+    background: var(--color-dorado);
+    color: var(--color-fondo);
+    border-color: transparent;
+    box-shadow: var(--brillo-dorado);
+    transform: translateY(-3px);
+}
+
+/* --- CABECERA --- */
+h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 3rem;
+    color: var(--color-dorado);
+    margin-bottom: 2rem;
+    text-align: center;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8), 0 0 15px rgba(217, 108, 130, 0.4);
+}
+
+/* --- BARRA DE BÚSQUEDA (.search-box) --- */
 .search-box {
     display: flex;
-    justify-content: center;
     gap: 15px;
-    margin-bottom: 3rem;
-    flex-wrap: wrap; /* Para que en móviles baje el botón */
+    max-width: 600px;
+    margin: 0 auto 4rem; /* Centrado con margen inferior */
+    justify-content: center;
 }
 
 .search-box input {
-    width: 100%;
-    max-width: 450px;
-    padding: 14px 25px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(217, 108, 130, 0.3);
-    border-radius: 30px; 
+    flex: 1;
+    padding: 15px 25px;
+    border-radius: 30px;
+    border: 1px solid rgba(217, 108, 130, 0.4);
+    background: var(--glass);
     color: var(--color-texto);
-    font-size: 1.1rem;
-    transition: all 0.3s ease;
+    font-size: 1rem;
+    font-family: 'Lato', sans-serif;
+    outline: none;
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
     backdrop-filter: blur(5px);
 }
 
 .search-box input::placeholder {
     color: rgba(242, 235, 235, 0.4);
-    font-style: italic;
 }
 
 .search-box input:focus {
-    outline: none;
     border-color: var(--color-dorado);
-    background: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 0 15px rgba(217, 108, 130, 0.15);
-}
-
-.search-box button {
-    padding: 14px 35px;
-    background: var(--color-dorado);
-    color: #111814;
-    border: 1px solid transparent;
-    border-radius: 30px;
-    font-family: 'Cinzel', serif;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.4s ease;
     box-shadow: var(--brillo-dorado);
 }
 
-.search-box button:hover {
-    background: #23362a; /* Verde bosque al pasar el ratón */
-    color: var(--color-dorado);
-    border-color: var(--color-dorado);
-    transform: scale(1.05);
-    box-shadow: 0 8px 25px rgba(35, 54, 42, 0.6);
-}
-
-/* --- ANIMACIÓN DE CARGA (Loader) --- */
-#loader {
-    margin: 3rem 0;
-    color: var(--color-dorado);
+.search-box button {
+    background: var(--color-dorado);
+    color: var(--color-fondo);
+    border: none;
+    border-radius: 30px;
+    padding: 0 30px;
     font-family: 'Cinzel', serif;
-    animation: latidoMagico 1.5s infinite ease-in-out;
+    font-weight: bold;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-@keyframes latidoMagico {
-    0% { opacity: 0.5; transform: scale(0.98); }
-    50% { opacity: 1; transform: scale(1); text-shadow: var(--brillo-dorado); }
-    100% { opacity: 0.5; transform: scale(0.98); }
+.search-box button:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--brillo-dorado);
+}
+
+/* --- MENSAJES (Loader y Vacío) --- */
+#loader h2 {
+    font-family: 'Cinzel', serif;
+    color: rgba(217, 108, 130, 0.8);
+    animation: pulse 1.5s infinite;
+}
+
+.vacio, .error {
+    text-align: center;
+    color: rgba(242, 235, 235, 0.6);
+    font-style: italic;
+    font-size: 1.1rem;
+    padding: 2rem;
+    border: 1px dashed rgba(217, 108, 130, 0.3);
+    border-radius: 10px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.error {
+    color: #ffb3b3;
+    border-color: #ff4d4d;
+    background: rgba(255, 0, 0, 0.1);
 }
 
 /* --- GRID DE RESULTADOS --- */
 .results-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 2.5rem;
-    margin-top: 2rem;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 2rem;
 }
 
-/* --- TARJETAS DE LIBROS --- */
+/* --- TARJETA DE LIBRO (.book-card) --- */
 .book-card {
     background: var(--glass);
-    border: 1px solid rgba(217, 108, 130, 0.2);
-    border-radius: 12px;
+    border: 1px solid rgba(217, 108, 130, 0.15);
+    border-radius: 15px;
     padding: 1.5rem;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+    text-align: center;
+    transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    text-align: center;
+    backdrop-filter: blur(10px);
 }
 
 .book-card:hover {
     transform: translateY(-8px);
     border-color: var(--color-dorado);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8), inset 0 0 15px rgba(217, 108, 130, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(217, 108, 130, 0.1);
 }
 
 .book-card img {
-    width: 130px;
-    height: 190px;
+    width: 100%;
+    aspect-ratio: 2 / 3;
     object-fit: cover;
-    border-radius: 4px;
-    margin-bottom: 1.2rem;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    margin-bottom: 1rem;
+    border: 1px solid rgba(0,0,0,0.8);
 }
 
 .book-card h3 {
@@ -153,34 +201,92 @@ h1 {
     font-size: 1.1rem;
     color: var(--color-texto);
     margin-bottom: 0.5rem;
-    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .book-card p {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    color: rgba(242, 235, 235, 0.6);
+    margin-bottom: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* --- FORMULARIO DENTRO DE LA TARJETA --- */
+.select-estado {
+    width: 100%;
+    padding: 10px;
+    margin-top: auto; /* Empuja el select y el botón hacia abajo */
+    margin-bottom: 10px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(217, 108, 130, 0.3);
+    color: var(--color-texto);
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Lato', sans-serif;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.select-estado:focus {
+    border-color: var(--color-dorado);
+}
+
+.btn-guardar {
+    width: 100%;
+    padding: 10px;
+    background: transparent;
+    border: 1px solid var(--color-dorado);
     color: var(--color-dorado);
-    font-style: italic;
-    margin-bottom: 1.5rem;
-    flex-grow: 1; 
+    cursor: pointer;
+    border-radius: 8px;
+    font-family: 'Lato', sans-serif;
+    font-weight: bold;
+    transition: all 0.3s ease;
 }
 
-/* --- MAGIA PARA SOBREESCRIBIR LOS ESTILOS EN LÍNEA DE TU JS --- */
-.book-card button {
-    background: transparent !important;
-    border: 1px solid var(--color-dorado) !important;
-    color: var(--color-dorado) !important;
-    border-radius: 20px !important;
-    font-family: 'Cinzel', serif !important;
-    font-size: 0.9rem !important;
-    font-weight: bold !important;
-    padding: 10px !important;
-    margin-top: 10px !important;
-    transition: all 0.3s ease !important;
+.btn-guardar:hover {
+    background: var(--color-dorado);
+    color: var(--color-fondo);
+    box-shadow: var(--brillo-dorado);
 }
 
-.book-card button:hover {
-    background: var(--color-dorado) !important;
-    color: #111814 !important;
-    box-shadow: var(--brillo-dorado) !important;
-    transform: scale(1.03) !important;
+/* --- ANIMACIONES --- */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0% { opacity: 0.5; }
+    50% { opacity: 1; }
+    100% { opacity: 0.5; }
+}
+
+/* --- BOTÓN DE IDIOMA --- */
+.btn-lang {
+    background: transparent;
+    border: 1px solid rgba(217, 108, 130, 0.5);
+    color: rgba(242, 235, 235, 0.8);
+    padding: 10px 20px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    font-weight: bold;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    backdrop-filter: blur(5px);
+    letter-spacing: 1px;
+    margin-left: auto;
+}
+
+.btn-lang:hover {
+    background: var(--color-dorado);
+    color: var(--color-fondo);
+    border-color: transparent;
+    box-shadow: var(--brillo-dorado);
+    transform: translateY(-3px);
 }

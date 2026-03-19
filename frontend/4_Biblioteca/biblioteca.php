@@ -7,6 +7,8 @@ if (empty($_SESSION['user_id'])) {
 
 include '../../backend/conexionBD.php';
 
+$cssVersion = @filemtime(__DIR__ . '/css/estilo.css') ?: time();
+
 $usuarioId = (int) $_SESSION['user_id'];
 $librosPorEstado = [
     'pendiente' => [],
@@ -41,13 +43,13 @@ try {
     $errorCarga = 'No se pudo cargar tu biblioteca en este momento.';
 }
 
-function renderizarSeccion(string $titulo, array $libros): void
+function renderizarSeccion(string $titulo, string $key, array $libros): void
 {
     echo '<section class="seccion-estado">';
-    echo '<h2>' . htmlspecialchars($titulo, ENT_QUOTES, 'UTF-8') . '</h2>';
+    echo '<h2 data-i18n="' . $key . '">' . htmlspecialchars($titulo, ENT_QUOTES, 'UTF-8') . '</h2>';
 
     if (count($libros) === 0) {
-        echo '<p class="vacio">Todavía no tienes libros en este apartado.</p>';
+        echo '<p class="vacio" data-i18n="biblio-vacio">Todavía no tienes libros en este apartado.</p>';
         echo '</section>';
         return;
     }
@@ -76,20 +78,54 @@ function renderizarSeccion(string $titulo, array $libros): void
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi biblioteca | K-Libro</title>
-    <link rel="stylesheet" href="css/estilo.css">
+    <link rel="stylesheet" href="css/estilo.css?v=<?= $cssVersion ?>">
 </head>
 <body>
     <main class="container">
-        <h1>Mi biblioteca</h1>
-        <p class="subtitulo">Tus libros guardados se organizan automáticamente por estado.</p>
+        <nav>
+            <a href="../3_Inicio/inicio.php" data-i18n="nav-inicio">Volver al inicio</a> |
+            <a href="../5_Mi_cuenta/mi_cuenta.php" data-i18n="nav-cuenta">Ir a mi cuenta</a> |
+            <a href="../6_buscador/buscador.php" data-i18n="nav-buscador">Ir al buscador</a>
+            <button id="btn-lang" class="btn-lang">🌐 English</button>
+        </nav>
+
+        <h1 data-i18n="biblio-h1">Mi biblioteca</h1>
+        <p class="subtitulo" data-i18n="biblio-subtitulo">Tus libros guardados se organizan automáticamente por estado.</p>
 
         <?php if (!empty($errorCarga)): ?>
             <p class="error"><?= htmlspecialchars($errorCarga, ENT_QUOTES, 'UTF-8') ?></p>
         <?php else: ?>
-            <?php renderizarSeccion('Pendientes de leer', $librosPorEstado['pendiente']); ?>
-            <?php renderizarSeccion('Leyendo', $librosPorEstado['leyendo']); ?>
-            <?php renderizarSeccion('Leídos', $librosPorEstado['leido']); ?>
+            <?php renderizarSeccion('Pendientes de leer:', 'biblio-pendiente', $librosPorEstado['pendiente']); ?>
+            <?php renderizarSeccion('Leyendo:', 'biblio-leyendo', $librosPorEstado['leyendo']); ?>
+            <?php renderizarSeccion('Leídos:', 'biblio-leido', $librosPorEstado['leido']); ?>
         <?php endif; ?>
     </main>
+    <script src="../js/i18n.js"></script>
+    <script>
+    I18n.init({
+        es: {
+            'nav-inicio':        'Volver al inicio',
+            'nav-cuenta':        'Ir a mi cuenta',
+            'nav-buscador':      'Ir al buscador',
+            'biblio-h1':         'Mi biblioteca',
+            'biblio-subtitulo':  'Tus libros guardados se organizan automáticamente por estado.',
+            'biblio-pendiente':  'Pendientes de leer:',
+            'biblio-leyendo':    'Leyendo:',
+            'biblio-leido':      'Leídos:',
+            'biblio-vacio':      'Todavía no tienes libros en este apartado.',
+        },
+        en: {
+            'nav-inicio':        'Back to home',
+            'nav-cuenta':        'Go to my account',
+            'nav-buscador':      'Go to search',
+            'biblio-h1':         'My library',
+            'biblio-subtitulo':  'Your saved books are automatically organised by status.',
+            'biblio-pendiente':  'To read:',
+            'biblio-leyendo':    'Reading:',
+            'biblio-leido':      'Read:',
+            'biblio-vacio':      'You have no books in this section yet.',
+        }
+    }, 'Mi biblioteca | K-Libro', 'My library | K-Libro');
+    </script>
 </body>
 </html>

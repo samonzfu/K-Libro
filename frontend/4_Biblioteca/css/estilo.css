@@ -1,106 +1,227 @@
+/* ==========================================================================
+   K-Libro - Estilo de la Biblioteca
+   Temática: Magia Oscura y Romance (Grimorio Antiguo)
+   ========================================================================== */
+
+/* --- IMPORTAMOS LAS FUENTES MÁGICAS --- */
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap');
 
+/* --- VARIABLES DE COLORES --- */
 :root {
-	--color-fondo: #111814;
-	--color-magia: #3a1f28;
-	--color-oscuridad: #0a0e0c;
-	--color-dorado: #d96c82;
-	--color-texto: #f2ebeb;
-	--glass: rgba(20, 28, 24, 0.85);
+    --color-fondo: #111814;       /* Verde bosque casi negro */
+    --color-magia: #3a1f28;       /* Borgoña/Rosa muy oscuro */
+    --color-oscuridad: #0a0e0c;   /* Sombra total */
+    --color-dorado: #d96c82;      /* Rosa rubor vibrante (Accent color) */
+    --color-texto: #f2ebeb;       /* Crema muy claro */
+    --glass: rgba(20, 28, 24, 0.85); /* Cristal oscuro ahumado */
+    --brillo-dorado: 0 4px 20px rgba(217, 108, 130, 0.3);
 }
 
+/* --- RESET BÁSICO --- */
 * {
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-	font-family: 'Lato', sans-serif;
-	background: linear-gradient(135deg, var(--color-fondo), var(--color-magia), var(--color-oscuridad));
-	background-attachment: fixed;
-	color: var(--color-texto);
-	min-height: 100vh;
-	padding: 2rem 1rem 3rem;
+    font-family: 'Lato', sans-serif;
+    background: linear-gradient(135deg, var(--color-fondo), var(--color-magia), var(--color-oscuridad));
+    background-attachment: fixed; 
+    color: var(--color-texto);
+    min-height: 100vh;
+    padding: 3rem 2rem;
 }
 
+/* --- CONTENEDOR PRINCIPAL --- */
 .container {
-	max-width: 1100px;
-	margin: 0 auto;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    animation: fadeInUp 1s ease-out;
 }
 
+/* --- MENÚ DE NAVEGACIÓN --- */
+nav {
+    color: transparent; /* Oculta mágicamente los "|" del HTML */
+    margin-bottom: 3rem; /* Espacio entre los botones y el título principal */
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+nav a {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(217, 108, 130, 0.3);
+    color: rgba(242, 235, 235, 0.8); /* Le devolvemos el color a las letras */
+    padding: 10px 25px;
+    text-decoration: none;
+    font-family: 'Cinzel', serif;
+    font-weight: bold;
+    border-radius: 30px;
+    transition: all 0.4s ease;
+    backdrop-filter: blur(5px);
+    letter-spacing: 1px;
+}
+
+nav a:hover {
+    background: var(--color-dorado);
+    color: var(--color-fondo); /* Texto oscuro al pasar el ratón */
+    border-color: transparent;
+    box-shadow: var(--brillo-dorado);
+    transform: translateY(-3px);
+}
+
+/* --- CABECERA DE LA PÁGINA --- */
 h1 {
-	font-family: 'Cinzel', serif;
-	color: var(--color-dorado);
-	font-size: 2.2rem;
-	margin-bottom: 0.5rem;
-	text-align: center;
+    font-family: 'Cinzel', serif;
+    font-size: 3rem;
+    color: var(--color-dorado);
+    margin-bottom: 0.5rem;
+    text-align: center;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8), 0 0 15px rgba(217, 108, 130, 0.4);
 }
 
 .subtitulo {
-	text-align: center;
-	margin-bottom: 2rem;
-	opacity: 0.9;
+    text-align: center;
+    font-size: 1.1rem;
+    color: rgba(242, 235, 235, 0.7);
+    margin-bottom: 4rem;
+    font-style: italic;
 }
 
 .error {
-	max-width: 700px;
-	margin: 1rem auto;
-	color: #ffd2d2;
-	text-align: center;
+    background: rgba(255, 0, 0, 0.1);
+    border: 1px solid #ff4d4d;
+    color: #ffb3b3;
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 2rem;
 }
 
+/* --- SECCIONES DE ESTADO --- */
 .seccion-estado {
-	background: var(--glass);
-	border: 1px solid rgba(217, 108, 130, 0.25);
-	border-radius: 12px;
-	padding: 1rem;
-	margin-bottom: 1.5rem;
+    margin-bottom: 5rem;
+    background: var(--glass);
+    border: 1px solid rgba(217, 108, 130, 0.15);
+    border-radius: 15px;
+    padding: 2.5rem;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
 }
 
 .seccion-estado h2 {
-	font-family: 'Cinzel', serif;
-	color: var(--color-dorado);
-	margin-bottom: 1rem;
-	font-size: 1.4rem;
+    font-family: 'Cinzel', serif;
+    font-size: 2rem;
+    color: var(--color-dorado);
+    margin-bottom: 2rem;
+    border-bottom: 1px solid rgba(217, 108, 130, 0.3);
+    padding-bottom: 10px;
+    letter-spacing: 1px;
 }
 
 .vacio {
-	opacity: 0.85;
+    text-align: center;
+    color: rgba(242, 235, 235, 0.5);
+    font-style: italic;
+    font-size: 1.1rem;
+    padding: 2rem;
+    border: 1px dashed rgba(217, 108, 130, 0.3);
+    border-radius: 10px;
 }
 
+/* --- GRID DE LIBROS --- */
 .grid-libros {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-	gap: 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 2rem;
 }
 
+/* --- TARJETA DE LIBRO --- */
 .book-card {
-	background: rgba(8, 12, 10, 0.9);
-	border: 1px solid rgba(217, 108, 130, 0.2);
-	border-radius: 10px;
-	padding: 0.8rem;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	text-align: center;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(217, 108, 130, 0.1);
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+    transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.book-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--color-dorado);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(217, 108, 130, 0.1);
 }
 
 .book-card img {
-	width: 120px;
-	height: 175px;
-	object-fit: cover;
-	border-radius: 6px;
-	margin-bottom: 0.7rem;
+    width: 100%;
+    aspect-ratio: 2 / 3; 
+    object-fit: cover;
+    border-radius: 5px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    margin-bottom: 1rem;
+    border: 1px solid rgba(0,0,0,0.5);
 }
 
 .book-card h3 {
-	font-family: 'Cinzel', serif;
-	font-size: 1rem;
-	margin-bottom: 0.4rem;
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    color: var(--color-texto);
+    margin-bottom: 0.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .book-card p {
-	font-size: 0.9rem;
-	color: #e3c2c9;
+    font-size: 0.85rem;
+    color: rgba(242, 235, 235, 0.6);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* --- ANIMACIONES --- */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- BOTÓN DE IDIOMA --- */
+.btn-lang {
+    background: transparent;
+    border: 1px solid rgba(217, 108, 130, 0.5);
+    color: rgba(242, 235, 235, 0.8);
+    padding: 10px 20px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    font-weight: bold;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    backdrop-filter: blur(5px);
+    letter-spacing: 1px;
+    margin-left: auto;
+}
+
+.btn-lang:hover {
+    background: var(--color-dorado);
+    color: var(--color-fondo);
+    border-color: transparent;
+    box-shadow: var(--brillo-dorado);
+    transform: translateY(-3px);
 }

@@ -1,21 +1,28 @@
-/*ARREGLAR EL BOTON DE FIJAR RETO*/
-
+/* ==========================================================================
+   K-Libro - Estilo de Mi Cuenta (Perfil)
+   Temática: Magia Oscura y Romance (Grimorio Antiguo)
+   ========================================================================== */
 
 /* --- IMPORTAMOS LAS FUENTES MÁGICAS --- */
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap');
 
-/* --- VARIABLES MAGIA OSCURA Y ROMANCE (Idénticas al Inicio) --- */
+/* --- VARIABLES DE COLORES --- */
 :root {
     --color-fondo: #111814;       /* Verde bosque casi negro */
     --color-magia: #3a1f28;       /* Borgoña/Rosa muy oscuro */
     --color-oscuridad: #0a0e0c;   /* Sombra total */
     --color-dorado: #d96c82;      /* Rosa rubor vibrante */
     --color-texto: #f2ebeb;       /* Crema muy claro */
-    --brillo-dorado: 0 4px 20px rgba(217, 108, 130, 0.3);
     --glass: rgba(20, 28, 24, 0.85); /* Cristal oscuro ahumado */
+    --brillo-dorado: 0 4px 20px rgba(217, 108, 130, 0.3);
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+/* --- RESET BÁSICO --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
 body {
     font-family: 'Lato', sans-serif;
@@ -24,15 +31,47 @@ body {
     color: var(--color-texto);
     min-height: 100vh;
     padding: 3rem 2rem;
-    display: flex;
-    justify-content: center; /* Centra el contenedor principal */
 }
 
 /* --- CONTENEDOR PRINCIPAL --- */
 .container {
     width: 100%;
     max-width: 1000px;
+    margin: 0 auto;
     animation: fadeInUp 1s ease-out;
+}
+
+/* --- MENÚ DE NAVEGACIÓN --- */
+nav {
+    color: transparent; /* Oculta los separadores "|" del HTML */
+    margin-bottom: 3.5rem;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+nav a {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(217, 108, 130, 0.3);
+    color: rgba(242, 235, 235, 0.8);
+    padding: 10px 25px;
+    text-decoration: none;
+    font-family: 'Cinzel', serif;
+    font-weight: bold;
+    border-radius: 30px;
+    transition: all 0.4s ease;
+    backdrop-filter: blur(5px);
+    letter-spacing: 1px;
+}
+
+nav a:hover {
+    background: var(--color-dorado);
+    color: var(--color-fondo);
+    border-color: transparent;
+    box-shadow: var(--brillo-dorado);
+    transform: translateY(-3px);
 }
 
 /* --- TÍTULOS DE SECCIÓN --- */
@@ -46,7 +85,7 @@ h2 {
     letter-spacing: 1px;
 }
 
-/* --- TARJETA DE PERFIL (Glassmorphism) --- */
+/* --- TARJETA DE PERFIL PRINCIPAL --- */
 .profile-card {
     background: var(--glass);
     border: 1px solid rgba(217, 108, 130, 0.3);
@@ -55,7 +94,7 @@ h2 {
     display: flex;
     align-items: center;
     gap: 2.5rem;
-    margin-bottom: 4rem; /* Separación con la siguiente sección */
+    margin-bottom: 4rem;
     backdrop-filter: blur(12px);
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
 }
@@ -67,6 +106,7 @@ h2 {
     border: 3px solid var(--color-dorado);
     box-shadow: 0 0 20px rgba(217, 108, 130, 0.4);
     object-fit: cover;
+    background-color: var(--color-fondo); /* Fondo oscuro por defecto */
 }
 
 .user-info h1 {
@@ -87,7 +127,7 @@ h2 {
 .reto-card {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(217, 108, 130, 0.15);
-    border-left: 5px solid var(--color-dorado); /* Acento visual a la izquierda */
+    border-left: 5px solid var(--color-dorado);
     border-radius: 10px;
     padding: 2rem;
     margin-bottom: 4rem;
@@ -97,32 +137,31 @@ h2 {
 .reto-card p {
     font-size: 1.1rem;
     line-height: 1.6;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
-/* Botón de fijar reto */
+/* Botón "Fijar Nuevo Reto" */
 .reto-card button {
-    background: transparent;
-    border: 1px solid var(--color-dorado);
+    background: transparent !important; /* Forzamos a quitar el fondo dorado que tenías en línea */
+    border: 1px solid var(--color-dorado) !important;
     color: var(--color-dorado);
-    padding: 10px 25px;
+    padding: 10px 25px !important;
     font-family: 'Cinzel', serif;
     font-weight: bold;
     border-radius: 30px;
     cursor: pointer;
     transition: all 0.4s ease;
-    margin-top: 15px;
     font-size: 1rem;
 }
 
 .reto-card button:hover {
-    background: var(--color-dorado);
+    background: var(--color-dorado) !important;
     color: var(--color-fondo);
     box-shadow: var(--brillo-dorado);
     transform: translateY(-2px);
 }
 
-/* --- GRID DE LOGROS (Estilo Cuadrícula de Inicio) --- */
+/* --- GRID DE LOGROS --- */
 .logros-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -166,15 +205,40 @@ h2 {
     line-height: 1.4;
 }
 
-/* Mensaje de estado vacío */
+/* --- MENSAJES VACÍOS --- */
 .empty-state {
     text-align: center;
-    color: rgba(242, 235, 235, 0.6);
+    color: rgba(242, 235, 235, 0.5);
     font-style: italic;
     font-size: 1.1rem;
     padding: 2.5rem;
     border: 1px dashed rgba(217, 108, 130, 0.3);
     border-radius: 10px;
+}
+
+/* --- BOTÓN DE IDIOMA --- */
+.btn-lang {
+    background: transparent;
+    border: 1px solid rgba(217, 108, 130, 0.5);
+    color: rgba(242, 235, 235, 0.8);
+    padding: 10px 20px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    font-weight: bold;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    backdrop-filter: blur(5px);
+    letter-spacing: 1px;
+    margin-left: auto; /* Empuja el botón a la derecha */
+}
+
+.btn-lang:hover {
+    background: var(--color-dorado);
+    color: var(--color-fondo);
+    border-color: transparent;
+    box-shadow: var(--brillo-dorado);
+    transform: translateY(-3px);
 }
 
 /* --- ANIMACIONES --- */

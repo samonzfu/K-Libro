@@ -4,6 +4,9 @@ if (!isset($_SESSION['user_id'])) {
     header('Location: /GitHub/K-Libro/frontend/2_Login/login.php');
     exit;
 }
+
+// Generamos la versión del CSS para evitar problemas de caché
+$cssVersion = @filemtime(__DIR__ . '/css/estilo.css') ?: time();
 ?>
 
 <!DOCTYPE html>
@@ -11,25 +14,79 @@ if (!isset($_SESSION['user_id'])) {
 <head>
     <meta charset="UTF-8">
     <title>K-Libro | Buscador</title>
-    <link rel="stylesheet" href="css/estilo.css">
+    <link rel="stylesheet" href="css/estilo.css?v=<?= $cssVersion ?>">
 </head>
 <body>
 
     <div class="container">
-        <h1>Busca un libro</h1>
+        
+        <nav>
+            <a href="../3_Inicio/inicio.php" data-i18n="nav-inicio">Volver al inicio</a> |
+            <a href="../4_Biblioteca/biblioteca.php" data-i18n="nav-biblioteca">Ir a mi biblioteca</a> |
+            <a href="../5_Mi_cuenta/mi_cuenta.php" data-i18n="nav-cuenta">Ir a mi cuenta</a>
+            <button id="btn-lang" class="btn-lang">🌐 English</button>
+        </nav>
+
+        <h1 data-i18n="busca-h1">Busca un libro</h1>
         
         <div class="search-box">
-            <input type="text" id="inputBusqueda" placeholder="Ej: Reino de Sombras..." onkeypress="manejarEnter(event)">
-            <button onclick="buscarLibros()">Buscar</button>
+            <input type="text" id="inputBusqueda" data-i18n-ph="busca-ph" placeholder="Ej: El Nombre del Viento..." onkeypress="manejarEnter(event)">
+            <button data-i18n="busca-btn" onclick="buscarLibros()">Buscar</button>
         </div>
 
-        <div id="loader"><h2>Consultando los archivos... ⏳</h2></div>
+        <div id="loader" style="display: none; text-align: center; margin-top: 2rem;"><h2 data-i18n="busca-cargando">Consultando los archivos... ⏳</h2></div>
 
         <div id="contenedorResultados" class="results-grid">
             </div>
     </div>
 
+    <script src="../js/i18n.js"></script>
     <script>
+    // Traducciones globales accesibles desde las funciones de búsqueda
+    const T = {
+        es: {
+            'nav-inicio':      'Volver al inicio',
+            'nav-biblioteca':  'Ir a mi biblioteca',
+            'nav-cuenta':      'Ir a mi cuenta',
+            'busca-h1':        'Busca un libro',
+            'busca-ph':        'Ej: El Nombre del Viento...',
+            'busca-btn':       'Buscar',
+            'busca-cargando':  'Consultando los archivos... ⏳',
+            'card-pendiente':  'Pendiente de leer',
+            'card-leyendo':    'Leyendo',
+            'card-leido':      'Leído',
+            'card-guardar':    '➕ Guardar en mi biblioteca',
+            'busca-vacio':     'No se encontraron libros con ese nombre en los registros antiguos.',
+            'busca-error-api': 'El grimorio de OpenLibrary no responde. Prueba otra vez.',
+            'busca-error-guardar': 'No se pudo guardar el libro. Los astros no están alineados.',
+            'busca-guardado':  'libro guardado como',
+            'autor-desconocido': 'Autor desconocido',
+        },
+        en: {
+            'nav-inicio':      'Back to home',
+            'nav-biblioteca':  'Go to my library',
+            'nav-cuenta':      'Go to my account',
+            'busca-h1':        'Search a book',
+            'busca-ph':        'E.g.: The Name of the Wind...',
+            'busca-btn':       'Search',
+            'busca-cargando':  'Consulting the archives... ⏳',
+            'card-pendiente':  'To read',
+            'card-leyendo':    'Reading',
+            'card-leido':      'Read',
+            'card-guardar':    '➕ Save to my library',
+            'busca-vacio':     'No books found with that name in the ancient records.',
+            'busca-error-api': 'The OpenLibrary grimoire is not responding. Try again.',
+            'busca-error-guardar': 'Could not save the book. The stars are not aligned.',
+            'busca-guardado':  'book saved as',
+            'autor-desconocido': 'Unknown author',
+        }
+    };
+
+    // Atajo para obtener texto en el idioma activo
+    const t = (key) => I18n.t(key, T);
+
+    I18n.init(T, 'K-Libro | Buscador', 'K-Libro | Search');
+
         // Permite buscar al pulsar la tecla "Enter"
         function manejarEnter(event) {
             if (event.key === "Enter") buscarLibros();
@@ -38,39 +95,36 @@ if (!isset($_SESSION['user_id'])) {
         // Función asíncrona principal
         async function buscarLibros() {
             const input = document.getElementById('inputBusqueda');
-            const termino = input.value.trim(); // .trim() quita espacios en blanco a los lados
+            const termino = input.value.trim(); 
             
-            if (termino === '') return; // Si está vacío, no hacemos nada
+            if (termino === '') return; 
 
             const loader = document.getElementById('loader');
             const contenedor = document.getElementById('contenedorResultados');
 
-            // 1. Preparamos la interfaz (Mostramos "cargando" y limpiamos resultados viejos)
+            // 1. Preparamos la interfaz
             loader.style.display = 'block';
             contenedor.innerHTML = '';
 
-            // 2. Construimos la URL de Open Library (Nota: forzamos el idioma español)
+            // 2. Construimos la URL de Open Library
             const url = `https://openlibrary.org/search.json?q=${encodeURIComponent(termino)}&language=spa`;
 
             try {
                 // 3. HACEMOS LA LLAMADA A LA API 
                 const respuesta = await fetch(url);
                 
-                // Si el servidor falla (ej: error 500), lanzamos un error que captura el bloque 'catch'
                 if (!respuesta.ok) throw new Error("Fallo en la conexión con la biblioteca");
 
-                // 4. Transformamos la respuesta en un objeto JavaScript (JSON)
+                // 4. Transformamos la respuesta en JSON
                 const datos = await respuesta.json();
                 
-                // 5. Enviamos la lista de libros (datos.docs) a la función que los dibuja
+                // 5. Enviamos la lista de libros a renderizar
                 renderizarLibros(datos.docs);
 
             } catch (error) {
-                // Si algo sale mal (ej: no hay internet), entra aquí
                 console.error("Error capturado:", error);
-                contenedor.innerHTML = `<p style="color: red;">Error: Ha habido un error, prueba otra vez.</p>`;
+                contenedor.innerHTML = `<p class="error">${t('busca-error-api')}</p>`;
             } finally {
-                // Esto se ejecuta SIEMPRE, haya ido bien o mal. Ideal para ocultar el "Cargando..."
                 loader.style.display = 'none';
             }
         }
@@ -79,49 +133,51 @@ if (!isset($_SESSION['user_id'])) {
         function renderizarLibros(libros) {
             const contenedor = document.getElementById('contenedorResultados');
 
-            // Open Library a veces devuelve 100 resultados, nos quedamos solo con los 12 primeros para no saturar
+            // Nos quedamos solo con los 12 primeros
             const primerosResultados = libros.slice(0, 12);
 
             if (primerosResultados.length === 0) {
-                contenedor.innerHTML = '<p>No se encontraron libros con ese nombre.</p>';
+                contenedor.innerHTML = `<p class="vacio">${t('busca-vacio')}</p>`;
                 return;
             }
 
-            // Recorremos cada libro con un bucle
+            // Variable para almacenar todo el HTML antes de inyectarlo de golpe (mejor rendimiento)
+            let htmlFinal = '';
+
             primerosResultados.forEach(libro => {
                 
-                // PROGRAMACIÓN DEFENSIVA: OpenLibrary a veces no tiene autor o portada.
-                // Si author_name existe, cogemos el primero [0]. Si no, texto por defecto.
-                const autor = libro.author_name ? libro.author_name[0] : 'Autor desconocido';
+                const autor = libro.author_name ? libro.author_name[0] : t('autor-desconocido');
                 
-                // Construimos la URL de la portada. Si no hay 'cover_i', ponemos una por defecto.
                 const urlPortada = libro.cover_i 
                     ? `https://covers.openlibrary.org/b/id/${libro.cover_i}-M.jpg` 
-                    : 'assets/img/default_book.png'; // <-- ¡Asegúrate de tener esta imagen en tu carpeta!
+                    : '../../assets/img/default_book.png'; // <-- Ruta ajustada al estilo de tu proyecto
 
                 const idSeguro = encodeURIComponent(libro.key || '');
                 const tituloSeguro = encodeURIComponent(libro.title || 'Sin título');
                 const autorSeguro = encodeURIComponent(autor);
                 const portadaSegura = encodeURIComponent(urlPortada);
 
-                // Creamos el HTML de la tarjeta (Usamos Template Literals con el símbolo ` `)
-                const tarjetaHTML = `
+                // Tarjeta HTML adaptada a las clases de tu CSS (Magia Oscura)
+                htmlFinal += `
                     <div class="book-card">
-                        <img src="${urlPortada}" alt="Portada de ${libro.title}">
+                        <img src="${urlPortada}" alt="Portada de ${libro.title}" onerror="this.src='../../assets/img/default_book.png'">
                         <h3>${libro.title}</h3>
                         <p>${autor}</p>
-                        <select id="estado-${idSeguro}" style="width:100%; padding:8px; margin-top:8px; background:transparent; border:1px solid #d4af37; color:#f2ebeb; cursor:pointer; border-radius:20px;">
-                            <option value="pendiente">Pendiente de leer</option>
-                            <option value="leyendo">Leyendo</option>
-                            <option value="leido">Leído</option>
+                        
+                        <select id="estado-${idSeguro}" class="select-estado">
+                            <option value="pendiente">${t('card-pendiente')}</option>
+                            <option value="leyendo">${t('card-leyendo')}</option>
+                            <option value="leido">${t('card-leido')}</option>
                         </select>
-                        <button onclick="guardarLibro('${idSeguro}', '${tituloSeguro}', '${autorSeguro}', '${portadaSegura}')" style="width:100%; padding:5px; margin-top:10px; background:transparent; border:1px solid #d4af37; color:#d4af37; cursor:pointer;">➕ Guardar en mi biblioteca</button>
+                        
+                        <button class="btn-guardar" onclick="guardarLibro('${idSeguro}', '${tituloSeguro}', '${autorSeguro}', '${portadaSegura}')">
+                            ${t('card-guardar')}
+                        </button>
                     </div>
                 `;
-
-                // Añadimos la tarjeta al contenedor
-                contenedor.innerHTML += tarjetaHTML;
             });
+
+            contenedor.innerHTML = htmlFinal;
         }
 
         async function guardarLibro(idOpenLibraryCod, tituloCod, autorCod, portadaCod) {
@@ -155,10 +211,10 @@ if (!isset($_SESSION['user_id'])) {
                     throw new Error(resultado.mensaje || 'No se pudo guardar el libro');
                 }
 
-                alert(`"${titulo}" guardado como "${estado}".`);
+                alert(`¡Magia realizada! "${titulo}" ${t('busca-guardado')} "${estado}".`);
             } catch (error) {
                 console.error('Error al guardar libro:', error);
-                alert('No se pudo guardar el libro. Inténtalo de nuevo.');
+                alert(t('busca-error-guardar'));
             }
         }
     </script>
