@@ -33,8 +33,16 @@ if (empty($_SESSION['user_id'])) {
             <ul>
                 <?php foreach ($noticias as $noticia): ?>
                     <li>
-                        <strong><?php echo htmlspecialchars($noticia['titulo']); ?></strong><br>
-                        <span><?php echo htmlspecialchars($noticia['descripcion']); ?></span><br>
+                        <strong
+                            class="news-title"
+                            data-title-es="<?php echo htmlspecialchars($noticia['titulo']); ?>"
+                            data-title-en="<?php echo htmlspecialchars($noticia['titulo_en'] ?? $noticia['titulo']); ?>"
+                        ><?php echo htmlspecialchars($noticia['titulo']); ?></strong><br>
+                        <span
+                            class="news-description"
+                            data-description-es="<?php echo htmlspecialchars($noticia['descripcion']); ?>"
+                            data-description-en="<?php echo htmlspecialchars($noticia['descripcion_en'] ?? $noticia['descripcion']); ?>"
+                        ><?php echo htmlspecialchars($noticia['descripcion']); ?></span><br>
                         <a href="<?php echo htmlspecialchars($noticia['enlace']); ?>" target="_blank" data-i18n="leer-mas">Leer más</a>
                     </li>
                 <?php endforeach; ?>
@@ -46,6 +54,27 @@ if (empty($_SESSION['user_id'])) {
 
     <script src="../js/i18n.js"></script>
     <script>
+    function updateNewsLanguage(lang) {
+        const isEnglish = lang === 'en';
+
+        document.querySelectorAll('.news-title').forEach((el) => {
+            el.textContent = isEnglish ? (el.dataset.titleEn || el.dataset.titleEs || '') : (el.dataset.titleEs || '');
+        });
+
+        document.querySelectorAll('.news-description').forEach((el) => {
+            el.textContent = isEnglish
+                ? (el.dataset.descriptionEn || el.dataset.descriptionEs || '')
+                : (el.dataset.descriptionEs || '');
+        });
+    }
+
+    // Hook para aplicar traducción también en los bloques de noticias dinámicas.
+    const originalSetLang = I18n.setLang.bind(I18n);
+    I18n.setLang = function(lang, t) {
+        originalSetLang(lang, t);
+        updateNewsLanguage(lang);
+    };
+
     I18n.init({
         es: {
             'inicio-h1':       'Bienvenido a K-Libro',

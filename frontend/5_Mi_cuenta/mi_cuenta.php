@@ -62,6 +62,7 @@ $reto = $stmtReto->fetch();
                 <h1><?= htmlspecialchars($usuario['nombre']) ?></h1>
                 <p><span data-i18n="label-email">📜 Email:</span> <?= htmlspecialchars($usuario['email']) ?></p>
                 <p><span data-i18n="label-miembro">⏳ Miembro desde:</span> <?= date('d/m/Y', strtotime($usuario['fecha_registro'])) ?></p>
+                <a href="../logout.php" class="btn-logout" data-i18n="nav-logout">Cerrar sesión</a>
             </div>
         </div>
 
@@ -109,6 +110,7 @@ $reto = $stmtReto->fetch();
             'nav-inicio':     'Volver al inicio',
             'nav-biblioteca': 'Ir a mi biblioteca',
             'nav-buscador':   'Ir al buscador',
+            'nav-logout':     'Cerrar sesión',
             'label-email':    '📜 Email:',
             'label-miembro':  '⏳ Miembro desde:',
             'reto-objetivo':  'Tu objetivo este mes es leer',
@@ -125,6 +127,7 @@ $reto = $stmtReto->fetch();
             'nav-inicio':     'Back to Home',
             'nav-biblioteca': 'Go to my library',
             'nav-buscador':   'Go to search',
+            'nav-logout':     'Log out',
             'label-email':    '📜 Email:',
             'label-miembro':  '⏳ Member since:',
             'reto-objetivo':  'Your goal this month is to read',

@@ -123,6 +123,28 @@ h2 {
     margin: 8px 0;
 }
 
+.btn-logout {
+    display: inline-block;
+    margin-top: 14px;
+    padding: 9px 18px;
+    border: 1px solid rgba(217, 108, 130, 0.45);
+    border-radius: 24px;
+    color: rgba(242, 235, 235, 0.9);
+    text-decoration: none;
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    transition: all 0.35s ease;
+}
+
+.btn-logout:hover {
+    background: var(--color-dorado);
+    color: var(--color-fondo);
+    border-color: transparent;
+    box-shadow: var(--brillo-dorado);
+    transform: translateY(-2px);
+}
+
 /* --- TARJETA DEL RETO MENSUAL --- */
 .reto-card {
     background: rgba(255, 255, 255, 0.03);
