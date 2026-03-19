@@ -24,7 +24,7 @@ if (empty($_SESSION['user_id'])) {
 
 <!-- SECCIÓN DE NOTICIAS. (ESTÁ HECHO MANUALMENTE, FALTA ARREGLARLO) -->
     <section id="noticias">
-        <h2 data-i18n="noticias-titulo">Noticias y recomendaciones</h2>
+        <h2 data-i18n="noticias-titulo">Recomendaciones</h2>
         <?php
         require_once __DIR__ . '/../../backend/noticias.php';
         $noticias = obtenerNoticias();
@@ -43,7 +43,7 @@ if (empty($_SESSION['user_id'])) {
                             data-description-es="<?php echo htmlspecialchars($noticia['descripcion']); ?>"
                             data-description-en="<?php echo htmlspecialchars($noticia['descripcion_en'] ?? $noticia['descripcion']); ?>"
                         ><?php echo htmlspecialchars($noticia['descripcion']); ?></span><br>
-                        <a href="<?php echo htmlspecialchars($noticia['enlace']); ?>" target="_blank" data-i18n="leer-mas">Leer más</a>
+                        <a href="<?php echo htmlspecialchars($noticia['enlace']); ?>" target="_blank" data-i18n="enlace">Enlace al contenido</a>
                     </li>
                 <?php endforeach; ?>
             </ul>
@@ -82,7 +82,7 @@ if (empty($_SESSION['user_id'])) {
             'nav-cuenta':      'Ir a mi cuenta',
             'nav-buscador':    'Ir al buscador',
             'noticias-titulo': 'Noticias y recomendaciones',
-            'leer-mas':        'Leer más',
+            'enlace':          'Enlace al contenido',
             'sin-noticias':    'No hay noticias disponibles en este momento.',
         },
         en: {
@@ -91,7 +91,7 @@ if (empty($_SESSION['user_id'])) {
             'nav-cuenta':      'Go to my account',
             'nav-buscador':    'Go to search',
             'noticias-titulo': 'News & recommendations',
-            'leer-mas':        'Read more',
+            'enlace':          'Content link',
             'sin-noticias':    'No news available at this time.',
         }
     }, 'Inicio | K-Libro', 'Home | K-Libro');

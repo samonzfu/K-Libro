@@ -3,25 +3,37 @@ function obtenerNoticias(): array
 {
     return [
         [
-            'titulo' => 'Los 10 clásicos que debes leer antes de los 30',
-            'titulo_en' => '10 classics you should read before 30',
-            'descripcion' => 'Una selección imprescindible de novelas que han marcado generaciones.',
-            'descripcion_en' => 'An essential selection of novels that have shaped generations.',
-            'enlace' => 'https://es.wikipedia.org/wiki/Lista_de_literatura_cl%C3%A1sica',
+            'titulo' => '¿No sabes qué leer a continuación?',
+            'titulo_en' => 'Not sure what to read next?',
+
+            'descripcion' => 'Esta web te recomienda autores/as que podrían interesarte según el autor/a que has buscado. Cuanto más cerca estén los/as autores/as del que has buscado, más se asemejan. 
+                            Esta web es una forma muy interactiva de descubrir nuevos escritores/as',
+            'descripcion_en' => 'This website recommends authors who might interest you based on the author you searched for. The closer the authors are to the one you searched for, the more similar they are.
+                            This website is a highly interactive way to discover new writers',
+
+            'enlace' => 'https://www.literature-map.com/',
         ],
         [
-            'titulo' => 'Nuevos lanzamientos de fantasía 2026',
-            'titulo_en' => 'New fantasy releases for 2026',
-            'descripcion' => 'Explora los mundos imaginarios que acaban de llegar a las librerías.',
-            'descripcion_en' => 'Explore imaginary worlds that have just arrived in bookstores.',
-            'enlace' => 'https://www.example.com/novedades-fantasia-2026',
+            'titulo' => '¿Buscas consumir contenido sobre libros?',
+            'titulo_en' => 'Looking for book-related content?',
+
+            'descripcion' => 'Aquí te dejo un vídeo del canal de youtube "Plan Based Bride" donde hace una selección de sus sagas de fantasía favoritas. Te recomiendo este canal
+                        encarecidamente si eres amante de la fantasía y no sabes qué leer a continuación.',
+            'descripcion_en' => 'Here is a video from the YouTube channel "Plan Based Bride" where she makes a selection of her favorite fantasy sagas. 
+                        I highly recommend this channel if you are a fantasy lover and dont know what to read next.',
+
+            'enlace' => 'https://www.youtube.com/watch?v=JVVLm0bLvZM',
         ],
         [
-            'titulo' => 'Cómo organizar tu club de lectura',
-            'titulo_en' => 'How to organize your book club',
-            'descripcion' => 'Consejos prácticos para que tu grupo disfrute cada encuentro.',
-            'descripcion_en' => 'Practical tips to help your group enjoy every meeting.',
-            'enlace' => 'https://www.example.com/club-de-lectura',
+            'titulo' => '¿No tienes dinero para comprar libros?',
+            'titulo_en' => 'Dont have money to buy books?',
+
+            'descripcion' => 'Si definitivamente no te puedes permitir comprar libros nuevos ya sean en físico o en digital, no te preocupes, tengo la solución.
+                            OpenLibrary.org es una biblioteca digital gratuita que ofrece acceso a millones de libros. Puedes leer en línea o descargar algunos títulos de forma gratuita. Es una excelente opción para los amantes de la lectura con presupuesto limitado.',
+            'descripcion_en' => 'If you definitely cannot afford to buy new books, whether in physical or digital format, do not worry, I have the solution.
+                            OpenLibrary.org is a free digital library that offers access to millions of books. You can read',
+
+            'enlace' => 'https://openlibrary.org/',
         ],
     ];
 }
