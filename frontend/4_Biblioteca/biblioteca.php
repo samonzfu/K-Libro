@@ -18,7 +18,7 @@ $librosPorEstado = [
 
 try {
     $stmt = $pdo->prepare(
-        'SELECT b.estado, b.calificacion, b.review, l.titulo, l.autores, l.portada
+        'SELECT b.estado, b.libro_id_openlibrary, b.calificacion, b.review, l.titulo, l.autores, l.portada
          FROM biblioteca b
          INNER JOIN (
             SELECT MAX(id) AS id
@@ -60,6 +60,7 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
         $tituloLibro = $libro['titulo'] ?: 'Sin título';
         $autorLibro = $libro['autores'] ?: 'Autor desconocido';
         $portadaLibro = $libro['portada'] ?: 'https://via.placeholder.com/130x190?text=Sin+portada';
+        $idOpenLibrary = (string) ($libro['libro_id_openlibrary'] ?? '');
         $calificacion = isset($libro['calificacion']) ? (int) $libro['calificacion'] : 0;
         $review = trim((string) ($libro['review'] ?? ''));
 
@@ -76,6 +77,15 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
             if ($review !== '') {
                 echo '<p class="book-review">' . nl2br(htmlspecialchars($review, ENT_QUOTES, 'UTF-8')) . '</p>';
             }
+        }
+
+        if ($idOpenLibrary !== '') {
+            echo '<form method="POST" action="/GitHub/K-Libro/backend/procesar/eliminar_libro.php" class="form-eliminar" onsubmit="return window.confirm(\'¿Seguro que quieres eliminar este libro de tu biblioteca?\');">';
+            echo '<input type="hidden" name="id_openlibrary" value="' . htmlspecialchars($idOpenLibrary, ENT_QUOTES, 'UTF-8') . '">';
+            echo '<button type="submit" class="btn-eliminar">';
+            echo '<span data-i18n="biblio-eliminar">Eliminar</span>';
+            echo '</button>';
+            echo '</form>';
         }
 
         echo '</article>';
@@ -131,6 +141,7 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
             'biblio-nav-pendiente': 'Pendientes de leer',
             'biblio-nav-leyendo': 'Leyendo',
             'biblio-nav-leido': 'Leídos',
+            'biblio-eliminar': 'Eliminar',
             'biblio-pendiente':  'Pendientes de leer:',
             'biblio-leyendo':    'Leyendo:',
             'biblio-leido':      'Leídos:',
@@ -145,12 +156,14 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
             'biblio-nav-pendiente': 'To read',
             'biblio-nav-leyendo': 'Reading',
             'biblio-nav-leido': 'Read',
+            'biblio-eliminar': 'Delete',
             'biblio-pendiente':  'To read:',
             'biblio-leyendo':    'Reading:',
             'biblio-leido':      'Read:',
             'biblio-vacio':      'You have no books in this section yet.',
         }
     }, 'Mi biblioteca | K-Libro', 'My library | K-Libro');
+
     </script>
 </body>
 </html>

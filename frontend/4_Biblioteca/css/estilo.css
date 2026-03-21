@@ -239,6 +239,29 @@ h1 {
     padding: 0.65rem;
 }
 
+.btn-eliminar {
+    width: 100%;
+    border: 1px solid rgba(255, 125, 125, 0.55);
+    background: rgba(255, 75, 75, 0.08);
+    color: #ffc7c7;
+    border-radius: 8px;
+    padding: 8px 10px;
+    cursor: pointer;
+    font-family: 'Lato', sans-serif;
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
+
+.form-eliminar {
+    margin-top: 0.9rem;
+}
+
+.btn-eliminar:hover {
+    background: rgba(255, 75, 75, 0.9);
+    color: #1f0909;
+    border-color: transparent;
+}
+
 /* --- ANIMACIONES --- */
 @keyframes fadeInUp {
     from {
