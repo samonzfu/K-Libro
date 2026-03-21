@@ -241,12 +241,29 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
         if (modalInputCalificacion) modalInputCalificacion.value = calificacion >= 1 && calificacion <= 5 ? String(calificacion) : '';
         if (modalInputResena) modalInputResena.value = review;
 
+        cerrarEdicion();
         modal.hidden = false;
     };
 
     const cerrarModalDetalles = () => {
         if (!modal) return;
         modal.hidden = true;
+    };
+
+    const cerrarEdicion = () => {
+        const btnEditar = document.getElementById('modal-detalles-btn-editar');
+        if (btnEditar && modalForm) {
+            btnEditar.style.display = 'block';
+            modalForm.style.display = 'none';
+        }
+    };
+
+    const abrirEdicion = () => {
+        const btnEditar = document.getElementById('modal-detalles-btn-editar');
+        if (btnEditar && modalForm) {
+            btnEditar.style.display = 'none';
+            modalForm.style.display = 'flex';
+        }
     };
 
     window.abrirDetallesLibro = (btn) => {
@@ -261,6 +278,11 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
 
     if (modalOverlay) {
         modalOverlay.addEventListener('click', cerrarModalDetalles);
+    }
+
+    const btnEditarModal = document.getElementById('modal-detalles-btn-editar');
+    if (btnEditarModal) {
+        btnEditarModal.addEventListener('click', abrirEdicion);
     }
 
     if (modalForm) {
@@ -304,6 +326,7 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
                 modalResena.textContent = review !== '' ? review : I18n.t('biblio-sin-resena');
 
                 alert(I18n.t('biblio-modal-guardado'));
+                cerrarEdicion();
             } catch (error) {
                 console.error('Error al guardar detalles del libro:', error);
                 alert(I18n.t('biblio-modal-error'));
@@ -352,7 +375,9 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
                     <p><strong data-i18n="biblio-modal-review">Reseña</strong>:</p>
                     <p id="modal-detalles-resena" class="modal-detalles-resena"></p>
 
-                    <form id="modal-detalles-form" class="modal-detalles-form">
+                    <button id="modal-detalles-btn-editar" type="button" class="btn-modal-editar">📝 Editar</button>
+
+                    <form id="modal-detalles-form" class="modal-detalles-form" style="display: none;">
                         <input id="modal-detalles-id" type="hidden" name="id_openlibrary" value="">
 
                         <label for="modal-detalles-input-calificacion" class="modal-detalles-label" data-i18n="biblio-modal-rating">Puntuación</label>
