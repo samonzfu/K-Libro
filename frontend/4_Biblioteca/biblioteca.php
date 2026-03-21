@@ -68,28 +68,28 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
         $clasesCard = 'book-card' . ($esExtra ? ' book-card-extra' : '');
         $hiddenAttr = $esExtra ? ' hidden' : '';
 
-        echo '<article class="' . $clasesCard . '"' . $hiddenAttr . '>';
+        echo '<article class="' . $clasesCard . '"' . $hiddenAttr
+            . ' data-libro-id="' . htmlspecialchars($idOpenLibrary, ENT_QUOTES, 'UTF-8') . '"'
+            . ' data-libro-titulo="' . htmlspecialchars($tituloLibro, ENT_QUOTES, 'UTF-8') . '"'
+            . ' data-libro-autor="' . htmlspecialchars($autorLibro, ENT_QUOTES, 'UTF-8') . '"'
+            . ' data-libro-portada="' . htmlspecialchars($portadaLibro, ENT_QUOTES, 'UTF-8') . '"'
+            . ' data-libro-calificacion="' . htmlspecialchars((string) $calificacion, ENT_QUOTES, 'UTF-8') . '"'
+            . ' data-libro-review="' . htmlspecialchars($review, ENT_QUOTES, 'UTF-8') . '"'
+            . '>';
         echo '<img src="' . htmlspecialchars($portadaLibro, ENT_QUOTES, 'UTF-8') . '" alt="Portada de ' . htmlspecialchars($tituloLibro, ENT_QUOTES, 'UTF-8') . '">';
         echo '<h3>' . htmlspecialchars($tituloLibro, ENT_QUOTES, 'UTF-8') . '</h3>';
         echo '<p>' . htmlspecialchars($autorLibro, ENT_QUOTES, 'UTF-8') . '</p>';
 
-        if ($estadoActual === 'leido') {
-            if ($calificacion >= 1 && $calificacion <= 5) {
-                echo '<p class="book-meta">Puntuación: ' . $calificacion . '/5</p>';
-            }
-
-            if ($review !== '') {
-                echo '<p class="book-review">' . nl2br(htmlspecialchars($review, ENT_QUOTES, 'UTF-8')) . '</p>';
-            }
-        }
-
         if ($idOpenLibrary !== '') {
+            echo '<div class="book-acciones">';
+            echo '<button type="button" class="btn-detalles" onclick="abrirDetallesLibro(this)" data-i18n="biblio-detalles">Detalles</button>';
             echo '<form method="POST" action="/GitHub/K-Libro/backend/procesar/eliminar_libro.php" class="form-eliminar" onsubmit="return window.confirm(\'¿Seguro que quieres eliminar este libro de tu biblioteca?\');">';
             echo '<input type="hidden" name="id_openlibrary" value="' . htmlspecialchars($idOpenLibrary, ENT_QUOTES, 'UTF-8') . '">';
             echo '<button type="submit" class="btn-eliminar">';
             echo '<span data-i18n="biblio-eliminar">Eliminar</span>';
             echo '</button>';
             echo '</form>';
+            echo '</div>';
         }
 
         echo '</article>';
@@ -145,6 +145,7 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
     </main>
     <script src="../js/i18n.js"></script>
     <script>
+    document.addEventListener('DOMContentLoaded', () => {
     I18n.init({
         es: {
             'nav-inicio':        'Inicio',
@@ -155,9 +156,20 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
             'biblio-nav-pendiente': 'Pendientes de leer',
             'biblio-nav-leyendo': 'Leyendo',
             'biblio-nav-leido': 'Leídos',
+            'biblio-detalles': 'Detalles',
             'biblio-eliminar': 'Eliminar',
             'biblio-ver-mas': 'Ver más',
             'biblio-ver-menos': 'Ver menos',
+            'biblio-modal-rating': 'Puntuación',
+            'biblio-modal-review': 'Reseña',
+            'biblio-sin-calificacion': 'Sin puntuar',
+            'biblio-sin-resena': 'Sin reseña',
+            'biblio-modal-rating-empty': 'Sin puntuar',
+            'biblio-modal-review-ph': 'Escribe una reseña o déjala vacía para eliminarla',
+            'biblio-modal-save': 'Guardar cambios',
+            'biblio-modal-guardado': 'Detalles guardados correctamente.',
+            'biblio-modal-error': 'No se pudieron guardar los detalles.',
+            'biblio-cerrar': 'Cerrar',
             'biblio-pendiente':  'Pendientes de leer:',
             'biblio-leyendo':    'Leyendo:',
             'biblio-leido':      'Leídos:',
@@ -172,15 +184,132 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
             'biblio-nav-pendiente': 'To read',
             'biblio-nav-leyendo': 'Reading',
             'biblio-nav-leido': 'Read',
+            'biblio-detalles': 'Details',
             'biblio-eliminar': 'Delete',
             'biblio-ver-mas': 'Show more',
             'biblio-ver-menos': 'Show less',
+            'biblio-modal-rating': 'Rating',
+            'biblio-modal-review': 'Review',
+            'biblio-sin-calificacion': 'No rating',
+            'biblio-sin-resena': 'No review',
+            'biblio-modal-rating-empty': 'No rating',
+            'biblio-modal-review-ph': 'Write a review or leave it empty to remove it',
+            'biblio-modal-save': 'Save changes',
+            'biblio-modal-guardado': 'Details saved successfully.',
+            'biblio-modal-error': 'Could not save details.',
+            'biblio-cerrar': 'Close',
             'biblio-pendiente':  'To read:',
             'biblio-leyendo':    'Reading:',
             'biblio-leido':      'Read:',
             'biblio-vacio':      'You have no books in this section yet.',
         }
     }, 'Mi biblioteca | K-Libro', 'My library | K-Libro');
+
+    const modal = document.getElementById('modal-detalles-libro');
+    const modalCerrar = document.getElementById('modal-detalles-cerrar');
+    const modalOverlay = document.getElementById('modal-detalles-overlay');
+    const modalPortada = document.getElementById('modal-detalles-portada');
+    const modalTitulo = document.getElementById('modal-detalles-titulo');
+    const modalAutor = document.getElementById('modal-detalles-autor');
+    const modalCalificacion = document.getElementById('modal-detalles-calificacion');
+    const modalResena = document.getElementById('modal-detalles-resena');
+    const modalInputId = document.getElementById('modal-detalles-id');
+    const modalInputCalificacion = document.getElementById('modal-detalles-input-calificacion');
+    const modalInputResena = document.getElementById('modal-detalles-input-resena');
+    const modalForm = document.getElementById('modal-detalles-form');
+
+    const abrirModalDetalles = (card) => {
+        if (!modal || !card) return;
+
+        const id = card.getAttribute('data-libro-id') || '';
+        const titulo = card.getAttribute('data-libro-titulo') || '';
+        const autor = card.getAttribute('data-libro-autor') || '';
+        const portada = card.getAttribute('data-libro-portada') || '';
+        const calificacionRaw = card.getAttribute('data-libro-calificacion') || '';
+        const review = (card.getAttribute('data-libro-review') || '').trim();
+
+        const calificacion = Number.parseInt(calificacionRaw, 10);
+
+        modalTitulo.textContent = titulo;
+        modalAutor.textContent = autor;
+        modalPortada.src = portada;
+        modalPortada.alt = `Portada de ${titulo}`;
+        modalCalificacion.textContent = calificacion >= 1 && calificacion <= 5 ? `${calificacion}/5` : I18n.t('biblio-sin-calificacion');
+        modalResena.textContent = review !== '' ? review : I18n.t('biblio-sin-resena');
+
+        if (modalInputId) modalInputId.value = id;
+        if (modalInputCalificacion) modalInputCalificacion.value = calificacion >= 1 && calificacion <= 5 ? String(calificacion) : '';
+        if (modalInputResena) modalInputResena.value = review;
+
+        modal.hidden = false;
+    };
+
+    const cerrarModalDetalles = () => {
+        if (!modal) return;
+        modal.hidden = true;
+    };
+
+    window.abrirDetallesLibro = (btn) => {
+        if (!btn) return;
+        const card = btn.closest('.book-card');
+        abrirModalDetalles(card);
+    };
+
+    if (modalCerrar) {
+        modalCerrar.addEventListener('click', cerrarModalDetalles);
+    }
+
+    if (modalOverlay) {
+        modalOverlay.addEventListener('click', cerrarModalDetalles);
+    }
+
+    if (modalForm) {
+        modalForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const idLibro = modalInputId ? modalInputId.value.trim() : '';
+            if (idLibro === '') return;
+
+            const calificacion = modalInputCalificacion ? modalInputCalificacion.value.trim() : '';
+            const review = modalInputResena ? modalInputResena.value.trim() : '';
+
+            try {
+                const datos = new URLSearchParams();
+                datos.append('id_openlibrary', idLibro);
+                datos.append('calificacion', calificacion);
+                datos.append('review', review);
+
+                const respuesta = await fetch('/GitHub/K-Libro/backend/procesar/actualizar_resena.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                        'Accept': 'application/json'
+                    },
+                    body: datos.toString()
+                });
+
+                const resultado = await respuesta.json();
+                if (!respuesta.ok || !resultado.ok) {
+                    throw new Error(resultado.mensaje || 'No se pudieron guardar los detalles');
+                }
+
+                const card = document.querySelector(`.book-card[data-libro-id="${CSS.escape(idLibro)}"]`);
+                if (card) {
+                    card.setAttribute('data-libro-calificacion', calificacion);
+                    card.setAttribute('data-libro-review', review);
+                }
+
+                const calificacionNum = Number.parseInt(calificacion, 10);
+                modalCalificacion.textContent = calificacionNum >= 1 && calificacionNum <= 5 ? `${calificacionNum}/5` : I18n.t('biblio-sin-calificacion');
+                modalResena.textContent = review !== '' ? review : I18n.t('biblio-sin-resena');
+
+                alert(I18n.t('biblio-modal-guardado'));
+            } catch (error) {
+                console.error('Error al guardar detalles del libro:', error);
+                alert(I18n.t('biblio-modal-error'));
+            }
+        });
+    }
 
     document.querySelectorAll('.btn-ver-mas-seccion').forEach((btn) => {
         btn.addEventListener('click', () => {
@@ -205,7 +334,45 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
             }
         });
     });
+    });
 
     </script>
+
+    <div id="modal-detalles-libro" class="modal-detalles-libro" hidden>
+        <div id="modal-detalles-overlay" class="modal-detalles-overlay"></div>
+        <div class="modal-detalles-contenido" role="dialog" aria-modal="true" aria-labelledby="modal-detalles-titulo">
+            <button id="modal-detalles-cerrar" type="button" class="modal-detalles-cerrar" data-i18n="biblio-cerrar">Cerrar</button>
+
+            <div class="modal-detalles-grid">
+                <img id="modal-detalles-portada" src="" alt="Portada del libro">
+                <div class="modal-detalles-info">
+                    <h2 id="modal-detalles-titulo"></h2>
+                    <p id="modal-detalles-autor" class="modal-detalles-autor"></p>
+                    <p><strong data-i18n="biblio-modal-rating">Puntuación</strong>: <span id="modal-detalles-calificacion"></span></p>
+                    <p><strong data-i18n="biblio-modal-review">Reseña</strong>:</p>
+                    <p id="modal-detalles-resena" class="modal-detalles-resena"></p>
+
+                    <form id="modal-detalles-form" class="modal-detalles-form">
+                        <input id="modal-detalles-id" type="hidden" name="id_openlibrary" value="">
+
+                        <label for="modal-detalles-input-calificacion" class="modal-detalles-label" data-i18n="biblio-modal-rating">Puntuación</label>
+                        <select id="modal-detalles-input-calificacion" class="modal-detalles-input" name="calificacion">
+                            <option value="" data-i18n="biblio-modal-rating-empty">Sin puntuar</option>
+                            <option value="1">1/5</option>
+                            <option value="2">2/5</option>
+                            <option value="3">3/5</option>
+                            <option value="4">4/5</option>
+                            <option value="5">5/5</option>
+                        </select>
+
+                        <label for="modal-detalles-input-resena" class="modal-detalles-label" data-i18n="biblio-modal-review">Reseña</label>
+                        <textarea id="modal-detalles-input-resena" class="modal-detalles-input" name="review" rows="4" maxlength="2000" data-i18n-ph="biblio-modal-review-ph" placeholder="Escribe una reseña o déjala vacía para eliminarla"></textarea>
+
+                        <button type="submit" class="btn-modal-guardar" data-i18n="biblio-modal-save">Guardar cambios</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

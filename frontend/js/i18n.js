@@ -3,6 +3,8 @@
  * Uso: incluir este script y llamar a I18n.init(translations, 'Título ES', 'Título EN')
  */
 const I18n = {
+    translations: {},
+    
     setLang(lang, t) {
         // Textos normales
         document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -24,6 +26,7 @@ const I18n = {
     },
 
     init(t, titleEs, titleEn) {
+        I18n.translations = t;
         const apply = (lang) => {
             I18n.setLang(lang, t);
             document.title = lang === 'en' ? titleEn : titleEs;
@@ -41,8 +44,8 @@ const I18n = {
     },
 
     /** Devuelve la traducción de una clave para el idioma activo (útil en JS dinámico) */
-    t(key, translations) {
+    t(key) {
         const lang = localStorage.getItem('klibro-lang') || 'es';
-        return translations[lang]?.[key] ?? key;
+        return I18n.translations[lang]?.[key] ?? key;
     }
 };
