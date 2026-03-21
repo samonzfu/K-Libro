@@ -50,9 +50,9 @@ $reto = $stmtReto->fetch();
     <div class="container">
         
         <nav>
-            <a href="../3_Inicio/inicio.php" data-i18n="nav-inicio">Volver al inicio</a> |
-            <a href="../4_Biblioteca/biblioteca.php" data-i18n="nav-biblioteca">Ir a mi biblioteca</a> |
-            <a href="../6_buscador/buscador.php" data-i18n="nav-buscador">Ir al buscador</a>
+            <a href="../3_Inicio/inicio.php" data-i18n="nav-inicio">IInicio</a> |
+            <a href="../4_Biblioteca/biblioteca.php" data-i18n="nav-biblioteca">Biblioteca</a> |
+            <a href="../6_buscador/buscador.php" data-i18n="nav-buscador">Buscador</a>
             <button id="btn-lang" class="btn-lang">🌐 English</button>
         </nav>
 
@@ -107,9 +107,9 @@ $reto = $stmtReto->fetch();
     <script>
     const translations = {
         es: {
-            'nav-inicio':     'Volver al inicio',
-            'nav-biblioteca': 'Ir a mi biblioteca',
-            'nav-buscador':   'Ir al buscador',
+            'nav-inicio':     'Inicio',
+            'nav-biblioteca': 'Biblioteca',
+            'nav-buscador':   'Buscador',
             'nav-logout':     'Cerrar sesión',
             'label-email':    '📜 Email:',
             'label-miembro':  '⏳ Miembro desde:',
@@ -124,9 +124,9 @@ $reto = $stmtReto->fetch();
             'label-obtenido': 'Obtenido el:',
         },
         en: {
-            'nav-inicio':     'Back to Home',
-            'nav-biblioteca': 'Go to my library',
-            'nav-buscador':   'Go to search',
+            'nav-inicio':     'Home',
+            'nav-biblioteca': 'Library',
+            'nav-buscador':   'Search',
             'nav-logout':     'Log out',
             'label-email':    '📜 Email:',
             'label-miembro':  '⏳ Member since:',

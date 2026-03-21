@@ -21,9 +21,9 @@ $cssVersion = @filemtime(__DIR__ . '/css/estilo.css') ?: time();
     <div class="container">
         
         <nav>
-            <a href="../3_Inicio/inicio.php" data-i18n="nav-inicio">Volver al inicio</a> |
-            <a href="../4_Biblioteca/biblioteca.php" data-i18n="nav-biblioteca">Ir a mi biblioteca</a> |
-            <a href="../5_Mi_cuenta/mi_cuenta.php" data-i18n="nav-cuenta">Ir a mi cuenta</a>
+            <a href="../3_Inicio/inicio.php" data-i18n="nav-inicio">Inicio</a> |
+            <a href="../4_Biblioteca/biblioteca.php" data-i18n="nav-biblioteca">Biblioteca</a> |
+            <a href="../5_Mi_cuenta/mi_cuenta.php" data-i18n="nav-cuenta">Mi cuenta</a>
             <button id="btn-lang" class="btn-lang">🌐 English</button>
         </nav>
 
@@ -45,39 +45,51 @@ $cssVersion = @filemtime(__DIR__ . '/css/estilo.css') ?: time();
     // Traducciones globales accesibles desde las funciones de búsqueda
     const T = {
         es: {
-            'nav-inicio':      'Volver al inicio',
-            'nav-biblioteca':  'Ir a mi biblioteca',
-            'nav-cuenta':      'Ir a mi cuenta',
+            'nav-inicio':      'Inicio',
+            'nav-biblioteca':  'Biblioteca',
+            'nav-cuenta':      'Mi cuenta',
             'busca-h1':        'Busca un libro',
             'busca-ph':        'Ej: El Nombre del Viento...',
             'busca-btn':       'Buscar',
             'busca-cargando':  'Consultando los archivos... ⏳',
-            'card-pendiente':  'Pendiente de leer',
+            'card-pendiente':  'Quiero leer',
             'card-leyendo':    'Leyendo',
             'card-leido':      'Leído',
+            'card-selecciona': 'Selecciona una opción',
+            'card-rating':     'Puntuación',
+            'card-rating-ph':  'Sin puntuar',
+            'card-review':     'Reseña personal',
+            'card-review-ph':  '¿Qué te pareció este libro?',
             'card-guardar':    '➕ Guardar en mi biblioteca',
             'busca-vacio':     'No se encontraron libros con ese nombre en los registros antiguos.',
             'busca-error-api': 'El grimorio de OpenLibrary no responde. Prueba otra vez.',
             'busca-error-guardar': 'No se pudo guardar el libro. Los astros no están alineados.',
             'busca-guardado':  'libro guardado como',
+            'busca-con-rating': 'con puntuación',
             'autor-desconocido': 'Autor desconocido',
         },
         en: {
-            'nav-inicio':      'Back to home',
-            'nav-biblioteca':  'Go to my library',
-            'nav-cuenta':      'Go to my account',
+            'nav-inicio':      'Home',
+            'nav-biblioteca':  'Library',
+            'nav-cuenta':      'My account',
             'busca-h1':        'Search a book',
             'busca-ph':        'E.g.: The Name of the Wind...',
             'busca-btn':       'Search',
             'busca-cargando':  'Consulting the archives... ⏳',
-            'card-pendiente':  'To read',
+            'card-pendiente':  'Want to read',
             'card-leyendo':    'Reading',
             'card-leido':      'Read',
+            'card-selecciona': 'Select an option',
+            'card-rating':     'Rating',
+            'card-rating-ph':  'No rating',
+            'card-review':     'Personal review',
+            'card-review-ph':  'What did you think about this book?',
             'card-guardar':    '➕ Save to my library',
             'busca-vacio':     'No books found with that name in the ancient records.',
             'busca-error-api': 'The OpenLibrary grimoire is not responding. Try again.',
             'busca-error-guardar': 'Could not save the book. The stars are not aligned.',
             'busca-guardado':  'book saved as',
+            'busca-con-rating': 'with rating',
             'autor-desconocido': 'Unknown author',
         }
     };
@@ -165,10 +177,26 @@ $cssVersion = @filemtime(__DIR__ . '/css/estilo.css') ?: time();
                         <p>${autor}</p>
                         
                         <select id="estado-${idSeguro}" class="select-estado">
+                            <option value="" selected disabled>${t('card-selecciona')}</option>
                             <option value="pendiente">${t('card-pendiente')}</option>
                             <option value="leyendo">${t('card-leyendo')}</option>
                             <option value="leido">${t('card-leido')}</option>
                         </select>
+
+                        <div id="extra-leido-${idSeguro}" class="campos-leido" style="display: none;">
+                            <label for="calificacion-${idSeguro}" class="campo-label">${t('card-rating')}</label>
+                            <select id="calificacion-${idSeguro}" class="select-estado select-calificacion">
+                                <option value="">${t('card-rating-ph')}</option>
+                                <option value="1">1/5</option>
+                                <option value="2">2/5</option>
+                                <option value="3">3/5</option>
+                                <option value="4">4/5</option>
+                                <option value="5">5/5</option>
+                            </select>
+
+                            <label for="review-${idSeguro}" class="campo-label">${t('card-review')}</label>
+                            <textarea id="review-${idSeguro}" class="input-review" rows="3" maxlength="2000" placeholder="${t('card-review-ph')}"></textarea>
+                        </div>
                         
                         <button class="btn-guardar" onclick="guardarLibro('${idSeguro}', '${tituloSeguro}', '${autorSeguro}', '${portadaSegura}')">
                             ${t('card-guardar')}
@@ -178,6 +206,26 @@ $cssVersion = @filemtime(__DIR__ . '/css/estilo.css') ?: time();
             });
 
             contenedor.innerHTML = htmlFinal;
+
+            primerosResultados.forEach(libro => {
+                const idSeguro = encodeURIComponent(libro.key || '');
+                const selectEstado = document.getElementById(`estado-${idSeguro}`);
+                if (selectEstado) {
+                    selectEstado.addEventListener('change', () => toggleCamposLeido(idSeguro));
+                }
+            });
+        }
+
+        function toggleCamposLeido(idSeguro) {
+            const selectEstado = document.getElementById(`estado-${idSeguro}`);
+            const extraLeido = document.getElementById(`extra-leido-${idSeguro}`);
+            if (!selectEstado || !extraLeido) return;
+
+            if (selectEstado.value === 'leido') {
+                extraLeido.style.display = 'block';
+            } else {
+                extraLeido.style.display = 'none';
+            }
         }
 
         async function guardarLibro(idOpenLibraryCod, tituloCod, autorCod, portadaCod) {
@@ -187,7 +235,13 @@ $cssVersion = @filemtime(__DIR__ . '/css/estilo.css') ?: time();
             const portada = decodeURIComponent(portadaCod);
 
             const selectEstado = document.getElementById(`estado-${idOpenLibraryCod}`);
-            const estado = selectEstado ? selectEstado.value : 'pendiente';
+            const estado = (selectEstado && selectEstado.value) ? selectEstado.value : 'pendiente';
+
+            const selectCalificacion = document.getElementById(`calificacion-${idOpenLibraryCod}`);
+            const textareaReview = document.getElementById(`review-${idOpenLibraryCod}`);
+
+            const calificacion = estado === 'leido' && selectCalificacion ? selectCalificacion.value.trim() : '';
+            const review = estado === 'leido' && textareaReview ? textareaReview.value.trim() : '';
 
             try {
                 const datos = new URLSearchParams();
@@ -196,6 +250,8 @@ $cssVersion = @filemtime(__DIR__ . '/css/estilo.css') ?: time();
                 datos.append('autor', autor);
                 datos.append('portada', portada);
                 datos.append('estado', estado);
+                datos.append('calificacion', calificacion);
+                datos.append('review', review);
 
                 const respuesta = await fetch('/GitHub/K-Libro/backend/procesar/guardar_libro.php', {
                     method: 'POST',
@@ -211,7 +267,8 @@ $cssVersion = @filemtime(__DIR__ . '/css/estilo.css') ?: time();
                     throw new Error(resultado.mensaje || 'No se pudo guardar el libro');
                 }
 
-                alert(`¡Magia realizada! "${titulo}" ${t('busca-guardado')} "${estado}".`);
+                const mensajeCalificacion = calificacion !== '' ? ` ${t('busca-con-rating')} ${calificacion}/5.` : '.';
+                alert(`¡Magia realizada! "${titulo}" ${t('busca-guardado')} "${estado}"${mensajeCalificacion}`);
             } catch (error) {
                 console.error('Error al guardar libro:', error);
                 alert(t('busca-error-guardar'));

@@ -235,6 +235,42 @@ h1 {
     border-color: var(--color-dorado);
 }
 
+.campos-leido {
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+.campo-label {
+    display: block;
+    font-size: 0.8rem;
+    color: rgba(242, 235, 235, 0.8);
+    margin-bottom: 6px;
+}
+
+.select-calificacion {
+    margin-top: 0;
+}
+
+.input-review {
+    width: 100%;
+    resize: vertical;
+    min-height: 80px;
+    max-height: 180px;
+    border-radius: 8px;
+    border: 1px solid rgba(217, 108, 130, 0.3);
+    background: rgba(0, 0, 0, 0.6);
+    color: var(--color-texto);
+    padding: 10px;
+    font-family: 'Lato', sans-serif;
+    margin-bottom: 10px;
+    outline: none;
+}
+
+.input-review:focus {
+    border-color: var(--color-dorado);
+    box-shadow: var(--brillo-dorado);
+}
+
 .btn-guardar {
     width: 100%;
     padding: 10px;

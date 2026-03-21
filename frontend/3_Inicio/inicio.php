@@ -16,9 +16,9 @@ if (empty($_SESSION['user_id'])) {
 <body>
     <h1 data-i18n="inicio-h1">Bienvenido a K-Libro</h1>
     <nav>
-        <a href="../4_Biblioteca/biblioteca.php" data-i18n="nav-biblioteca">Ir a mi biblioteca</a> |
-        <a href="../5_Mi_cuenta/mi_cuenta.php" data-i18n="nav-cuenta">Ir a mi cuenta</a> |
-        <a href="../6_buscador/buscador.php" data-i18n="nav-buscador">Ir al buscador</a>
+        <a href="../4_Biblioteca/biblioteca.php" data-i18n="nav-biblioteca">Biblioteca</a> |
+        <a href="../5_Mi_cuenta/mi_cuenta.php" data-i18n="nav-cuenta">Mi cuenta</a> |
+        <a href="../6_buscador/buscador.php" data-i18n="nav-buscador">Buscador</a>
         <button id="btn-lang" class="btn-lang">🌐 English</button>
     </nav>
 
@@ -78,18 +78,18 @@ if (empty($_SESSION['user_id'])) {
     I18n.init({
         es: {
             'inicio-h1':       'Bienvenido a K-Libro',
-            'nav-biblioteca':  'Ir a mi biblioteca',
-            'nav-cuenta':      'Ir a mi cuenta',
-            'nav-buscador':    'Ir al buscador',
+            'nav-biblioteca':  'Biblioteca',
+            'nav-cuenta':      'Mi cuenta',
+            'nav-buscador':    'Buscador',
             'noticias-titulo': 'Noticias y recomendaciones',
             'enlace':          'Enlace al contenido',
             'sin-noticias':    'No hay noticias disponibles en este momento.',
         },
         en: {
             'inicio-h1':       'Welcome to K-Libro',
-            'nav-biblioteca':  'Go to my library',
-            'nav-cuenta':      'Go to my account',
-            'nav-buscador':    'Go to search',
+            'nav-biblioteca':  'Library',
+            'nav-cuenta':      'My Account',
+            'nav-buscador':    'Search',
             'noticias-titulo': 'News & recommendations',
             'enlace':          'Content link',
             'sin-noticias':    'No news available at this time.',
