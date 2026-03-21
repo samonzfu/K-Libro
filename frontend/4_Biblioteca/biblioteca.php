@@ -56,7 +56,7 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
 
     echo '<div class="grid-libros">';
 
-    foreach ($libros as $libro) {
+    foreach ($libros as $index => $libro) {
         $tituloLibro = $libro['titulo'] ?: 'Sin título';
         $autorLibro = $libro['autores'] ?: 'Autor desconocido';
         $portadaLibro = $libro['portada'] ?: 'https://via.placeholder.com/130x190?text=Sin+portada';
@@ -64,7 +64,11 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
         $calificacion = isset($libro['calificacion']) ? (int) $libro['calificacion'] : 0;
         $review = trim((string) ($libro['review'] ?? ''));
 
-        echo '<article class="book-card">';
+        $esExtra = $index >= 10;
+        $clasesCard = 'book-card' . ($esExtra ? ' book-card-extra' : '');
+        $hiddenAttr = $esExtra ? ' hidden' : '';
+
+        echo '<article class="' . $clasesCard . '"' . $hiddenAttr . '>';
         echo '<img src="' . htmlspecialchars($portadaLibro, ENT_QUOTES, 'UTF-8') . '" alt="Portada de ' . htmlspecialchars($tituloLibro, ENT_QUOTES, 'UTF-8') . '">';
         echo '<h3>' . htmlspecialchars($tituloLibro, ENT_QUOTES, 'UTF-8') . '</h3>';
         echo '<p>' . htmlspecialchars($autorLibro, ENT_QUOTES, 'UTF-8') . '</p>';
@@ -92,6 +96,16 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
     }
 
     echo '</div>';
+
+    if (count($libros) > 10) {
+        echo '<div class="acciones-seccion">';
+        echo '<button type="button" class="btn-ver-mas-seccion" aria-expanded="false">';
+        echo '<span class="label-more" data-i18n="biblio-ver-mas">Ver más</span>';
+        echo '<span class="label-less" data-i18n="biblio-ver-menos" hidden>Ver menos</span>';
+        echo '</button>';
+        echo '</div>';
+    }
+
     echo '</section>';
 }
 ?>
@@ -142,6 +156,8 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
             'biblio-nav-leyendo': 'Leyendo',
             'biblio-nav-leido': 'Leídos',
             'biblio-eliminar': 'Eliminar',
+            'biblio-ver-mas': 'Ver más',
+            'biblio-ver-menos': 'Ver menos',
             'biblio-pendiente':  'Pendientes de leer:',
             'biblio-leyendo':    'Leyendo:',
             'biblio-leido':      'Leídos:',
@@ -157,12 +173,38 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
             'biblio-nav-leyendo': 'Reading',
             'biblio-nav-leido': 'Read',
             'biblio-eliminar': 'Delete',
+            'biblio-ver-mas': 'Show more',
+            'biblio-ver-menos': 'Show less',
             'biblio-pendiente':  'To read:',
             'biblio-leyendo':    'Reading:',
             'biblio-leido':      'Read:',
             'biblio-vacio':      'You have no books in this section yet.',
         }
     }, 'Mi biblioteca | K-Libro', 'My library | K-Libro');
+
+    document.querySelectorAll('.btn-ver-mas-seccion').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const seccion = btn.closest('.seccion-estado');
+            if (!seccion) return;
+
+            const extras = seccion.querySelectorAll('.book-card-extra');
+            const expandido = btn.getAttribute('aria-expanded') === 'true';
+            const nuevoEstado = !expandido;
+
+            extras.forEach((card) => {
+                card.hidden = !nuevoEstado;
+            });
+
+            btn.setAttribute('aria-expanded', nuevoEstado ? 'true' : 'false');
+
+            const labelMore = btn.querySelector('.label-more');
+            const labelLess = btn.querySelector('.label-less');
+            if (labelMore && labelLess) {
+                labelMore.hidden = nuevoEstado;
+                labelLess.hidden = !nuevoEstado;
+            }
+        });
+    });
 
     </script>
 </body>

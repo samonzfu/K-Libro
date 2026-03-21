@@ -172,6 +172,31 @@ h1 {
     gap: 2rem;
 }
 
+.acciones-seccion {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.2rem;
+}
+
+.btn-ver-mas-seccion {
+    border: 1px solid rgba(217, 108, 130, 0.45);
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(242, 235, 235, 0.9);
+    border-radius: 999px;
+    padding: 10px 18px;
+    cursor: pointer;
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.5px;
+    transition: all 0.25s ease;
+}
+
+.btn-ver-mas-seccion:hover {
+    background: var(--color-dorado);
+    color: var(--color-fondo);
+    border-color: transparent;
+    box-shadow: var(--brillo-dorado);
+}
+
 /* --- TARJETA DE LIBRO --- */
 .book-card {
     background: rgba(255, 255, 255, 0.02);
@@ -183,6 +208,10 @@ h1 {
     display: flex;
     flex-direction: column;
     cursor: pointer;
+}
+
+.book-card[hidden] {
+    display: none !important;
 }
 
 .book-card:hover {
