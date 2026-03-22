@@ -95,7 +95,7 @@ $mis_logros = $stmtLogros->fetchAll();
 
         <?php if ($retoFlash): ?>
             <div class="flash-message flash-<?= htmlspecialchars($retoFlash['tipo']) ?>">
-                <?= htmlspecialchars($retoFlash['mensaje']) ?>
+                <span data-i18n="<?= htmlspecialchars($retoFlash['clave']) ?>"></span>
             </div>
         <?php endif; ?>
 
@@ -128,19 +128,28 @@ $mis_logros = $stmtLogros->fetchAll();
 
         <h2 data-i18n="section-logros">Logros</h2>
         <div class="logros-grid">
-            <?php foreach ($mis_logros as $logro): ?>
+            <?php 
+            // Mapeo de nombres/descripciones de logros a claves de traducción
+            $logrosMap = [
+                'Lector Iniciado' => ['nombre-key' => 'logro-lector-iniciado-nombre', 'desc-key' => 'logro-lector-iniciado-desc'],
+                'Ratón de Biblioteca' => ['nombre-key' => 'logro-raton-libreria-nombre', 'desc-key' => 'logro-raton-libreria-desc'],
+                'Devorador de Mundos' => ['nombre-key' => 'logro-devorador-mundos-nombre', 'desc-key' => 'logro-devorador-mundos-desc'],
+                'Campeón Mensual' => ['nombre-key' => 'logro-campeon-mensual-nombre', 'desc-key' => 'logro-campeon-mensual-desc'],
+            ];
+            foreach ($mis_logros as $logro): ?>
                 <?php
                 $desbloqueado = !empty($logro['fecha_ganado']);
                 $esLogroLectura = (int) $logro['criterio'] > 0;
                 $progresoLogro = $esLogroLectura
                     ? min($totalLibrosLeidos, (int) $logro['criterio']) . '/' . (int) $logro['criterio']
                     : null;
+                $mapeo = $logrosMap[$logro['nombre']] ?? null;
                 ?>
                 <div class="logro-card<?= $desbloqueado ? '' : ' logro-card-lock' ?>">
                     <div class="logro-icono"><?= $desbloqueado ? '🏆' : '🔒' ?></div>
                     <div class="logro-info">
-                        <h3><?= htmlspecialchars($logro['nombre']) ?></h3>
-                        <p><?= htmlspecialchars($logro['descripcion']) ?></p>
+                        <h3 data-i18n="<?= $mapeo ? htmlspecialchars($mapeo['nombre-key']) : '' ?>"><?= htmlspecialchars($logro['nombre']) ?></h3>
+                        <p data-i18n="<?= $mapeo ? htmlspecialchars($mapeo['desc-key']) : '' ?>"><?= htmlspecialchars($logro['descripcion']) ?></p>
                         <?php if ($desbloqueado): ?>
                             <p class="logro-meta">
                                 <span data-i18n="label-obtenido">Obtenido el:</span> <?= date('d/m/Y', strtotime($logro['fecha_ganado'])) ?>
@@ -183,6 +192,19 @@ $mis_logros = $stmtLogros->fetchAll();
             'label-obtenido': 'Obtenido el:',
             'label-progreso-logro': 'Progreso:',
             'label-bloqueado': 'Aún bloqueado',
+            'reto-error-numero': 'Introduce un número entero válido para tu reto mensual.',
+            'reto-error-rango': 'La meta mensual debe estar entre 1 y 50 libros.',
+            'reto-success-guardado': 'Reto mensual guardado correctamente.',
+            'reto-error-duplicado': 'Ya tienes un reto fijado para este mes.',
+            'reto-error-guardado': 'No se pudo guardar el reto mensual. Inténtalo de nuevo.',
+            'logro-lector-iniciado-nombre': 'Lector Iniciado',
+            'logro-lector-iniciado-desc': 'Has leído tu primer libro en K-Libro',
+            'logro-raton-libreria-nombre': 'Ratón de Biblioteca',
+            'logro-raton-libreria-desc': 'Has leído 5 libros',
+            'logro-devorador-mundos-nombre': 'Devorador de Mundos',
+            'logro-devorador-mundos-desc': 'Has leído 20 libros',
+            'logro-campeon-mensual-nombre': 'Campeón Mensual',
+            'logro-campeon-mensual-desc': '¡Has completado tu reto de lectura del mes!',
         },
         en: {
             'nav-inicio':     'Home',
@@ -205,6 +227,19 @@ $mis_logros = $stmtLogros->fetchAll();
             'label-obtenido': 'Earned on:',
             'label-progreso-logro': 'Progress:',
             'label-bloqueado': 'Still locked',
+            'reto-error-numero': 'Enter a valid integer for your monthly reading goal.',
+            'reto-error-rango': 'The monthly goal must be between 1 and 50 books.',
+            'reto-success-guardado': 'Monthly reading goal saved successfully.',
+            'reto-error-duplicado': 'You already have a reading goal set for this month.',
+            'reto-error-guardado': 'Could not save the reading goal. Try again.',
+            'logro-lector-iniciado-nombre': 'Beginner Reader',
+            'logro-lector-iniciado-desc': 'You have read your first book in K-Libro',
+            'logro-raton-libreria-nombre': 'Library Mouse',
+            'logro-raton-libreria-desc': 'You have read 5 books',
+            'logro-devorador-mundos-nombre': 'World Devourer',
+            'logro-devorador-mundos-desc': 'You have read 20 books',
+            'logro-campeon-mensual-nombre': 'Monthly Champion',
+            'logro-campeon-mensual-desc': 'You have completed your monthly reading challenge!',
         }
     };
 

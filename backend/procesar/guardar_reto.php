@@ -19,7 +19,7 @@ $metaLibrosRaw = trim((string) ($_POST['meta_libros'] ?? ''));
 if ($metaLibrosRaw === '' || !ctype_digit($metaLibrosRaw)) {
     $_SESSION['reto_flash'] = [
         'tipo' => 'error',
-        'mensaje' => 'Introduce un numero entero valido para tu reto mensual.'
+        'clave' => 'reto-error-numero'
     ];
     header('Location: /GitHub/K-Libro/frontend/5_Mi_cuenta/mi_cuenta.php');
     exit;
@@ -30,7 +30,7 @@ $metaLibros = (int) $metaLibrosRaw;
 if ($metaLibros < 1 || $metaLibros > 50) {
     $_SESSION['reto_flash'] = [
         'tipo' => 'error',
-        'mensaje' => 'La meta mensual debe estar entre 1 y 50 libros.'
+        'clave' => 'reto-error-rango'
     ];
     header('Location: /GitHub/K-Libro/frontend/5_Mi_cuenta/mi_cuenta.php');
     exit;
@@ -49,16 +49,14 @@ try {
 
     $_SESSION['reto_flash'] = [
         'tipo' => 'success',
-        'mensaje' => 'Reto mensual guardado correctamente.'
+        'clave' => 'reto-success-guardado'
     ];
 } catch (PDOException $e) {
     $errorDuplicado = isset($e->errorInfo[1]) && (int) $e->errorInfo[1] === 1062;
 
     $_SESSION['reto_flash'] = [
         'tipo' => 'error',
-        'mensaje' => $errorDuplicado
-            ? 'Ya tienes un reto fijado para este mes.'
-            : 'No se pudo guardar el reto mensual. Intentalo de nuevo.'
+        'clave' => $errorDuplicado ? 'reto-error-duplicado' : 'reto-error-guardado'
     ];
 }
 
