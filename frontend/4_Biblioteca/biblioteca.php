@@ -186,17 +186,6 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
             'biblio-leido':      'Leídos:',
             'biblio-vacio':      'Todavía no tienes libros en este apartado.',
             'biblio-modal-editar': '📝 Editar',
-            'error-sesion': 'Sesión no iniciada.',
-            'error-metodo': 'Método no permitido.',
-            'error-libro-id': 'Falta el identificador del libro.',
-            'error-calificacion-numero': 'La calificación debe ser un número entero entre 1 y 5.',
-            'error-calificacion-rango': 'La calificación debe estar entre 1 y 5.',
-            'error-resena-larga': 'La reseña es demasiado larga (máximo 2000 caracteres).',
-            'error-libro-no-encontrado': 'No se encontró el libro en tu biblioteca.',
-            'error-fecha-requerida': 'Debes indicar la fecha de lectura para libros leídos.',
-            'error-fecha-invalida': 'La fecha de lectura no es válida.',
-            'error-fecha-futura': 'La fecha de lectura no puede estar en el futuro.',
-            'error-guardar': 'Error al guardar los detalles. Inténtalo de nuevo.',
         },
         en: {
             'nav-inicio':        'Home',
@@ -230,17 +219,6 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
             'biblio-leido':      'Read:',
             'biblio-modal-editar': '📝 Edit',
             'biblio-vacio':      'You have no books in this section yet.',
-            'error-sesion': 'Session not started.',
-            'error-metodo': 'Method not allowed.',
-            'error-libro-id': 'Book identifier is missing.',
-            'error-calificacion-numero': 'The rating must be an integer between 1 and 5.',
-            'error-calificacion-rango': 'The rating must be between 1 and 5.',
-            'error-resena-larga': 'The review is too long (maximum 2000 characters).',
-            'error-libro-no-encontrado': 'The book was not found in your library.',
-            'error-fecha-requerida': 'You must indicate the read date for read books.',
-            'error-fecha-invalida': 'The read date is invalid.',
-            'error-fecha-futura': 'The read date cannot be in the future.',
-            'error-guardar': 'Error saving details. Try again.',
         }
     }, 'Mi biblioteca | K-Libro', 'My library | K-Libro');
 
@@ -372,8 +350,7 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
 
                 const resultado = await respuesta.json();
                 if (!respuesta.ok || !resultado.ok) {
-                    const mensajeError = resultado.clave ? I18n.t(resultado.clave) : I18n.t('biblio-modal-error');
-                    throw new Error(mensajeError);
+                    throw new Error(resultado.mensaje || 'No se pudieron guardar los detalles');
                 }
 
                 const card = document.querySelector(`.book-card[data-libro-id="${CSS.escape(idLibro)}"]`);
