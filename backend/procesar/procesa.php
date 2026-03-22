@@ -69,7 +69,7 @@ if(isset($_POST['accion'])){
         }
 
         // Buscar usuario por nombre y comprobar contraseña:
-        $stmt = $pdo->prepare("SELECT id, nombre, contrasena FROM usuarios WHERE nombre = ?");
+        $stmt = $pdo->prepare("SELECT id, nombre, contrasena, rol FROM usuarios WHERE nombre = ?");
         if ($stmt) {
             $stmt->execute([$nombre]);
             $res = $stmt->fetchAll();
@@ -79,7 +79,14 @@ if(isset($_POST['accion'])){
                     session_start();
                     $_SESSION['user_id'] = $row['id'];
                     $_SESSION['nombre'] = $row['nombre'];
-                    header('Location: /GitHub/K-Libro/frontend/3_Inicio/inicio.php');
+                    $_SESSION['rol'] = $row['rol'];
+                    
+                    // Si es admin, redirigir al panel de admin
+                    if ($row['rol'] === 'admin') {
+                        header('Location: /GitHub/K-Libro/frontend/7_Admin/panel_admin.php');
+                    } else {
+                        header('Location: /GitHub/K-Libro/frontend/3_Inicio/inicio.php');
+                    }
                     exit;
                 } else {
                     echo "<script>alert('Usuario o contraseña incorrectos.'); window.history.back();</script>";
