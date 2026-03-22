@@ -6,6 +6,9 @@ if (empty($_SESSION['user_id'])) {
 }
 
 include '../../backend/conexionBD.php';
+require_once '../../backend/helpers/biblioteca_schema.php';
+
+asegurarColumnaFechaLectura($pdo);
 
 $cssVersion = @filemtime(__DIR__ . '/css/estilo.css') ?: time();
 
@@ -18,7 +21,7 @@ $librosPorEstado = [
 
 try {
     $stmt = $pdo->prepare(
-        'SELECT b.estado, b.libro_id_openlibrary, b.calificacion, b.review, l.titulo, l.autores, l.portada
+        'SELECT b.estado, b.libro_id_openlibrary, b.fecha_lectura, b.calificacion, b.review, l.titulo, l.autores, l.portada
          FROM biblioteca b
          INNER JOIN (
             SELECT MAX(id) AS id
@@ -61,6 +64,8 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
         $autorLibro = $libro['autores'] ?: 'Autor desconocido';
         $portadaLibro = $libro['portada'] ?: 'https://via.placeholder.com/130x190?text=Sin+portada';
         $idOpenLibrary = (string) ($libro['libro_id_openlibrary'] ?? '');
+        $estadoLibro = (string) ($libro['estado'] ?? '');
+        $fechaLectura = trim((string) ($libro['fecha_lectura'] ?? ''));
         $calificacion = isset($libro['calificacion']) ? (int) $libro['calificacion'] : 0;
         $review = trim((string) ($libro['review'] ?? ''));
 
@@ -73,6 +78,8 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
             . ' data-libro-titulo="' . htmlspecialchars($tituloLibro, ENT_QUOTES, 'UTF-8') . '"'
             . ' data-libro-autor="' . htmlspecialchars($autorLibro, ENT_QUOTES, 'UTF-8') . '"'
             . ' data-libro-portada="' . htmlspecialchars($portadaLibro, ENT_QUOTES, 'UTF-8') . '"'
+            . ' data-libro-estado="' . htmlspecialchars($estadoLibro, ENT_QUOTES, 'UTF-8') . '"'
+            . ' data-libro-fecha-lectura="' . htmlspecialchars($fechaLectura, ENT_QUOTES, 'UTF-8') . '"'
             . ' data-libro-calificacion="' . htmlspecialchars((string) $calificacion, ENT_QUOTES, 'UTF-8') . '"'
             . ' data-libro-review="' . htmlspecialchars($review, ENT_QUOTES, 'UTF-8') . '"'
             . '>';
@@ -162,13 +169,17 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
             'biblio-ver-menos': 'Ver menos',
             'biblio-modal-rating': 'Puntuación',
             'biblio-modal-review': 'Reseña',
+            'biblio-modal-read-date': 'Fecha de lectura',
+            'biblio-modal-read-date-empty': 'Sin fecha registrada',
             'biblio-sin-calificacion': 'Sin puntuar',
             'biblio-sin-resena': 'Sin reseña',
             'biblio-modal-rating-empty': 'Sin puntuar',
             'biblio-modal-review-ph': 'Escribe una reseña o déjala vacía para eliminarla',
+            'biblio-modal-read-date-ph': 'Elige la fecha en que terminaste el libro',
             'biblio-modal-save': 'Guardar cambios',
             'biblio-modal-guardado': 'Detalles guardados correctamente.',
             'biblio-modal-error': 'No se pudieron guardar los detalles.',
+            'biblio-modal-date-error': 'Indica una fecha de lectura válida.',
             'biblio-cerrar': 'Cerrar',
             'biblio-pendiente':  'Pendientes de leer:',
             'biblio-leyendo':    'Leyendo:',
@@ -190,13 +201,17 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
             'biblio-ver-menos': 'Show less',
             'biblio-modal-rating': 'Rating',
             'biblio-modal-review': 'Review',
+            'biblio-modal-read-date': 'Read date',
+            'biblio-modal-read-date-empty': 'No saved date',
             'biblio-sin-calificacion': 'No rating',
             'biblio-sin-resena': 'No review',
             'biblio-modal-rating-empty': 'No rating',
             'biblio-modal-review-ph': 'Write a review or leave it empty to remove it',
+            'biblio-modal-read-date-ph': 'Choose the date when you finished the book',
             'biblio-modal-save': 'Save changes',
             'biblio-modal-guardado': 'Details saved successfully.',
             'biblio-modal-error': 'Could not save details.',
+            'biblio-modal-date-error': 'Enter a valid read date.',
             'biblio-cerrar': 'Close',
             'biblio-pendiente':  'To read:',
             'biblio-leyendo':    'Reading:',
@@ -213,9 +228,13 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
     const modalAutor = document.getElementById('modal-detalles-autor');
     const modalCalificacion = document.getElementById('modal-detalles-calificacion');
     const modalResena = document.getElementById('modal-detalles-resena');
+    const modalFechaLectura = document.getElementById('modal-detalles-fecha-lectura');
+    const modalFechaLecturaBloque = document.getElementById('modal-detalles-fecha-bloque');
     const modalInputId = document.getElementById('modal-detalles-id');
     const modalInputCalificacion = document.getElementById('modal-detalles-input-calificacion');
     const modalInputResena = document.getElementById('modal-detalles-input-resena');
+    const modalInputFechaLectura = document.getElementById('modal-detalles-input-fecha-lectura');
+    const modalInputFechaGrupo = document.getElementById('modal-detalles-input-fecha-grupo');
     const modalForm = document.getElementById('modal-detalles-form');
 
     const abrirModalDetalles = (card) => {
@@ -225,6 +244,8 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
         const titulo = card.getAttribute('data-libro-titulo') || '';
         const autor = card.getAttribute('data-libro-autor') || '';
         const portada = card.getAttribute('data-libro-portada') || '';
+        const estado = card.getAttribute('data-libro-estado') || '';
+        const fechaLectura = card.getAttribute('data-libro-fecha-lectura') || '';
         const calificacionRaw = card.getAttribute('data-libro-calificacion') || '';
         const review = (card.getAttribute('data-libro-review') || '').trim();
 
@@ -236,10 +257,18 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
         modalPortada.alt = `Portada de ${titulo}`;
         modalCalificacion.textContent = calificacion >= 1 && calificacion <= 5 ? `${calificacion}/5` : I18n.t('biblio-sin-calificacion');
         modalResena.textContent = review !== '' ? review : I18n.t('biblio-sin-resena');
+        if (modalFechaLectura) {
+            modalFechaLectura.textContent = fechaLectura !== '' ? fechaLectura.split('-').reverse().join('/') : I18n.t('biblio-modal-read-date-empty');
+        }
+        if (modalFechaLecturaBloque) {
+            modalFechaLecturaBloque.hidden = estado !== 'leido';
+        }
 
         if (modalInputId) modalInputId.value = id;
         if (modalInputCalificacion) modalInputCalificacion.value = calificacion >= 1 && calificacion <= 5 ? String(calificacion) : '';
         if (modalInputResena) modalInputResena.value = review;
+        if (modalInputFechaLectura) modalInputFechaLectura.value = fechaLectura;
+        if (modalInputFechaGrupo) modalInputFechaGrupo.hidden = estado !== 'leido';
 
         cerrarEdicion();
         modal.hidden = false;
@@ -294,12 +323,19 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
 
             const calificacion = modalInputCalificacion ? modalInputCalificacion.value.trim() : '';
             const review = modalInputResena ? modalInputResena.value.trim() : '';
+            const fechaLectura = modalInputFechaLectura ? modalInputFechaLectura.value.trim() : '';
+
+            if (modalInputFechaGrupo && !modalInputFechaGrupo.hidden && fechaLectura === '') {
+                alert(I18n.t('biblio-modal-date-error'));
+                return;
+            }
 
             try {
                 const datos = new URLSearchParams();
                 datos.append('id_openlibrary', idLibro);
                 datos.append('calificacion', calificacion);
                 datos.append('review', review);
+                datos.append('fecha_lectura', fechaLectura);
 
                 const respuesta = await fetch('/GitHub/K-Libro/backend/procesar/actualizar_resena.php', {
                     method: 'POST',
@@ -319,11 +355,15 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
                 if (card) {
                     card.setAttribute('data-libro-calificacion', calificacion);
                     card.setAttribute('data-libro-review', review);
+                    card.setAttribute('data-libro-fecha-lectura', fechaLectura);
                 }
 
                 const calificacionNum = Number.parseInt(calificacion, 10);
                 modalCalificacion.textContent = calificacionNum >= 1 && calificacionNum <= 5 ? `${calificacionNum}/5` : I18n.t('biblio-sin-calificacion');
                 modalResena.textContent = review !== '' ? review : I18n.t('biblio-sin-resena');
+                if (modalFechaLectura && modalInputFechaGrupo && !modalInputFechaGrupo.hidden) {
+                    modalFechaLectura.textContent = fechaLectura !== '' ? fechaLectura.split('-').reverse().join('/') : I18n.t('biblio-modal-read-date-empty');
+                }
 
                 alert(I18n.t('biblio-modal-guardado'));
                 cerrarEdicion();
@@ -372,6 +412,7 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
                     <h2 id="modal-detalles-titulo"></h2>
                     <p id="modal-detalles-autor" class="modal-detalles-autor"></p>
                     <p><strong data-i18n="biblio-modal-rating">Puntuación</strong>: <span id="modal-detalles-calificacion"></span></p>
+                    <p id="modal-detalles-fecha-bloque"><strong data-i18n="biblio-modal-read-date">Fecha de lectura</strong>: <span id="modal-detalles-fecha-lectura"></span></p>
                     <p><strong data-i18n="biblio-modal-review">Reseña</strong>:</p>
                     <p id="modal-detalles-resena" class="modal-detalles-resena"></p>
 
@@ -392,6 +433,11 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
 
                         <label for="modal-detalles-input-resena" class="modal-detalles-label" data-i18n="biblio-modal-review">Reseña</label>
                         <textarea id="modal-detalles-input-resena" class="modal-detalles-input" name="review" rows="4" maxlength="2000" data-i18n-ph="biblio-modal-review-ph" placeholder="Escribe una reseña o déjala vacía para eliminarla"></textarea>
+
+                        <div id="modal-detalles-input-fecha-grupo">
+                            <label for="modal-detalles-input-fecha-lectura" class="modal-detalles-label" data-i18n="biblio-modal-read-date">Fecha de lectura</label>
+                            <input id="modal-detalles-input-fecha-lectura" type="date" class="modal-detalles-input" name="fecha_lectura" max="<?= date('Y-m-d') ?>" data-i18n-ph="biblio-modal-read-date-ph">
+                        </div>
 
                         <button type="submit" class="btn-modal-guardar" data-i18n="biblio-modal-save">Guardar cambios</button>
                     </form>

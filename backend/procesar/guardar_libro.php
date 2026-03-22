@@ -16,12 +16,17 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 include '../conexionBD.php';
+require_once '../helpers/biblioteca_schema.php';
+require_once '../helpers/logros.php';
+
+asegurarColumnaFechaLectura($pdo);
 
 $idOpenLibrary = trim($_POST['id_openlibrary'] ?? '');
 $titulo = trim($_POST['titulo'] ?? '');
 $autor = trim($_POST['autor'] ?? 'Autor desconocido');
 $portada = trim($_POST['portada'] ?? '');
 $estado = trim($_POST['estado'] ?? '');
+$fechaLecturaRaw = trim((string) ($_POST['fecha_lectura'] ?? ''));
 $calificacionRaw = trim((string) ($_POST['calificacion'] ?? ''));
 $review = trim((string) ($_POST['review'] ?? ''));
 
@@ -34,6 +39,34 @@ if ($idOpenLibrary === '' || $titulo === '' || !in_array($estado, $estadosPermit
 }
 
 $calificacion = null;
+$fechaLectura = null;
+
+if ($estado === 'leido') {
+    if ($fechaLecturaRaw === '') {
+        http_response_code(400);
+        echo json_encode(['ok' => false, 'mensaje' => 'Debes indicar cuando leiste el libro']);
+        exit;
+    }
+
+    $fechaLecturaObj = DateTime::createFromFormat('Y-m-d', $fechaLecturaRaw);
+    $fechaValida = $fechaLecturaObj && $fechaLecturaObj->format('Y-m-d') === $fechaLecturaRaw;
+
+    if (!$fechaValida) {
+        http_response_code(400);
+        echo json_encode(['ok' => false, 'mensaje' => 'La fecha de lectura no es valida']);
+        exit;
+    }
+
+    $hoy = new DateTimeImmutable('today');
+    if ($fechaLecturaObj > $hoy) {
+        http_response_code(400);
+        echo json_encode(['ok' => false, 'mensaje' => 'La fecha de lectura no puede estar en el futuro']);
+        exit;
+    }
+
+    $fechaLectura = $fechaLecturaRaw;
+}
+
 if ($estado === 'leido' && $calificacionRaw !== '') {
     if (!ctype_digit($calificacionRaw)) {
         http_response_code(400);
@@ -65,6 +98,18 @@ $usuarioId = (int) $_SESSION['user_id'];
 try {
     $pdo->beginTransaction();
 
+    $mesActual = (int) date('n');
+    $anioActual = (int) date('Y');
+    $stmtRetoAntes = $pdo->prepare(
+        'SELECT conseguido
+         FROM retos_mensuales
+         WHERE usuario_id = ? AND mes = ? AND anio = ?
+         LIMIT 1'
+    );
+    $stmtRetoAntes->execute([$usuarioId, $mesActual, $anioActual]);
+    $retoActualAntes = $stmtRetoAntes->fetch(PDO::FETCH_ASSOC);
+    $conseguidoAntes = (bool) ($retoActualAntes['conseguido'] ?? false);
+
     $stmtColCal = $pdo->query("SHOW COLUMNS FROM biblioteca LIKE 'calificacion'");
     $stmtColReview = $pdo->query("SHOW COLUMNS FROM biblioteca LIKE 'review'");
     $soportaCalificacion = $stmtColCal && $stmtColCal->fetch(PDO::FETCH_ASSOC);
@@ -88,7 +133,7 @@ try {
     ]);
 
     $stmtBuscar = $pdo->prepare(
-        'SELECT id
+        'SELECT id, estado, fecha_lectura
          FROM biblioteca
          WHERE usuario_id = :usuario_id AND libro_id_openlibrary = :libro_id_openlibrary
          ORDER BY id DESC
@@ -101,57 +146,84 @@ try {
     ]);
 
     $registroExistente = $stmtBuscar->fetch(PDO::FETCH_ASSOC);
+    $fechaLecturaAnterior = null;
+    if ($registroExistente && ($registroExistente['estado'] ?? '') === 'leido') {
+        $fechaLecturaAnterior = $registroExistente['fecha_lectura'] ?: null;
+    }
 
     if ($registroExistente) {
         if ($soportaExtras) {
             $stmtActualizar = $pdo->prepare(
                 'UPDATE biblioteca
                  SET estado = :estado,
+                     fecha_lectura = :fecha_lectura,
                      calificacion = :calificacion,
                      review = :review
                  WHERE id = :id'
             );
             $stmtActualizar->execute([
                 ':estado' => $estado,
+                ':fecha_lectura' => $fechaLectura,
                 ':calificacion' => $calificacion,
                 ':review' => $review !== '' ? $review : null,
                 ':id' => (int) $registroExistente['id']
             ]);
         } else {
-            $stmtActualizar = $pdo->prepare('UPDATE biblioteca SET estado = :estado WHERE id = :id');
+            $stmtActualizar = $pdo->prepare('UPDATE biblioteca SET estado = :estado, fecha_lectura = :fecha_lectura WHERE id = :id');
             $stmtActualizar->execute([
                 ':estado' => $estado,
+                ':fecha_lectura' => $fechaLectura,
                 ':id' => (int) $registroExistente['id']
             ]);
         }
     } else {
         if ($soportaExtras) {
             $stmtInsertar = $pdo->prepare(
-                'INSERT INTO biblioteca (usuario_id, libro_id_openlibrary, estado, calificacion, review)
-                 VALUES (:usuario_id, :libro_id_openlibrary, :estado, :calificacion, :review)'
+                'INSERT INTO biblioteca (usuario_id, libro_id_openlibrary, estado, fecha_lectura, calificacion, review)
+                 VALUES (:usuario_id, :libro_id_openlibrary, :estado, :fecha_lectura, :calificacion, :review)'
             );
             $stmtInsertar->execute([
                 ':usuario_id' => $usuarioId,
                 ':libro_id_openlibrary' => $idOpenLibrary,
                 ':estado' => $estado,
+                ':fecha_lectura' => $fechaLectura,
                 ':calificacion' => $calificacion,
                 ':review' => $review !== '' ? $review : null
             ]);
         } else {
             $stmtInsertar = $pdo->prepare(
-                'INSERT INTO biblioteca (usuario_id, libro_id_openlibrary, estado)
-                 VALUES (:usuario_id, :libro_id_openlibrary, :estado)'
+                'INSERT INTO biblioteca (usuario_id, libro_id_openlibrary, estado, fecha_lectura)
+                 VALUES (:usuario_id, :libro_id_openlibrary, :estado, :fecha_lectura)'
             );
             $stmtInsertar->execute([
                 ':usuario_id' => $usuarioId,
                 ':libro_id_openlibrary' => $idOpenLibrary,
-                ':estado' => $estado
+                ':estado' => $estado,
+                ':fecha_lectura' => $fechaLectura
             ]);
         }
     }
 
+    $sincronizacion = sincronizarRetosYLogrosPorCambioLibro(
+        $pdo,
+        $usuarioId,
+        $fechaLecturaAnterior,
+        $estado === 'leido' ? $fechaLectura : null
+    );
+
+    $progresoReto = $sincronizacion['reto_actual'];
+    $retoRecienCompletado = !$conseguidoAntes && (bool) ($progresoReto['conseguido'] ?? false);
+    $nuevosLogros = $sincronizacion['nuevos_logros'];
+
     $pdo->commit();
-    echo json_encode(['ok' => true, 'mensaje' => 'Libro guardado correctamente']);
+    echo json_encode([
+        'ok' => true,
+        'mensaje' => 'Libro guardado correctamente',
+        'reto_recien_completado' => $retoRecienCompletado,
+        'reto_mensaje' => $retoRecienCompletado ? 'Has completado el objetivo.' : null,
+        'reto_progreso' => $progresoReto,
+        'nuevos_logros' => $nuevosLogros
+    ]);
 } catch (Throwable $e) {
     if ($pdo->inTransaction()) {
         $pdo->rollBack();

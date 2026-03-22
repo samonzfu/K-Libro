@@ -55,12 +55,17 @@ $cssVersion = @filemtime(__DIR__ . '/css/estilo.css') ?: time();
             'card-pendiente':  'Quiero leer',
             'card-leyendo':    'Leyendo',
             'card-leido':      'Leído',
+            'card-fecha-lectura': 'Fecha de lectura',
+            'card-fecha-ayuda': 'Solo contará para el reto mensual si la fecha pertenece a este mes.',
             'card-selecciona': 'Selecciona una opción',
             'card-guardar':    '➕ Guardar en mi biblioteca',
             'busca-vacio':     'No se encontraron libros con ese nombre en los registros antiguos.',
             'busca-error-api': 'El grimorio de OpenLibrary no responde. Prueba otra vez.',
             'busca-error-guardar': 'No se pudo guardar el libro. Los astros no están alineados.',
+            'busca-error-fecha': 'Selecciona una fecha de lectura válida para marcarlo como leído.',
+            'busca-error-estado': 'Selecciona un estado antes de guardar el libro.',
             'busca-guardado':  'libro guardado como',
+            'busca-reto-completado': 'Has completado el objetivo.',
             'autor-desconocido': 'Autor desconocido',
         },
         en: {
@@ -74,12 +79,17 @@ $cssVersion = @filemtime(__DIR__ . '/css/estilo.css') ?: time();
             'card-pendiente':  'Want to read',
             'card-leyendo':    'Reading',
             'card-leido':      'Read',
+            'card-fecha-lectura': 'Read date',
+            'card-fecha-ayuda': 'It will only count for the monthly challenge if the date belongs to this month.',
             'card-selecciona': 'Select an option',
             'card-guardar':    '➕ Save to my library',
             'busca-vacio':     'No books found with that name in the ancient records.',
             'busca-error-api': 'The OpenLibrary grimoire is not responding. Try again.',
             'busca-error-guardar': 'Could not save the book. The stars are not aligned.',
+            'busca-error-fecha': 'Select a valid read date before marking it as read.',
+            'busca-error-estado': 'Select a status before saving the book.',
             'busca-guardado':  'book saved as',
+            'busca-reto-completado': 'You have completed the goal.',
             'autor-desconocido': 'Unknown author',
         }
     };
@@ -134,6 +144,7 @@ $cssVersion = @filemtime(__DIR__ . '/css/estilo.css') ?: time();
         // Función para dibujar el HTML de cada libro
         function renderizarLibros(libros) {
             const contenedor = document.getElementById('contenedorResultados');
+            const fechaHoy = new Date().toISOString().split('T')[0];
 
             // Nos quedamos solo con los 12 primeros
             const primerosResultados = libros.slice(0, 12);
@@ -155,9 +166,9 @@ $cssVersion = @filemtime(__DIR__ . '/css/estilo.css') ?: time();
                     : '../../assets/img/default_book.png'; // <-- Ruta ajustada al estilo de tu proyecto
 
                 const idSeguro = encodeURIComponent(libro.key || '');
-                const tituloSeguro = encodeURIComponent(libro.title || 'Sin título');
-                const autorSeguro = encodeURIComponent(autor);
-                const portadaSegura = encodeURIComponent(urlPortada);
+                const tituloSeguro = libro.title || 'Sin título';
+                const autorSeguro = autor;
+                const portadaSegura = urlPortada;
 
                 // Tarjeta HTML adaptada a las clases de tu CSS (Magia Oscura)
                 htmlFinal += `
@@ -172,8 +183,20 @@ $cssVersion = @filemtime(__DIR__ . '/css/estilo.css') ?: time();
                             <option value="leyendo">${t('card-leyendo')}</option>
                             <option value="leido">${t('card-leido')}</option>
                         </select>
+
+                        <div id="fecha-lectura-wrap-${idSeguro}" class="campos-leido" hidden>
+                            <label for="fecha-lectura-${idSeguro}" class="campo-label">${t('card-fecha-lectura')}</label>
+                            <input type="date" id="fecha-lectura-${idSeguro}" class="input-fecha-lectura" max="${fechaHoy}" value="${fechaHoy}">
+                            <p class="campo-ayuda">${t('card-fecha-ayuda')}</p>
+                        </div>
                         
-                        <button class="btn-guardar" onclick="guardarLibro('${idSeguro}', '${tituloSeguro}', '${autorSeguro}', '${portadaSegura}')">
+                        <button
+                            class="btn-guardar"
+                            data-id-openlibrary="${idSeguro}"
+                            data-titulo="${encodeURIComponent(tituloSeguro)}"
+                            data-autor="${encodeURIComponent(autorSeguro)}"
+                            data-portada="${encodeURIComponent(portadaSegura)}"
+                        >
                             ${t('card-guardar')}
                         </button>
                     </div>
@@ -181,6 +204,34 @@ $cssVersion = @filemtime(__DIR__ . '/css/estilo.css') ?: time();
             });
 
             contenedor.innerHTML = htmlFinal;
+
+            contenedor.querySelectorAll('.select-estado').forEach((select) => {
+                select.addEventListener('change', () => {
+                    const idSeguro = select.id.replace('estado-', '');
+                    const campoFecha = document.getElementById(`fecha-lectura-wrap-${idSeguro}`);
+                    const inputFecha = document.getElementById(`fecha-lectura-${idSeguro}`);
+
+                    if (!campoFecha) return;
+
+                    const mostrarFecha = select.value === 'leido';
+                    campoFecha.hidden = !mostrarFecha;
+
+                    if (!mostrarFecha && inputFecha) {
+                        inputFecha.value = inputFecha.max || '';
+                    }
+                });
+            });
+
+            contenedor.querySelectorAll('.btn-guardar').forEach((button) => {
+                button.addEventListener('click', () => {
+                    guardarLibro(
+                        button.dataset.idOpenlibrary || '',
+                        button.dataset.titulo || '',
+                        button.dataset.autor || '',
+                        button.dataset.portada || ''
+                    );
+                });
+            });
         }
 
         async function guardarLibro(idOpenLibraryCod, tituloCod, autorCod, portadaCod) {
@@ -190,7 +241,19 @@ $cssVersion = @filemtime(__DIR__ . '/css/estilo.css') ?: time();
             const portada = decodeURIComponent(portadaCod);
 
             const selectEstado = document.getElementById(`estado-${idOpenLibraryCod}`);
-            const estado = (selectEstado && selectEstado.value) ? selectEstado.value : 'pendiente';
+            const estado = (selectEstado && selectEstado.value) ? selectEstado.value : '';
+            const inputFechaLectura = document.getElementById(`fecha-lectura-${idOpenLibraryCod}`);
+            const fechaLectura = inputFechaLectura ? inputFechaLectura.value.trim() : '';
+
+            if (estado === '') {
+                alert(t('busca-error-estado'));
+                return;
+            }
+
+            if (estado === 'leido' && fechaLectura === '') {
+                alert(t('busca-error-fecha'));
+                return;
+            }
 
             try {
                 const datos = new URLSearchParams();
@@ -199,6 +262,7 @@ $cssVersion = @filemtime(__DIR__ . '/css/estilo.css') ?: time();
                 datos.append('autor', autor);
                 datos.append('portada', portada);
                 datos.append('estado', estado);
+                datos.append('fecha_lectura', fechaLectura);
 
                 const respuesta = await fetch('/GitHub/K-Libro/backend/procesar/guardar_libro.php', {
                     method: 'POST',
@@ -208,16 +272,29 @@ $cssVersion = @filemtime(__DIR__ . '/css/estilo.css') ?: time();
                     body: datos.toString()
                 });
 
-                const resultado = await respuesta.json();
+                const textoRespuesta = await respuesta.text();
+                let resultado;
+
+                try {
+                    resultado = JSON.parse(textoRespuesta);
+                } catch (errorParseo) {
+                    throw new Error(textoRespuesta || t('busca-error-guardar'));
+                }
 
                 if (!respuesta.ok || !resultado.ok) {
                     throw new Error(resultado.mensaje || 'No se pudo guardar el libro');
                 }
 
-                alert(`¡Magia realizada! "${titulo}" ${t('busca-guardado')} "${estado}".`);
+                let mensaje = `¡Magia realizada! "${titulo}" ${t('busca-guardado')} "${estado}".`;
+
+                if (resultado.reto_recien_completado) {
+                    mensaje += ` ${resultado.reto_mensaje || t('busca-reto-completado')}`;
+                }
+
+                alert(mensaje);
             } catch (error) {
                 console.error('Error al guardar libro:', error);
-                alert(t('busca-error-guardar'));
+                alert(error.message || t('busca-error-guardar'));
             }
         }
     </script>

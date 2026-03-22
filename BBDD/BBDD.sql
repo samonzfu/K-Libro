@@ -38,10 +38,11 @@ CREATE TABLE biblioteca (
     libro_id_openlibrary VARCHAR(100) NOT NULL, 
     
     estado ENUM('pendiente', 'leyendo', 'leido') NOT NULL,
+    fecha_lectura DATE NULL,
     calificacion TINYINT CHECK (calificacion BETWEEN 1 AND 5),
     review TEXT NULL,
     
-    -- Fecha automática al actualizar (clave para los retos mensuales)
+    -- Fecha automática al registrar o editar el elemento en biblioteca
     fecha_accion DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,

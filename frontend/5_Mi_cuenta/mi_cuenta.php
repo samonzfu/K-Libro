@@ -10,30 +10,57 @@ if (empty($_SESSION['user_id'])) {
 
 // Ajustamos la ruta para llegar a la carpeta backend según tu estructura
 require '../../backend/conexionBD.php'; 
+require_once '../../backend/helpers/biblioteca_schema.php';
+require_once '../../backend/helpers/logros.php';
+
+asegurarColumnaFechaLectura($pdo);
 
 $user_id = $_SESSION['user_id'];
+$retoFlash = $_SESSION['reto_flash'] ?? null;
+unset($_SESSION['reto_flash']);
 
 // 2. OBTENER DATOS DEL USUARIO
 $stmtUsuario = $pdo->prepare("SELECT nombre, email, avatar, fecha_registro FROM usuarios WHERE id = ?");
 $stmtUsuario->execute([$user_id]);
 $usuario = $stmtUsuario->fetch();
 
-// 3. OBTENER LOGROS DEL USUARIO (Usando JOIN)
-$sqlLogros = "SELECT l.nombre, l.descripcion, l.icono, ul.fecha_ganado 
-              FROM logros l 
-              JOIN usuario_logros ul ON l.id = ul.logro_id 
-              WHERE ul.usuario_id = ? 
-              ORDER BY ul.fecha_ganado DESC";
-$stmtLogros = $pdo->prepare($sqlLogros);
-$stmtLogros->execute([$user_id]);
-$mis_logros = $stmtLogros->fetchAll();
-
-// 4. OBTENER RETO DEL MES ACTUAL
+// 3. OBTENER RETO DEL MES ACTUAL
 $mesActual = date('n');
 $anioActual = date('Y');
 $stmtReto = $pdo->prepare("SELECT meta_libros, conseguido FROM retos_mensuales WHERE usuario_id = ? AND mes = ? AND anio = ?");
 $stmtReto->execute([$user_id, $mesActual, $anioActual]);
 $reto = $stmtReto->fetch();
+
+$librosLeidosMes = 0;
+$progresoReto = 0;
+
+if ($reto) {
+    $resumenReto = recalcularRetoMensual($pdo, (int) $user_id, (int) $mesActual, (int) $anioActual);
+    if ($resumenReto) {
+        $librosLeidosMes = (int) $resumenReto['libros_leidos'];
+        $progresoReto = (int) $resumenReto['porcentaje'];
+        $reto['meta_libros'] = (int) $resumenReto['meta_libros'];
+        $reto['conseguido'] = (int) $resumenReto['conseguido'];
+    }
+}
+
+sincronizarLogrosUsuario($pdo, (int) $user_id);
+
+// 4. OBTENER LOGROS DEL USUARIO (Catálogo completo + desbloqueados)
+$totalLibrosLeidos = contarLibrosLeidosTotales($pdo, (int) $user_id);
+$sqlLogros = "SELECT l.nombre, l.descripcion, l.icono, l.criterio, ul.fecha_ganado
+                            FROM logros l
+                            INNER JOIN (
+                                SELECT MIN(id) AS id
+                                FROM logros
+                                GROUP BY nombre
+                            ) canon ON canon.id = l.id
+                            LEFT JOIN usuario_logros ul
+                                ON l.id = ul.logro_id AND ul.usuario_id = ?
+                            ORDER BY ul.fecha_ganado IS NULL ASC, ul.fecha_ganado DESC, l.criterio ASC, l.id ASC";
+$stmtLogros = $pdo->prepare($sqlLogros);
+$stmtLogros->execute([$user_id]);
+$mis_logros = $stmtLogros->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -66,40 +93,69 @@ $reto = $stmtReto->fetch();
             </div>
         </div>
 
+        <?php if ($retoFlash): ?>
+            <div class="flash-message flash-<?= htmlspecialchars($retoFlash['tipo']) ?>">
+                <?= htmlspecialchars($retoFlash['mensaje']) ?>
+            </div>
+        <?php endif; ?>
+
         <h2 id="reto-titulo" data-mes="<?= date('n') ?>" data-anio="<?= date('Y') ?>">Reto de Lectura (<?= date('F Y') ?>)</h2>
         <div class="reto-card">
             <?php if ($reto): ?>
                 <p><span data-i18n="reto-objetivo">Tu objetivo este mes es leer</span> <strong><?= $reto['meta_libros'] ?></strong> <span data-i18n="reto-libros">libros.</span></p>
+                <p class="reto-progress-text"><span data-i18n="reto-progreso">Progreso actual:</span> <strong><?= $librosLeidosMes ?>/<?= (int) $reto['meta_libros'] ?></strong> <span data-i18n="reto-progreso-libros">libros leídos este mes.</span></p>
+                <div class="reto-progress" aria-label="Progreso del reto mensual">
+                    <div class="reto-progress-bar" style="width: <?= $progresoReto ?>%;"></div>
+                </div>
+                <p class="reto-progress-percent"><?= $progresoReto ?>%</p>
                 <?php if ($reto['conseguido']): ?>
-                    <p style="color: #4CAF50; font-weight: bold;" data-i18n="reto-conseguido">¡Misión Cumplida! Has ganado el favor de los dioses literarios.</p>
+                    <p class="reto-completado" data-i18n="reto-conseguido">Has completado el objetivo.</p>
                 <?php else: ?>
                     <p data-i18n="reto-pendiente">Sigue leyendo, aún estás a tiempo de completarlo.</p>
                 <?php endif; ?>
             <?php else: ?>
                 <p data-i18n="reto-vacio">Aún no has fijado tu destino para este mes.</p>
-                <button style="padding: 10px; background: var(--color-dorado); border: none; cursor: pointer;" data-i18n="btn-nuevo-reto">Fijar Nuevo Reto</button>
+                <form action="../../backend/procesar/guardar_reto.php" method="POST" class="reto-form">
+                    <label for="meta_libros" class="reto-form-label" data-i18n="label-meta-libros">¿Cuántos libros quieres leer este mes?</label>
+                    <div class="reto-input-group">
+                        <input type="number" id="meta_libros" name="meta_libros" class="reto-input" min="1" max="50" step="1" value="1" required>
+                        <button type="submit" data-i18n="btn-nuevo-reto">Fijar Nuevo Reto</button>
+                    </div>
+                    <p class="reto-hint" data-i18n="reto-hint">Elige una meta entre 1 y 50 libros para este mes.</p>
+                </form>
             <?php endif; ?>
         </div>
 
         <h2 data-i18n="section-logros">Logros</h2>
-        <?php if (empty($mis_logros)): ?>
-            <div class="empty-state" data-i18n="logros-vacio">Aún no tienes ningún logro. Sigue leyendo para desbloquearlas.</div>
-        <?php else: ?>
-            <div class="logros-grid">
-                <?php foreach ($mis_logros as $logro): ?>
-                    <div class="logro-card">
-                        <div class="logro-icono">🏆</div> 
-                        <div class="logro-info">
-                            <h3><?= htmlspecialchars($logro['nombre']) ?></h3>
-                            <p><?= htmlspecialchars($logro['descripcion']) ?></p>
-                            <p style="font-size: 0.7rem; margin-top: 5px; color: var(--color-dorado);">
+        <div class="logros-grid">
+            <?php foreach ($mis_logros as $logro): ?>
+                <?php
+                $desbloqueado = !empty($logro['fecha_ganado']);
+                $esLogroLectura = (int) $logro['criterio'] > 0;
+                $progresoLogro = $esLogroLectura
+                    ? min($totalLibrosLeidos, (int) $logro['criterio']) . '/' . (int) $logro['criterio']
+                    : null;
+                ?>
+                <div class="logro-card<?= $desbloqueado ? '' : ' logro-card-lock' ?>">
+                    <div class="logro-icono"><?= $desbloqueado ? '🏆' : '🔒' ?></div>
+                    <div class="logro-info">
+                        <h3><?= htmlspecialchars($logro['nombre']) ?></h3>
+                        <p><?= htmlspecialchars($logro['descripcion']) ?></p>
+                        <?php if ($desbloqueado): ?>
+                            <p class="logro-meta">
                                 <span data-i18n="label-obtenido">Obtenido el:</span> <?= date('d/m/Y', strtotime($logro['fecha_ganado'])) ?>
                             </p>
-                        </div>
+                        <?php elseif ($esLogroLectura): ?>
+                            <p class="logro-meta">
+                                <span data-i18n="label-progreso-logro">Progreso:</span> <?= htmlspecialchars($progresoLogro) ?>
+                            </p>
+                        <?php else: ?>
+                            <p class="logro-meta" data-i18n="label-bloqueado">Aún bloqueado</p>
+                        <?php endif; ?>
                     </div>
-                <?php endforeach; ?>
-            </div>
-        <?php endif; ?>
+                </div>
+            <?php endforeach; ?>
+        </div>
 
     </div>
 
@@ -115,13 +171,18 @@ $reto = $stmtReto->fetch();
             'label-miembro':  '⏳ Miembro desde:',
             'reto-objetivo':  'Tu objetivo este mes es leer',
             'reto-libros':    'libros.',
-            'reto-conseguido':'¡Misión Cumplida! Has ganado el favor de los dioses literarios.',
+            'reto-progreso':  'Progreso actual:',
+            'reto-progreso-libros': 'libros leídos este mes.',
+            'reto-conseguido':'Has completado el objetivo.',
             'reto-pendiente': 'Sigue leyendo, aún estás a tiempo de completarlo.',
             'reto-vacio':     'Aún no has fijado tu destino para este mes.',
             'btn-nuevo-reto': 'Fijar Nuevo Reto',
+            'label-meta-libros': '¿Cuántos libros quieres leer este mes?',
+            'reto-hint':      'Elige una meta entre 1 y 50 libros para este mes.',
             'section-logros': 'Logros',
-            'logros-vacio':   'Aún no tienes ningún logro. Sigue leyendo para desbloquearlas.',
             'label-obtenido': 'Obtenido el:',
+            'label-progreso-logro': 'Progreso:',
+            'label-bloqueado': 'Aún bloqueado',
         },
         en: {
             'nav-inicio':     'Home',
@@ -132,13 +193,18 @@ $reto = $stmtReto->fetch();
             'label-miembro':  '⏳ Member since:',
             'reto-objetivo':  'Your goal this month is to read',
             'reto-libros':    'books.',
-            'reto-conseguido':'Mission Complete! You have earned the favor of the literary gods.',
+            'reto-progreso':  'Current progress:',
+            'reto-progreso-libros': 'books read this month.',
+            'reto-conseguido':'You have completed the goal.',
             'reto-pendiente': 'Keep reading, you still have time to complete it.',
             'reto-vacio':     "You haven't set your goal for this month yet.",
             'btn-nuevo-reto': 'Set New Goal',
+            'label-meta-libros': 'How many books do you want to read this month?',
+            'reto-hint':      'Choose a goal between 1 and 50 books for this month.',
             'section-logros': 'Achievements',
-            'logros-vacio':   "You don't have any achievements yet. Keep reading to unlock them.",
             'label-obtenido': 'Earned on:',
+            'label-progreso-logro': 'Progress:',
+            'label-bloqueado': 'Still locked',
         }
     };
 
