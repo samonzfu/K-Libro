@@ -8,8 +8,7 @@ session_start();   // si hace falta
 // Conexión a la BBDD.
 include '../conexionBD.php';
 // Incluir función de validación de contraseña
-include '../Validadores/validar_contrasena.php';
-
+include '../validadores/validar_contrasena.php';
 // VERIFICAR DATOS RECIBIDOS:
 if(isset($_POST['accion'])){
 

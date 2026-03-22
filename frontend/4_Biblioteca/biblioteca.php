@@ -129,7 +129,7 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
         <nav>
             <a href="../3_Inicio/inicio.php" data-i18n="nav-inicio">Inicio</a> |
             <a href="../5_Mi_cuenta/mi_cuenta.php" data-i18n="nav-cuenta">Mi cuenta</a> |
-            <a href="../6_buscador/buscador.php" data-i18n="nav-buscador">Buscador</a>
+            <a href="../6_Buscador/buscador.php" data-i18n="nav-buscador">Buscador</a>
             <button id="btn-lang" class="btn-lang">🌐 English</button>
         </nav>
 

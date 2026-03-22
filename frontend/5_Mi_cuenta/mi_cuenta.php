@@ -77,9 +77,9 @@ $mis_logros = $stmtLogros->fetchAll();
     <div class="container">
         
         <nav>
-            <a href="../3_Inicio/inicio.php" data-i18n="nav-inicio">IInicio</a> |
+            <a href="../3_Inicio/inicio.php" data-i18n="nav-inicio">Inicio</a> |
             <a href="../4_Biblioteca/biblioteca.php" data-i18n="nav-biblioteca">Biblioteca</a> |
-            <a href="../6_buscador/buscador.php" data-i18n="nav-buscador">Buscador</a>
+            <a href="../6_Buscador/buscador.php" data-i18n="nav-buscador">Buscador</a>
             <button id="btn-lang" class="btn-lang">🌐 English</button>
         </nav>
 

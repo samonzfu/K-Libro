@@ -18,7 +18,7 @@ if (empty($_SESSION['user_id'])) {
     <nav>
         <a href="../4_Biblioteca/biblioteca.php" data-i18n="nav-biblioteca">Biblioteca</a> |
         <a href="../5_Mi_cuenta/mi_cuenta.php" data-i18n="nav-cuenta">Mi cuenta</a> |
-        <a href="../6_buscador/buscador.php" data-i18n="nav-buscador">Buscador</a>
+        <a href="../6_Buscador/buscador.php" data-i18n="nav-buscador">Buscador</a>
         <?php if (!empty($_SESSION['rol']) && $_SESSION['rol'] === 'admin'): ?>
             | <a href="../7_Admin/panel_admin.php" style="color: #e74c3c; font-weight: bold;">Panel Admin</a>
         <?php endif; ?>

@@ -1,4 +1,5 @@
--- CREAR BD
+-- 0. CREAR BD
+DROP DATABASE IF EXISTS k_libro;
 CREATE DATABASE k_libro CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 USE k_libro;
@@ -13,7 +14,7 @@ CREATE TABLE usuarios (
     avatar VARCHAR(255) DEFAULT 'default.png',
     rol ENUM('user', 'admin') DEFAULT 'user',
     fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP
-);
+) ENGINE=InnoDB;
 
 
 -- 2. TABLA LIBROS (Adaptada a Open Library)
@@ -25,7 +26,7 @@ CREATE TABLE libros (
     portada VARCHAR(255), 
     descripcion TEXT,
     fecha_publicacion VARCHAR(50)
-);
+) ENGINE=InnoDB;
 
 
 -- 3. TABLA BIBLIOTECA
@@ -39,15 +40,22 @@ CREATE TABLE biblioteca (
     
     estado ENUM('pendiente', 'leyendo', 'leido') NOT NULL,
     fecha_lectura DATE NULL,
-    calificacion TINYINT CHECK (calificacion BETWEEN 1 AND 5),
+    calificacion TINYINT NULL,
     review TEXT NULL,
     
     -- Fecha automática al registrar o editar el elemento en biblioteca
     fecha_accion DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CHECK (calificacion IS NULL OR calificacion BETWEEN 1 AND 5),
+    CHECK ((estado <> 'leido' AND fecha_lectura IS NULL) OR (estado = 'leido' AND fecha_lectura IS NOT NULL)),
+
+    INDEX idx_biblioteca_usuario_libro_id (usuario_id, libro_id_openlibrary, id),
+    INDEX idx_biblioteca_usuario_estado (usuario_id, estado),
+    INDEX idx_biblioteca_usuario_fecha_lectura (usuario_id, fecha_lectura),
     
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
-    FOREIGN KEY (libro_id_openlibrary) REFERENCES libros(id_openlibrary)
-);
+    FOREIGN KEY (libro_id_openlibrary) REFERENCES libros(id_openlibrary) ON DELETE CASCADE
+) ENGINE=InnoDB;
 
 
 -- 4. TABLA LOGROS
@@ -57,8 +65,10 @@ CREATE TABLE logros (
     nombre VARCHAR(50) NOT NULL,
     descripcion VARCHAR(255),
     icono VARCHAR(255) NOT NULL,
-    criterio INT DEFAULT 0
-);
+    criterio INT DEFAULT 0,
+
+    UNIQUE KEY uk_logros_nombre (nombre)
+) ENGINE=InnoDB;
 
 
 -- 5. TABLA USUARIO_LOGROS
@@ -70,10 +80,11 @@ CREATE TABLE usuario_logros (
     fecha_ganado DATETIME DEFAULT CURRENT_TIMESTAMP,
     
     UNIQUE(usuario_id, logro_id),
+    INDEX idx_usuario_logros_usuario_fecha (usuario_id, fecha_ganado),
     
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
     FOREIGN KEY (logro_id) REFERENCES logros(id) ON DELETE CASCADE
-);
+) ENGINE=InnoDB;
 
 
 -- 6. TABLA RETOS MENSUALES
@@ -85,11 +96,14 @@ CREATE TABLE retos_mensuales (
     anio SMALLINT NOT NULL,
     meta_libros INT NOT NULL DEFAULT 1,
     conseguido BOOLEAN DEFAULT FALSE,
+
+    CHECK (meta_libros BETWEEN 1 AND 50),
     
     UNIQUE(usuario_id, mes, anio),
+    INDEX idx_retos_usuario_conseguido (usuario_id, conseguido),
     
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
-);
+) ENGINE=InnoDB;
 
 
 -- 7. SEEDERS (Datos de prueba)
@@ -98,23 +112,33 @@ INSERT INTO logros (nombre, descripcion, icono, criterio) VALUES
 ('Lector Iniciado', 'Has leído tu primer libro en K-Libro', 'novato.png', 1),
 ('Ratón de Biblioteca', 'Has leído 5 libros', 'intermedio.png', 5),
 ('Devorador de Mundos', 'Has leído 20 libros', 'experto.png', 20),
-('Campeón Mensual', '¡Has completado tu reto de lectura del mes!', 'trofeo_mensual.png', 0);
+('Campeón Mensual', '¡Has completado tu reto de lectura del mes!', 'trofeo_mensual.png', 0)
+ON DUPLICATE KEY UPDATE
+    descripcion = VALUES(descripcion),
+    icono = VALUES(icono),
+    criterio = VALUES(criterio);
 
 -- Usuario Admin de prueba
--- Contraseña '1234' hasheada para que puedas entrar directo a probar
--- El hash es: $2y$10$buM/.k/Nl5u8.gG8E.j/..wN.M/n.M/n.M/n.M/n.M/n.M/n.M/n
--- (Nota: Para este ejemplo, asegúrate de crear tu propio hash en PHP o usar un registro nuevo)
+-- Email: admin@klibro.com
+-- Password inicial: Admin123$
 INSERT INTO usuarios (nombre, email, contrasena, rol) VALUES 
-('Admin K-Libro', 'admin@klibro.com', '$2y$10$eE.Y.Z.P.H.P.H.P.H.P.H.P.H.P.H.P.H.P.H.P.H.P.H.P.H.P.H.', 'admin');
+('Admin K-Libro', 'admin@klibro.com', '$2y$10$rl8UXXxCgcgqSJcdl1MgnORVm4eYvkzUDvlBlXpUi74tulUEaFIeK', 'admin')
+ON DUPLICATE KEY UPDATE
+    nombre = VALUES(nombre),
+    contrasena = VALUES(contrasena),
+    rol = 'admin';
 
 
 -- CREAR USUARIO:
-CREATE USER 
-'k_libro'@'localhost' 
-IDENTIFIED  BY 'k_libro123$';
+CREATE USER IF NOT EXISTS 
+    'k_libro'@'localhost' 
+IDENTIFIED BY 'k_libro123$';
 
 GRANT USAGE ON *.* TO 'k_libro'@'localhost';
 
+
+ALTER USER 'k_libro'@'localhost'
+    IDENTIFIED BY 'k_libro123$';
 
 ALTER USER 'k_libro'@'localhost' 
 REQUIRE NONE 
@@ -123,9 +147,9 @@ MAX_CONNECTIONS_PER_HOUR 0
 MAX_UPDATES_PER_HOUR 0 
 MAX_USER_CONNECTIONS 0;
 
--- dale acceso a la base de datos retroplay
+-- Dale acceso a la base de datos k_libro
 GRANT ALL PRIVILEGES ON k_libro.* 
 TO 'k_libro'@'localhost';
 
--- recarga la tabla de privilegios
+-- Recarga la tabla de privilegios
 FLUSH PRIVILEGES;

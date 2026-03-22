@@ -10,7 +10,7 @@ K-Libro/
 │   ├── procesar/
 │   │   └── procesa.php                  # Procesador de formularios (registro, login)
 │   ├── noticias.php                     # Función que devuelve noticias/recomendaciones
-│   └── Validadores/
+│   └── validadores/
 │       └── validar_contrasena.php       # Validación de contraseñas
 │
 ├── frontend/                             # Interfaz de usuario (HTML, CSS)
@@ -39,17 +39,11 @@ K-Libro/
 │   │   └── css/
 │   │       └── estilo.css               # Estilos de mi cuenta
 │   │
-│   └── 6_buscador/                      # Buscador de libros
+│   └── 6_Buscador/                      # Buscador de libros
 │       └── buscador.php                 # Motor de búsqueda
 │
 ├── BBDD/                                 # Base de datos
 │   └── BBDD.sql                         # Script de creación y datos iniciales
-│
-├── ideas front/                          # Prototipos y diseños antiguos (no activo)
-│   ├── registro.html
-│   ├── login.html
-│   ├── inicio.html
-│   └── biblioteca.html
 │
 └── ESTRUCTURA_PROYECTO.md                # Este archivo
 
@@ -79,7 +73,7 @@ Completa formulario y envía POST
          ↓
 backend/procesar/procesa.php recibe acción='registro'
          ↓
-Valida contraseña (backend/Validadores/validar_contrasena.php)
+Valida contraseña (backend/validadores/validar_contrasena.php)
          ↓
 Verifica email único en BBDD
          ↓
@@ -106,7 +100,7 @@ Verifica email único en BBDD
 | Inicio | `/frontend/3_Inicio/inicio.php` | Dashboard principal (requiere sesión) |
 | Biblioteca | `/frontend/4_Biblioteca/biblioteca.php` | Catálogo de libros |
 | Mi Cuenta | `/frontend/5_Mi_cuenta/mi_cuenta.php` | Perfil del usuario |
-| Buscador | `/frontend/6_buscador/buscador.php` | Búsqueda de libros |
+| Buscador | `/frontend/6_Buscador/buscador.php` | Búsqueda de libros |
 
 ## 🔐 Seguridad Implementada
 
@@ -124,7 +118,7 @@ Verifica email único en BBDD
 | `backend/conexionBD.php` | Conexión a MySQL | Manejo de BBDD |
 | `backend/procesar/procesa.php` | Servidor | Lógica de registro y login |
 | `backend/noticias.php` | Contenido | Devuelve arreglo de noticias/recomendaciones |
-| `backend/Validadores/validar_contrasena.php` | Validación | Reglas de contraseña |
+| `backend/validadores/validar_contrasena.php` | Validación | Reglas de contraseña |
 | `frontend/*/estilo.css` | Estilos | Diseño visual |
 | `BBDD/BBDD.sql` | SQL script | Estructura de datos |
 
