@@ -132,13 +132,13 @@ ON DUPLICATE KEY UPDATE
 -- CREAR USUARIO:
 CREATE USER IF NOT EXISTS 
     'k_libro'@'localhost' 
-IDENTIFIED BY 'k_libro123$';
+IDENTIFIED BY 'KLibro_2026$Clase!';
 
 GRANT USAGE ON *.* TO 'k_libro'@'localhost';
 
 
 ALTER USER 'k_libro'@'localhost'
-    IDENTIFIED BY 'k_libro123$';
+    IDENTIFIED BY 'KLibro_2026$Clase!';
 
 ALTER USER 'k_libro'@'localhost' 
 REQUIRE NONE 

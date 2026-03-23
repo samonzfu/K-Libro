@@ -3,40 +3,37 @@
 session_start();
 
 if (empty($_SESSION['user_id'])) {
-    header('Location: /GitHub/K-Libro/frontend/2_Login/login.php');
+    header('Location: ../../frontend/2_Login/login.php');
     exit;
 }
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: /GitHub/K-Libro/frontend/4_Biblioteca/biblioteca.php');
+if (empty($_POST['libro_id'])) {
+    header('Location: ../../frontend/4_Biblioteca/biblioteca.php');
     exit;
 }
 
 include '../conexionBD.php';
 
-$idOpenLibrary = trim((string) ($_POST['id_openlibrary'] ?? ''));
-if ($idOpenLibrary === '') {
-    header('Location: /GitHub/K-Libro/frontend/4_Biblioteca/biblioteca.php');
+$libro_id = $_POST['libro_id'];
+$usuario_id = $_SESSION['user_id'];
+
+// Verificar que el libro existe en la biblioteca del usuario
+$stmt = $pdo->prepare("
+    SELECT b.id FROM biblioteca b
+    WHERE b.libro_id_openlibrary = ? AND b.usuario_id = ?
+");
+$stmt->execute([$libro_id, $usuario_id]);
+
+if (!$stmt->fetch()) {
+    header('Location: ../../frontend/4_Biblioteca/biblioteca.php');
     exit;
 }
 
-$usuarioId = (int) $_SESSION['user_id'];
+// Eliminar el libro de la biblioteca del usuario
+$stmt = $pdo->prepare("DELETE FROM biblioteca WHERE libro_id_openlibrary = ? AND usuario_id = ?");
+$stmt->execute([$libro_id, $usuario_id]);
 
-try {
-    $stmt = $pdo->prepare(
-        'DELETE FROM biblioteca
-         WHERE usuario_id = :usuario_id
-           AND libro_id_openlibrary = :libro_id_openlibrary'
-    );
-
-    $stmt->execute([
-        ':usuario_id' => $usuarioId,
-        ':libro_id_openlibrary' => $idOpenLibrary
-    ]);
-} catch (Throwable $e) {
-    header('Location: /GitHub/K-Libro/frontend/4_Biblioteca/biblioteca.php');
-    exit;
-}
-
-header('Location: /GitHub/K-Libro/frontend/4_Biblioteca/biblioteca.php');
+header('Location: ../../frontend/4_Biblioteca/biblioteca.php');
 exit;
+
+?>

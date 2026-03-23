@@ -3,12 +3,12 @@
 session_start();
 
 if (empty($_SESSION['user_id'])) {
-    header('Location: /GitHub/K-Libro/frontend/2_Login/login.php');
+    header('Location: ../../frontend/2_Login/login.php');
     exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: /GitHub/K-Libro/frontend/5_Mi_cuenta/mi_cuenta.php');
+    header('Location: ../../frontend/5_Mi_cuenta/mi_cuenta.php');
     exit;
 }
 
@@ -21,7 +21,7 @@ if ($metaLibrosRaw === '' || !ctype_digit($metaLibrosRaw)) {
         'tipo' => 'error',
         'clave' => 'reto-error-numero'
     ];
-    header('Location: /GitHub/K-Libro/frontend/5_Mi_cuenta/mi_cuenta.php');
+    header('Location: ../../frontend/5_Mi_cuenta/mi_cuenta.php');
     exit;
 }
 
@@ -32,7 +32,7 @@ if ($metaLibros < 1 || $metaLibros > 50) {
         'tipo' => 'error',
         'clave' => 'reto-error-rango'
     ];
-    header('Location: /GitHub/K-Libro/frontend/5_Mi_cuenta/mi_cuenta.php');
+    header('Location: ../../frontend/5_Mi_cuenta/mi_cuenta.php');
     exit;
 }
 
@@ -60,6 +60,6 @@ try {
     ];
 }
 
-header('Location: /GitHub/K-Libro/frontend/5_Mi_cuenta/mi_cuenta.php');
+header('Location: ../../frontend/5_Mi_cuenta/mi_cuenta.php');
 exit;
 ?>

@@ -3,13 +3,13 @@ session_start();
 
 // Verificar que el usuario esté registrado
 if (empty($_SESSION['user_id'])) {
-    header('Location: /GitHub/K-Libro/frontend/2_Login/login.php');
+    header('Location: ../2_Login/login.php');
     exit;
 }
 
 // Verificar que el usuario sea admin
 if ($_SESSION['rol'] !== 'admin') {
-    echo "<script>alert('No tienes permisos para acceder a esta página.'); window.location.href = '/GitHub/K-Libro/frontend/3_Inicio/inicio.php';</script>";
+    echo "<script>alert('No tienes permisos para acceder a esta página.'); window.location.href = '../3_Inicio/inicio.php';</script>";
     exit;
 }
 

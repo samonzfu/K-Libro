@@ -46,8 +46,8 @@ if(isset($_POST['accion'])){
         $stmt = $pdo->prepare("INSERT INTO usuarios (nombre, email, contrasena) VALUES (?,?,?)");
         if ($stmt){
             if($stmt->execute([$nombre, $correo, $contrasena])){
-                // Registro exitoso - Redirigir al login (carpeta renombrada a 2_Login):
-                header('Location: /GitHub/K-Libro/frontend/2_Login/login.php');
+                // Registro exitoso - Redirigir al login
+                header('Location: ../../frontend/2_Login/login.php');
                 exit;
             }else{
                 echo "Error al registrar: " . htmlspecialchars($stmt->errorInfo()[2]);
@@ -75,16 +75,15 @@ if(isset($_POST['accion'])){
             if (count($res) > 0) {
                 $row = $res[0];
                 if (password_verify($contrasena, $row['contrasena'])) {
-                    session_start();
                     $_SESSION['user_id'] = $row['id'];
                     $_SESSION['nombre'] = $row['nombre'];
                     $_SESSION['rol'] = $row['rol'];
                     
                     // Si es admin, redirigir al panel de admin
                     if ($row['rol'] === 'admin') {
-                        header('Location: /GitHub/K-Libro/frontend/7_Admin/panel_admin.php');
+                        header('Location: ../../frontend/7_Admin/panel_admin.php');
                     } else {
-                        header('Location: /GitHub/K-Libro/frontend/3_Inicio/inicio.php');
+                        header('Location: ../../frontend/3_Inicio/inicio.php');
                     }
                     exit;
                 } else {

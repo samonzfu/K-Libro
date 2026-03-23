@@ -20,5 +20,5 @@ if (ini_get('session.use_cookies')) {
 
 session_destroy();
 
-header('Location: /GitHub/K-Libro/frontend/2_Login/login.php');
+header('Location: 2_Login/login.php');
 exit;

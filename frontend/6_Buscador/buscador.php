@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!isset($_SESSION['user_id'])) {
-    header('Location: /GitHub/K-Libro/frontend/2_Login/login.php');
+    header('Location: ../2_Login/login.php');
     exit;
 }
 
@@ -264,7 +264,7 @@ $cssVersion = @filemtime(__DIR__ . '/css/estilo.css') ?: time();
                 datos.append('estado', estado);
                 datos.append('fecha_lectura', fechaLectura);
 
-                const respuesta = await fetch('/GitHub/K-Libro/backend/procesar/guardar_libro.php', {
+                const respuesta = await fetch('../../backend/procesar/guardar_libro.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'

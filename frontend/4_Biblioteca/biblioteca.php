@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (empty($_SESSION['user_id'])) {
-    header('Location: /GitHub/K-Libro/frontend/2_Login/login.php');
+    header('Location: ../2_Login/login.php');
     exit;
 }
 
@@ -90,8 +90,8 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
         if ($idOpenLibrary !== '') {
             echo '<div class="book-acciones">';
             echo '<button type="button" class="btn-detalles" onclick="abrirDetallesLibro(this)" data-i18n="biblio-detalles">Detalles</button>';
-            echo '<form method="POST" action="/GitHub/K-Libro/backend/procesar/eliminar_libro.php" class="form-eliminar" onsubmit="return window.confirm(\'¿Seguro que quieres eliminar este libro de tu biblioteca?\');">';
-            echo '<input type="hidden" name="id_openlibrary" value="' . htmlspecialchars($idOpenLibrary, ENT_QUOTES, 'UTF-8') . '">';
+            echo '<form method="POST" action="../../backend/procesar/eliminar_libro.php" class="form-eliminar" onsubmit="return window.confirm(\'¿Seguro que quieres eliminar este libro de tu biblioteca?\');">';
+            echo '<input type="hidden" name="libro_id" value="' . htmlspecialchars($idOpenLibrary, ENT_QUOTES, 'UTF-8') . '">';
             echo '<button type="submit" class="btn-eliminar">';
             echo '<span data-i18n="biblio-eliminar">Eliminar</span>';
             echo '</button>';
@@ -339,7 +339,7 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
                 datos.append('review', review);
                 datos.append('fecha_lectura', fechaLectura);
 
-                const respuesta = await fetch('/GitHub/K-Libro/backend/procesar/actualizar_resena.php', {
+                const respuesta = await fetch('../../backend/procesar/actualizar_resena.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',

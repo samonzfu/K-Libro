@@ -4,7 +4,7 @@ session_start();
 
 // 🛑 APLICADO TU CAMBIO AQUÍ 🛑
 if (empty($_SESSION['user_id'])) {
-    header('Location: /GitHub/K-Libro/frontend/2_Login/login.php');
+    header('Location: ../2_Login/login.php');
     exit;
 }
 
