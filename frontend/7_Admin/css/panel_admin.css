@@ -1,6 +1,10 @@
-/* Panel de administrador: estilo practico con colorimetria K-Libro */
+/* ========================================================================== */
+/* K-Libro - CSS del Panel Admin                                              */
+/* Uso: cabecera admin, tarjetas de métricas y tabla de usuarios.             */
+/* ========================================================================== */
 
 :root {
+    /* Paleta principal del tema admin */
     --color-fondo: #111814;
     --color-magia: #3a1f28;
     --color-oscuridad: #0a0e0c;
@@ -18,6 +22,7 @@
 }
 
 body {
+    /* Fondo general y tipografía base del panel */
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, var(--color-fondo), var(--color-magia), var(--color-oscuridad));
     color: var(--color-texto);
@@ -26,6 +31,7 @@ body {
 }
 
 header {
+    /* Barra superior con título y navegación */
     max-width: 1200px;
     margin: 0 auto 1.5rem;
     background: var(--panel);
@@ -60,6 +66,7 @@ header nav a:hover {
 }
 
 main {
+    /* Contenedor principal: apila secciones de estadísticas y listado */
     max-width: 1200px;
     margin: 0 auto;
     display: grid;
@@ -80,6 +87,7 @@ section h2 {
 }
 
 .estadisticas {
+    /* Grid responsive de tarjetas KPI */
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 0.75rem;
@@ -106,6 +114,7 @@ section h2 {
 }
 
 .usuarios-listado {
+    /* Scroll horizontal si la tabla no cabe en pantallas pequeñas */
     overflow-x: auto;
 }
 
@@ -173,6 +182,7 @@ section h2 {
 }
 
 @media (max-width: 768px) {
+    /* Ajustes básicos para móvil */
     body {
         padding: 0.9rem;
     }

@@ -111,7 +111,7 @@ try {
     $libroActual = $stmtEstado->fetch(PDO::FETCH_ASSOC);
 
     // Si no encontramos el libro, error 404
-    if (!libroActual) {
+    if (!$libroActual) {
         http_response_code(404);
         echo json_encode(['ok' => false, 'mensaje' => 'No se encontro el libro en tu biblioteca']);
         exit;
