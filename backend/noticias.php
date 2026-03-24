@@ -93,4 +93,4 @@ function obtenerNoticias(): array
  *     echo "Descripción: " . $noticia['descripcion'];
  *     echo "Link: " . $noticia['enlace'];
  * }
- */"
+ */

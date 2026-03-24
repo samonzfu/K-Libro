@@ -56,6 +56,6 @@ function asegurarColumnaFechaLectura(PDO $pdo): void
  * asegurarColumnaFechaLectura($pdo);
  * 
  * // Ahora podemos acceder a $pdo y saber que la columna existe
- */"
+ */
 
 ?>

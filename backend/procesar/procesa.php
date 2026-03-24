@@ -159,7 +159,5 @@ if(isset($_POST['accion'])){
             exit;
         }
     }
-    }
-
 }
 ?>

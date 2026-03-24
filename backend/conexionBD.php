@@ -109,5 +109,5 @@ try {
  * 4. DELETE (Eliminar datos):
  *    $stmt = $pdo->prepare("DELETE FROM usuarios WHERE id = ?");
  *    $stmt->execute([$usuarioId]);
- */"
+ */
 ?>

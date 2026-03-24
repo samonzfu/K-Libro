@@ -337,6 +337,6 @@ function sincronizarRetosYLogrosPorCambioLibro(PDO $pdo, int $usuarioId, ?string
         'reto_actual' => $resumenReto,      // Progreso del reto de este mes
         'nuevos_logros' => $nuevosLogros    // Logros que se desbloquearon
     ];
-}"
+}
 
 ?>
