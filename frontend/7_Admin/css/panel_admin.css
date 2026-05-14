@@ -200,3 +200,109 @@ section h2 {
         padding: 0.9rem;
     }
 }
+
+/* ── Acciones en tabla ────────────────────────────────────────────────────── */
+
+.acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    align-items: center;
+}
+
+.acciones form {
+    margin: 0;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.35rem 0.7rem;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, opacity 0.2s;
+    white-space: nowrap;
+    font-family: inherit;
+}
+
+.btn-rol {
+    background: rgba(217, 108, 130, 0.12);
+    border-color: rgba(217, 108, 130, 0.35);
+    color: var(--color-dorado);
+}
+
+.btn-rol:hover {
+    background: rgba(217, 108, 130, 0.25);
+    border-color: var(--color-dorado);
+}
+
+.btn-eliminar {
+    background: rgba(200, 50, 50, 0.12);
+    border-color: rgba(200, 50, 50, 0.35);
+    color: #e88080;
+}
+
+.btn-eliminar:hover {
+    background: rgba(200, 50, 50, 0.28);
+    border-color: #e88080;
+}
+
+.sin-acciones {
+    color: rgba(242, 235, 235, 0.35);
+    font-size: 0.85rem;
+}
+
+/* ── Fila del admin activo ───────────────────────────────────────────────── */
+
+.fila-self {
+    background: rgba(217, 108, 130, 0.06) !important;
+}
+
+.badge-yo {
+    display: inline-block;
+    margin-left: 0.4rem;
+    padding: 0.1rem 0.45rem;
+    background: rgba(217, 108, 130, 0.18);
+    border: 1px solid rgba(217, 108, 130, 0.4);
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--color-dorado);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    vertical-align: middle;
+}
+
+/* ── Alertas de feedback ─────────────────────────────────────────────────── */
+
+.alerta {
+    max-width: 1200px;
+    margin: 0 auto 0.75rem;
+    padding: 0.8rem 1.1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: 1px solid transparent;
+}
+
+.alerta-ok {
+    background: rgba(50, 180, 100, 0.12);
+    border-color: rgba(50, 180, 100, 0.35);
+    color: #7ce0a8;
+}
+
+.alerta-error {
+    background: rgba(200, 50, 50, 0.12);
+    border-color: rgba(200, 50, 50, 0.35);
+    color: #e88080;
+}
+
+/* ── Columnas extra en tabla ─────────────────────────────────────────────── */
+
+.tabla-usuarios {
+    min-width: 920px;
+}
