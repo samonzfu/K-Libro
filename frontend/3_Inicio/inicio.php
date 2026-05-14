@@ -14,10 +14,11 @@ if (empty($_SESSION['user_id'])) {
     <link rel="stylesheet" href="css/estilo.css">
 </head>
 <body>
-    <h1 data-i18n="inicio-h1">Bienvenido a K-Libro</h1>
+    <h1 data-i18n="inicio-h1">K-Libro</h1>
     <nav>
-        <a href="../4_Biblioteca/biblioteca.php" data-i18n="nav-biblioteca">Biblioteca</a> |
-        <a href="../5_Mi_cuenta/mi_cuenta.php" data-i18n="nav-cuenta">Mi cuenta</a> |
+        <a href="../3_Inicio/inicio.php" data-i18n="nav-inicio">Inicio</a>
+        <a href="../4_Biblioteca/biblioteca.php" data-i18n="nav-biblioteca">Biblioteca</a> 
+        <a href="../5_Mi_cuenta/mi_cuenta.php" data-i18n="nav-cuenta">Mi cuenta</a> 
         <a href="../6_Buscador/buscador.php" data-i18n="nav-buscador">Buscador</a>
         <?php if (!empty($_SESSION['rol']) && $_SESSION['rol'] === 'admin'): ?>
             | <a href="../7_Admin/panel_admin.php" style="color: #e74c3c; font-weight: bold;">Panel Admin</a>
@@ -80,7 +81,8 @@ if (empty($_SESSION['user_id'])) {
 
     I18n.init({
         es: {
-            'inicio-h1':       'Bienvenido a K-Libro',
+            'inicio-h1':       'K-Libro',
+            'nav-inicio':        'Inicio',
             'nav-biblioteca':  'Biblioteca',
             'nav-cuenta':      'Mi cuenta',
             'nav-buscador':    'Buscador',
@@ -89,8 +91,10 @@ if (empty($_SESSION['user_id'])) {
             'sin-noticias':    'No hay noticias disponibles en este momento.',
         },
         en: {
-            'inicio-h1':       'Welcome to K-Libro',
+            'inicio-h1':       'K-Libro',
+            'nav-inicio':        'Home',
             'nav-biblioteca':  'Library',
+            'nav-inicio':        'Home',
             'nav-cuenta':      'My Account',
             'nav-buscador':    'Search',
             'noticias-titulo': 'News & recommendations',

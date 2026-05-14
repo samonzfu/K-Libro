@@ -17,13 +17,14 @@ $cssVersion = @filemtime(__DIR__ . '/css/estilo.css') ?: time();
     <link rel="stylesheet" href="css/estilo.css?v=<?= $cssVersion ?>">
 </head>
 <body>
-
+    <h1 data-i18n="inicio-h1">K-Libro</h1>
     <div class="container">
         
         <nav>
-            <a href="../3_Inicio/inicio.php" data-i18n="nav-inicio">Inicio</a> |
-            <a href="../4_Biblioteca/biblioteca.php" data-i18n="nav-biblioteca">Biblioteca</a> |
-            <a href="../5_Mi_cuenta/mi_cuenta.php" data-i18n="nav-cuenta">Mi cuenta</a>
+            <a href="../3_Inicio/inicio.php" data-i18n="nav-inicio">Inicio</a>
+            <a href="../4_Biblioteca/biblioteca.php" data-i18n="nav-biblioteca">Biblioteca</a> 
+            <a href="../5_Mi_cuenta/mi_cuenta.php" data-i18n="nav-cuenta">Mi cuenta</a> 
+            <a href="../6_Buscador/buscador.php" data-i18n="nav-buscador">Buscador</a>
             <button id="btn-lang" class="btn-lang">🌐 English</button>
         </nav>
 
@@ -45,9 +46,11 @@ $cssVersion = @filemtime(__DIR__ . '/css/estilo.css') ?: time();
     // Traducciones globales accesibles desde las funciones de búsqueda
     const T = {
         es: {
-            'nav-inicio':      'Inicio',
+            'inicio-h1':       'K-Libro',
+            'nav-inicio':        'Inicio',
             'nav-biblioteca':  'Biblioteca',
             'nav-cuenta':      'Mi cuenta',
+            'nav-buscador':    'Buscador',
             'busca-h1':        'Busca un libro',
             'busca-ph':        'Ej: El Nombre del Viento...',
             'busca-btn':       'Buscar',
@@ -69,9 +72,11 @@ $cssVersion = @filemtime(__DIR__ . '/css/estilo.css') ?: time();
             'autor-desconocido': 'Autor desconocido',
         },
         en: {
+            'inicio-h1':       'K-Libro',
             'nav-inicio':      'Home',
             'nav-biblioteca':  'Library',
             'nav-cuenta':      'My account',
+            'nav-buscador':   'Search',
             'busca-h1':        'Search a book',
             'busca-ph':        'E.g.: The Name of the Wind...',
             'busca-btn':       'Search',

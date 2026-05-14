@@ -73,12 +73,13 @@ $mis_logros = $stmtLogros->fetchAll();
     <link rel="stylesheet" href="css/estilo.css">
 </head>
 <body>
-
+    <h1 data-i18n="inicio-h1">K-Libro</h1>
     <div class="container">
         
         <nav>
-            <a href="../3_Inicio/inicio.php" data-i18n="nav-inicio">Inicio</a> |
-            <a href="../4_Biblioteca/biblioteca.php" data-i18n="nav-biblioteca">Biblioteca</a> |
+            <a href="../3_Inicio/inicio.php" data-i18n="nav-inicio">Inicio</a>
+            <a href="../4_Biblioteca/biblioteca.php" data-i18n="nav-biblioteca">Biblioteca</a> 
+            <a href="../5_Mi_cuenta/mi_cuenta.php" data-i18n="nav-cuenta">Mi cuenta</a> 
             <a href="../6_Buscador/buscador.php" data-i18n="nav-buscador">Buscador</a>
             <button id="btn-lang" class="btn-lang">🌐 English</button>
         </nav>
@@ -172,9 +173,11 @@ $mis_logros = $stmtLogros->fetchAll();
     <script>
     const translations = {
         es: {
-            'nav-inicio':     'Inicio',
-            'nav-biblioteca': 'Biblioteca',
-            'nav-buscador':   'Buscador',
+            'inicio-h1':       'K-Libro',
+            'nav-inicio':        'Inicio',
+            'nav-biblioteca':  'Biblioteca',
+            'nav-cuenta':      'Mi cuenta',
+            'nav-buscador':    'Buscador',
             'nav-logout':     'Cerrar sesión',
             'label-email':    '📜 Email:',
             'label-miembro':  '⏳ Miembro desde:',
@@ -207,8 +210,10 @@ $mis_logros = $stmtLogros->fetchAll();
             'logro-campeon-mensual-desc': '¡Has completado tu reto de lectura del mes!',
         },
         en: {
+            'inicio-h1':       'K-Libro',
             'nav-inicio':     'Home',
             'nav-biblioteca': 'Library',
+            'nav-cuenta':      'My account',
             'nav-buscador':   'Search',
             'nav-logout':     'Log out',
             'label-email':    '📜 Email:',

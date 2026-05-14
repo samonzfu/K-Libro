@@ -125,10 +125,12 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
     <link rel="stylesheet" href="css/estilo.css?v=<?= $cssVersion ?>">
 </head>
 <body>
+    <h1 data-i18n="inicio-h1">K-Libro</h1>
     <main class="container">
         <nav>
-            <a href="../3_Inicio/inicio.php" data-i18n="nav-inicio">Inicio</a> |
-            <a href="../5_Mi_cuenta/mi_cuenta.php" data-i18n="nav-cuenta">Mi cuenta</a> |
+            <a href="../3_Inicio/inicio.php" data-i18n="nav-inicio">Inicio</a>
+            <a href="../4_Biblioteca/biblioteca.php" data-i18n="nav-biblioteca">Biblioteca</a> 
+            <a href="../5_Mi_cuenta/mi_cuenta.php" data-i18n="nav-cuenta">Mi cuenta</a> 
             <a href="../6_Buscador/buscador.php" data-i18n="nav-buscador">Buscador</a>
             <button id="btn-lang" class="btn-lang">🌐 English</button>
         </nav>
@@ -156,6 +158,7 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
     I18n.init({
         es: {
             'nav-inicio':        'Inicio',
+            'nav-biblioteca':  'Biblioteca',
             'nav-cuenta':        'Mi cuenta',
             'nav-buscador':      'Buscador',
             'biblio-h1':         'Biblioteca',
@@ -188,7 +191,9 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
             'biblio-modal-editar': '📝 Editar',
         },
         en: {
+            'inicio-h1':       'K-Libro',
             'nav-inicio':        'Home',
+            'nav-biblioteca': 'Library',
             'nav-cuenta':        'My account',
             'nav-buscador':      'Search',
             'biblio-h1':         'My library',

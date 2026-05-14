@@ -76,6 +76,17 @@ nav a:hover {
 }
 
 /* --- TÍTULOS DE SECCIÓN --- */
+h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 3rem;
+    color: var(--color-dorado);
+    margin-bottom: 1.5rem;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8), 0 0 15px rgba(217, 108, 130, 0.4);
+    text-align: center;
+    letter-spacing: 2px;
+    animation: fadeInDown 0.8s ease-out;
+}
+
 h2 {
     font-family: 'Cinzel', serif;
     font-size: 2.2rem;
