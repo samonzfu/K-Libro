@@ -1,5 +1,5 @@
 /**
- * K-Libro - Motor de internacionalización (i18n)
+ * Motor de internacionalización (i18n)
  * Uso: incluir este script y llamar a I18n.init(translations, 'Título ES', 'Título EN')
  */
 const I18n = {
@@ -33,6 +33,7 @@ const I18n = {
             const btn = document.getElementById('btn-lang');
             if (btn) btn.textContent = lang === 'es' ? '🌐 English' : '🌐 Español';
         };
+        // Cuando haces click en el botón. cambia de idioma dependiendo del lenguaje actual.
         const btn = document.getElementById('btn-lang');
         if (btn) {
             btn.addEventListener('click', () => {
@@ -40,10 +41,11 @@ const I18n = {
                 apply(next);
             });
         }
+        // Carga inicial. (Español por defecto).
         apply(localStorage.getItem('klibro-lang') || 'es');
     },
 
-    /** Devuelve la traducción de una clave para el idioma activo (útil en JS dinámico) */
+    // Traducir alerts al idioma activo.
     t(key) {
         const lang = localStorage.getItem('klibro-lang') || 'es';
         return I18n.translations[lang]?.[key] ?? key;

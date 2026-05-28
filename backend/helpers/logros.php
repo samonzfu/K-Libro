@@ -1,26 +1,7 @@
 <?php
 
-/**
- * ==================== GESTIÓN DE LOGROS Y RETOS ====================
- * 
- * Este archivo contiene todas las funciones que calculan:
- * - Cuántos libros ha leído un usuario
- * - Cuántos logros/medallas ha conseguido
- * - Progreso de los retos mensuales
- */
+/* Extrae el MES y AÑO de una fecha en formato "YYYY-MM-DD" */
 
-/**
- * obtenerMesAnioDeFecha()
- * 
- * Extrae el MES y AÑO de una fecha en formato "YYYY-MM-DD"
- * 
- * @param string|null $fecha Fecha en formato "2024-03-15"
- * @return array|null Array con ['mes' => 3, 'anio' => 2024] o null si es inválida
- * 
- * EJEMPLO:
- * $resultado = obtenerMesAnioDeFecha("2024-03-15");
- * // Devuelve: ['mes' => 3, 'anio' => 2024]
- */
 function obtenerMesAnioDeFecha(?string $fecha): ?array
 {
     // Si no hay fecha, devolver null
@@ -44,19 +25,9 @@ function obtenerMesAnioDeFecha(?string $fecha): ?array
     ];
 }
 
-/**
- * contarLibrosLeidosTotales()
- * 
- * Cuenta CUÁNTOS LIBROS HA LEÍDO UN USUARIO en toda su vida
- * (no solo este mes, sino TOTAL de libros con estado 'leido')
- * 
- * @param PDO $pdo Conexión a base de datos
- * @param int $usuarioId ID del usuario
- * @return int Número total de libros leídos
- * 
- * NOTA: Solo cuenta UN registro por libro
- * (si el usuario agregó el mismo libro varias veces, solo cuenta una)
- */
+
+/* Cuenta CUÁNTOS LIBROS HA LEÍDO UN USUARIO en toda su vida */
+
 function contarLibrosLeidosTotales(PDO $pdo, int $usuarioId): int
 {
     // Query SQL que:
@@ -82,21 +53,9 @@ function contarLibrosLeidosTotales(PDO $pdo, int $usuarioId): int
     return (int) $stmt->fetchColumn();
 }
 
-/**
- * contarLibrosLeidosMes()
- * 
- * Cuenta cuántos LIBROS HA LEÍDO UN USUARIO EN UN MES ESPECÍFICO
- * 
- * @param PDO $pdo Conexión a base de datos
- * @param int $usuarioId ID del usuario
- * @param int $mes Mes (1-12)
- * @param int $anio Año (ej: 2024)
- * @return int Número de libros leídos en ese mes
- * 
- * EJEMPLO:
- * $librosMarzo = contarLibrosLeidosMes($pdo, 5, 3, 2024);
- * // Libros leídos en marzo 2024 por el usuario 5
- */
+
+/* Cuenta cuántos LIBROS HA LEÍDO UN USUARIO EN UN MES ESPECÍFICO 
+*/
 function contarLibrosLeidosMes(PDO $pdo, int $usuarioId, int $mes, int $anio): int
 {
     // Query SQL que:
@@ -124,24 +83,9 @@ function contarLibrosLeidosMes(PDO $pdo, int $usuarioId, int $mes, int $anio): i
     return (int) $stmt->fetchColumn();
 }
 
-/**
- * recalcularRetoMensual()
- * 
- * Actualiza el PROGRESO DEL RETO MENSUAL de un usuario
- * 
- * QUÉ HACE:
- * 1. Obtiene el reto del mes especificado
- * 2. Cuenta cuántos libros ha leído ese mes
- * 3. Verifica si la meta fue CONSEGUIDA (libros leídos >= meta)
- * 4. Actualiza la base de datos si cambió el estado
- * 
- * @param PDO $pdo Conexión a base de datos
- * @param int $usuarioId ID del usuario
- * @param int $mes Mes (1-12)
- * @param int $anio Año (2024)
- * @return array|null Array con progreso del reto o null si no existe
- *                     ['meta_libros' => 5, 'conseguido' => true, 'libros_leidos' => 5, 'porcentaje' => 100]
- */
+
+/*Actualiza el PROGRESO DEL RETO MENSUAL de un usuario */
+
 function recalcularRetoMensual(PDO $pdo, int $usuarioId, int $mes, int $anio): ?array
 {
     // PASO 1: Obtener el reto del mes especificado
@@ -188,20 +132,9 @@ function recalcularRetoMensual(PDO $pdo, int $usuarioId, int $mes, int $anio): ?
     ];
 }
 
-/**
- * sincronizarLogrosUsuario()
- * 
- * Calcula y desbloquea nuevos LOGROS/MEDALLAS para el usuario
- * según sus logros de lectura
- * 
- * LOGROS INCLUYEN:
- * - Medallas de lectura por número de libros leídos (1, 5, 10, etc.)
- * - Medalla "Campeón Mensual" si completó retos mensuales
- * 
- * @param PDO $pdo Conexión a base de datos
- * @param int $usuarioId ID del usuario
- * @return array Lista de nombres de nuevos logros que se desbloquearon
- */
+
+/* Calcula y desbloquea nuevos LOGROS/MEDALLAS para el usuario */
+
 function sincronizarLogrosUsuario(PDO $pdo, int $usuarioId): array
 {
     // Array para guardar los nuevos logros que se desbloquearon
@@ -281,9 +214,8 @@ function sincronizarLogrosUsuario(PDO $pdo, int $usuarioId): array
     return $nuevosLogros;
 }
 
+
 /**
- * sincronizarRetosYLogrosPorCambioLibro()
- * 
  * Cuando un usuario CAMBIA UN LIBRO (ej: lo marca como "leído"),
  * esta función ACTUALIZA todos los logros y retos afectados
  * 
@@ -292,12 +224,8 @@ function sincronizarLogrosUsuario(PDO $pdo, int $usuarioId): array
  * 2. Recalcula los retos mensuales para esos meses
  * 3. Sincroniza todos los logros del usuario
  * 4. Devuelve el progreso del reto del mes actual
- * 
- * @param PDO $pdo Conexión a base de datos
- * @param int $usuarioId ID del usuario
- * @param string|null $fechaAnterior Fecha anterior del libro (ej: "2024-02-01")
- * @param string|null $fechaNueva Fecha nueva del libro (ej: "2024-03-15")
- * @return array ['reto_actual' => [...], 'nuevos_logros' => [...]]\n */
+*/
+
 function sincronizarRetosYLogrosPorCambioLibro(PDO $pdo, int $usuarioId, ?string $fechaAnterior, ?string $fechaNueva): array
 {
     // Identificar todos los meses que fueron afectados

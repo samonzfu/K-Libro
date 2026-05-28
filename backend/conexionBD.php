@@ -1,8 +1,9 @@
 <?php
 /**
- * ==================== CONEXIÓN A BASE DE DATOS ====================
- * 
  * Este archivo ABRE LA CONEXIÓN a MySQL usando PDO (PHP Data Objects)
+ * 
+ * PDO es una extensión oficial que proporciona una interfaz unificada y orientada a objetos
+ * para acceder y gestionar bases de datos
  * 
  * QUÉ HACE:
  * 1. Intenta conectar con variables de ENTORNO (si están configuradas)
@@ -10,7 +11,7 @@
  * 3. Crea un objeto PDO que se guarda en la variable $pdo
  * 4. Otros archivos pueden usar $pdo para hacer queries a la BBDD
  * 
- * CREDENCIALES POR DEFECTO:
+ * CREDENCIALES:
  * - Usuario: k_libro
  * - Contraseña: KLibro_2026$Clase!
  * - Base de datos: k_libro
@@ -87,7 +88,7 @@ try {
 
 /**
  * VARIABLE GLOBAL: $pdo
- * 
+ *  
  * Ahora la variable $pdo está disponible para todos los archivos que incluyan
  * este archivo con require_once.
  * 
