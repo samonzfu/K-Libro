@@ -29,7 +29,21 @@ CREATE TABLE libros (
 ) ENGINE=InnoDB;
 
 
--- 3. TABLA BIBLIOTECA
+-- 3. TABLA LOGROS
+-- Catálogo de medallas disponibles.
+CREATE TABLE logros (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL,
+    descripcion VARCHAR(255),
+    icono VARCHAR(255) NOT NULL,
+    criterio INT DEFAULT 0,
+
+    UNIQUE KEY uk_logros_nombre (nombre)
+) ENGINE=InnoDB;
+
+
+
+-- 4. TABLA BIBLIOTECA
 -- Vincula usuarios con libros y define el estado (Leído, Pendiente...)
 CREATE TABLE biblioteca (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -55,19 +69,6 @@ CREATE TABLE biblioteca (
     
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
     FOREIGN KEY (libro_id_openlibrary) REFERENCES libros(id_openlibrary) ON DELETE CASCADE
-) ENGINE=InnoDB;
-
-
--- 4. TABLA LOGROS
--- Catálogo de medallas disponibles.
-CREATE TABLE logros (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(50) NOT NULL,
-    descripcion VARCHAR(255),
-    icono VARCHAR(255) NOT NULL,
-    criterio INT DEFAULT 0,
-
-    UNIQUE KEY uk_logros_nombre (nombre)
 ) ENGINE=InnoDB;
 
 
