@@ -27,6 +27,10 @@ require_once __DIR__ . '/../../backend/conexionBD.php';
 $stmtTotalUsuarios = $pdo->query("SELECT COUNT(*) FROM usuarios WHERE rol = 'user'");
 $totalUsuarios = (int) $stmtTotalUsuarios->fetchColumn();
 
+// NUEVO: Contador de moderadores
+$stmtTotalModeradores = $pdo->query("SELECT COUNT(*) FROM usuarios WHERE rol = 'moderador'");
+$totalModeradores = (int) $stmtTotalModeradores->fetchColumn();
+
 $stmtTotalAdmins = $pdo->query("SELECT COUNT(*) FROM usuarios WHERE rol = 'admin'");
 $totalAdmins = (int) $stmtTotalAdmins->fetchColumn();
 
@@ -52,8 +56,8 @@ $stmtUsuarios = $pdo->prepare("
     FROM usuarios u
     LEFT JOIN biblioteca b ON u.id = b.usuario_id
     GROUP BY u.id, u.nombre, u.email, u.rol, u.fecha_registro
-    ORDER BY u.rol DESC, libros_leidos DESC
-");
+    ORDER BY FIELD(u.rol, 'admin', 'moderador', 'user'), libros_leidos DESC
+"); // Se ha mejorado el ORDER BY para que ordene jerárquicamente: Admin -> Moderador -> User
 $stmtUsuarios->execute();
 $usuarios = $stmtUsuarios->fetchAll(PDO::FETCH_ASSOC);
 
@@ -63,7 +67,7 @@ $mensajes = [
     'rol_actualizado'    => ['tipo' => 'ok',    'texto' => 'Rol actualizado correctamente.'],
     'csrf'               => ['tipo' => 'error', 'texto' => 'Acción no válida (token de seguridad incorrecto).'],
     'autoeliminar'       => ['tipo' => 'error', 'texto' => 'No puedes eliminarte a ti mismo.'],
-    'es_admin'           => ['tipo' => 'error', 'texto' => 'No puedes eliminar a otro administrador.'],
+    'es_admin'           => ['tipo' => 'error', 'texto' => 'No puedes eliminar a un administrador.'],
     'no_existe'          => ['tipo' => 'error', 'texto' => 'El usuario no existe.'],
     'cambiar_propio_rol' => ['tipo' => 'error', 'texto' => 'No puedes cambiar tu propio rol.'],
     'datos_invalidos'    => ['tipo' => 'error', 'texto' => 'Datos no válidos.'],
@@ -97,13 +101,16 @@ $feedback    = $feedbackKey ? ($mensajes[$feedbackKey] ?? null) : null;
     </div>
     <?php endif; ?>
 
-    <!-- ── Resumen ────────────────────────────────────────────── -->
     <section class="resumen">
         <h2>Resumen General</h2>
         <div class="estadisticas">
             <div class="estadistica-card">
                 <h3>Usuarios registrados</h3>
                 <p class="numero"><?php echo $totalUsuarios; ?></p>
+            </div>
+            <div class="estadistica-card">
+                <h3>Moderadores</h3>
+                <p class="numero"><?php echo $totalModeradores; ?></p>
             </div>
             <div class="estadistica-card">
                 <h3>Administradores</h3>
@@ -120,7 +127,6 @@ $feedback    = $feedbackKey ? ($mensajes[$feedbackKey] ?? null) : null;
         </div>
     </section>
 
-    <!-- ── Tabla de usuarios ──────────────────────────────────── -->
     <section class="usuarios-listado">
         <h2>Usuarios Registrados</h2>
         <table class="tabla-usuarios">
@@ -152,7 +158,15 @@ $feedback    = $feedbackKey ? ($mensajes[$feedbackKey] ?? null) : null;
                             <td><?php echo htmlspecialchars($u['email']); ?></td>
                             <td>
                                 <span class="rol-badge <?php echo $u['rol']; ?>">
-                                    <?php echo $u['rol'] === 'admin' ? '★ Admin' : 'Usuario'; ?>
+                                    <?php 
+                                        if ($u['rol'] === 'admin') {
+                                            echo '♛ Admin';
+                                        } elseif ($u['rol'] === 'moderador') {
+                                            echo '♘ Mod';
+                                        } else {
+                                            echo 'Usuario';
+                                        }
+                                    ?>
                                 </span>
                             </td>
                             <td><?php echo htmlspecialchars($u['fecha_registro']); ?></td>
@@ -162,21 +176,18 @@ $feedback    = $feedbackKey ? ($mensajes[$feedbackKey] ?? null) : null;
                             <td class="acciones">
                                 <?php if (!$esSelf): ?>
 
-                                    <!-- Cambiar rol -->
-                                    <?php $nuevoRol = ($u['rol'] === 'admin') ? 'user' : 'admin'; ?>
-                                    <form method="POST"
-                                          action="../../backend/procesar/cambiar_rol.php"
-                                          onsubmit="return confirm('¿Cambiar rol de <?php echo htmlspecialchars(addslashes($u['nombre'])); ?> a <?php echo $nuevoRol; ?>?')">
+                                    <form method="POST" action="../../backend/procesar/cambiar_rol.php" class="form-cambiar-rol">
                                         <input type="hidden" name="csrf_token" value="<?php echo $csrf; ?>">
                                         <input type="hidden" name="usuario_id" value="<?php echo (int)$u['id']; ?>">
-                                        <input type="hidden" name="nuevo_rol"  value="<?php echo $nuevoRol; ?>">
-                                        <button type="submit" class="btn btn-rol"
-                                                title="<?php echo $u['rol'] === 'admin' ? 'Quitar admin' : 'Hacer admin'; ?>">
-                                            <?php echo $u['rol'] === 'admin' ? '↓ Quitar admin' : '↑ Hacer admin'; ?>
-                                        </button>
+                                        
+                                        <select name="nuevo_rol" class="select-rol" onchange="return confirmarCambioRol(this, '<?php echo htmlspecialchars(addslashes($u['nombre'])); ?>')">
+                                            <option value="user" <?php echo $u['rol'] === 'user' ? 'selected' : ''; ?>>Usuario</option>
+                                            <option value="moderador" <?php echo $u['rol'] === 'moderador' ? 'selected' : ''; ?>>Moderador</option>
+                                            <option value="admin" <?php echo $u['rol'] === 'admin' ? 'selected' : ''; ?>>Admin</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-rol-actualizar">Actualizar</button>
                                     </form>
 
-                                    <!-- Eliminar (solo usuarios, no admins) -->
                                     <?php if ($u['rol'] !== 'admin'): ?>
                                     <form method="POST"
                                           action="../../backend/procesar/eliminar_usuario.php"
@@ -212,6 +223,12 @@ function confirmarEliminar(nombre, totalLibros) {
         ? '\n\u26A0\uFE0F Este usuario tiene ' + totalLibros + ' libro(s) en su biblioteca que también se eliminarán.'
         : '';
     return confirm('¿Eliminar a "' + nombre + '"? Esta acción no se puede deshacer.' + aviso);
+}
+
+// NUEVA: Función JS para confirmar los cambios de rol desde el selector
+function confirmarCambioRol(selectElement, nombreUsuario) {
+    const rolSeleccionado = selectElement.options[selectElement.selectedIndex].text;
+    return confirm('¿Estás seguro de cambiar el rol de "' + nombreUsuario + '" a "' + rolSeleccionado + '"?');
 }
 </script>
 
