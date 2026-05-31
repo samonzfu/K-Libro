@@ -40,6 +40,10 @@ if (!empty($_SESSION['user_id'])) {
             </div>
             <input type="hidden" name="accion" value="registro">
             <input type="submit" data-i18n-val="reg-submit" value="Insertar">
+            <div class="recordar" data-i18n="registro-iniciar">¿Ya tienes una cuenta?</div>
+            <div class="iniciar-sesion">
+                <a href="../login/login.php" data-i18n="registro-log">Iniciar sesión</a>
+            </div>
         </form>
     </div>
     <script>
@@ -87,6 +91,8 @@ if (!empty($_SESSION['user_id'])) {
             'ph-contrasena':     'Contraseña',
             'ph-correo':         'Correo',
             'reg-submit':        'Insertar',
+            'registro-iniciar':  '¿Ya tienes una cuenta?',
+            'registro-log':      'Iniciar sesión',
             'req-titulo':        'Requisitos de contraseña:',
             'req-longitud-txt':  'Mínimo 8 caracteres',
             'req-mayuscula-txt': 'Una mayúscula',
@@ -100,6 +106,8 @@ if (!empty($_SESSION['user_id'])) {
             'ph-contrasena':     'Password',
             'ph-correo':         'Email',
             'reg-submit':        'Register',
+            'registro-iniciar':  'Do you already have an account?',
+            'registro-log':      'Login',
             'req-titulo':        'Password requirements:',
             'req-longitud-txt':  'Minimum 8 characters',
             'req-mayuscula-txt': 'One uppercase letter',
