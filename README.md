@@ -12,12 +12,6 @@ Aplicación web de gestión de biblioteca personal. Permite registrarse, buscar 
 - Panel de administración (gestión de usuarios y roles: user, moderador, admin)
 - Interfaz en español e inglés
 
-## Capturas
-
-| Login | Biblioteca | Buscador |
-| ----- | ---------- | -------- |
-| ![Login](docs/img/login.png) | ![Biblioteca](docs/img/biblioteca.png) | ![Buscador](docs/img/buscador.png) |
-
 ## Requisitos
 
 - PHP 7.3 o superior con la extensión `pdo_mysql`
@@ -33,7 +27,13 @@ Aplicación web de gestión de biblioteca personal. Permite registrarse, buscar 
    ```bash
    sudo mysql < database/BBDD.sql
    ```
-3. **Configura las credenciales.** Copia `.env.example` a `.env` y pon la misma contraseña en `DB_PASS`. La aplicación lo carga automáticamente.
+3. **Configura las credenciales.** Crea un archivo `.env` en la raíz del proyecto (está en `.gitignore`, no se sube) con tus datos. La aplicación lo carga automáticamente:
+   ```
+   DB_HOST=localhost
+   DB_NAME=k_libro
+   DB_USER=k_libro
+   DB_PASS=tu_contraseña
+   ```
 4. **Arranca el servidor** con `public/` como raíz:
    ```bash
    php -S localhost:8000 -t public
@@ -74,7 +74,3 @@ k-libro/
     ├── assets/img/
     └── pages/              # registro, login, inicio, biblioteca, mi_cuenta, buscador, admin
 ```
-
-## Licencia
-
-[MIT](LICENSE)
