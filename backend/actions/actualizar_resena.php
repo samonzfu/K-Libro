@@ -39,6 +39,14 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+// Verificar token CSRF (se envía en la cabecera X-CSRF-Token)
+require_once __DIR__ . '/../helpers/csrf.php';
+if (!csrf_valido()) {
+    http_response_code(403);
+    echo json_encode(['ok' => false, 'mensaje' => 'Token de seguridad invalido']);
+    exit;
+}
+
 // Incluir conexión a BD y funciones de helpers
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../helpers/biblioteca_schema.php';

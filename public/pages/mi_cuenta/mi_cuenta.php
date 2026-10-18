@@ -12,6 +12,7 @@ if (empty($_SESSION['user_id'])) {
 require_once __DIR__ . '/../../../backend/config/db.php'; 
 require_once __DIR__ . '/../../../backend/helpers/biblioteca_schema.php';
 require_once __DIR__ . '/../../../backend/helpers/logros.php';
+require_once __DIR__ . '/../../../backend/helpers/csrf.php';
 
 asegurarColumnaFechaLectura($pdo);
 
@@ -120,6 +121,7 @@ $mis_logros = $stmtLogros->fetchAll();
             <?php else: ?>
                 <p data-i18n="reto-vacio">Aún no has fijado tu destino para este mes.</p>
                 <form action="../../../backend/actions/guardar_reto.php" method="POST" class="reto-form">
+                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
                     <label for="meta_libros" class="reto-form-label" data-i18n="label-meta-libros">¿Cuántos libros quieres leer este mes?</label>
                     <div class="reto-input-group">
                         <input type="number" id="meta_libros" name="meta_libros" class="reto-input" min="1" max="50" step="1" value="1" required>

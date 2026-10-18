@@ -119,38 +119,8 @@ ON DUPLICATE KEY UPDATE
     icono = VALUES(icono),
     criterio = VALUES(criterio);
 
--- Usuario Admin de prueba
--- Email: admin@klibro.com
--- Password inicial: Admin123$
-INSERT INTO usuarios (nombre, email, contrasena, rol) VALUES 
-('Admin K-Libro', 'admin@klibro.com', '$2y$10$rl8UXXxCgcgqSJcdl1MgnORVm4eYvkzUDvlBlXpUi74tulUEaFIeK', 'admin')
-ON DUPLICATE KEY UPDATE
-    nombre = VALUES(nombre),
-    contrasena = VALUES(contrasena),
-    rol = 'admin';
-
-
--- CREAR USUARIO:
-CREATE USER IF NOT EXISTS 
-    'k_libro'@'localhost' 
-IDENTIFIED BY 'KLibro_2026$Clase!';
-
-GRANT USAGE ON *.* TO 'k_libro'@'localhost';
-
-
-ALTER USER 'k_libro'@'localhost'
-    IDENTIFIED BY 'KLibro_2026$Clase!';
-
-ALTER USER 'k_libro'@'localhost' 
-REQUIRE NONE 
-WITH MAX_QUERIES_PER_HOUR 0 
-MAX_CONNECTIONS_PER_HOUR 0 
-MAX_UPDATES_PER_HOUR 0 
-MAX_USER_CONNECTIONS 0;
-
--- Dale acceso a la base de datos k_libro
-GRANT ALL PRIVILEGES ON k_libro.* 
-TO 'k_libro'@'localhost';
-
--- Recarga la tabla de privilegios
-FLUSH PRIVILEGES;
+-- NOTA: este script ya no crea el usuario de MySQL ni un administrador de prueba
+-- (no deben publicarse contraseñas en el repositorio).
+--  - Usuario de MySQL: ver database/crear-usuario-local.sql
+--  - Primer administrador: regístrate en la aplicación y ejecuta:
+--      UPDATE usuarios SET rol = 'admin' WHERE email = 'tu@correo.com';

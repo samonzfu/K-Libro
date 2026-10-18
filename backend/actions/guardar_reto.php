@@ -32,6 +32,14 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+// Verificar token CSRF
+require_once __DIR__ . '/../helpers/csrf.php';
+if (!csrf_valido()) {
+    $_SESSION['reto_flash'] = ['tipo' => 'error', 'clave' => 'reto-error-guardado'];
+    header('Location: ../../public/pages/mi_cuenta/mi_cuenta.php');
+    exit;
+}
+
 // Incluir conexión a base de datos
 require_once __DIR__ . '/../config/db.php';
 

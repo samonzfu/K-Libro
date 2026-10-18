@@ -9,30 +9,41 @@ Aplicación web de gestión de biblioteca personal. Permite registrarse, buscar 
 - Biblioteca personal con estados de lectura
 - Reseñas de los libros
 - Logros y retos mensuales
-- Panel de administración (gestión de usuarios y roles)
+- Panel de administración (gestión de usuarios y roles: user, moderador, admin)
 - Interfaz en español e inglés
+
+## Capturas
+
+| Login | Biblioteca | Buscador |
+| ----- | ---------- | -------- |
+| ![Login](docs/img/login.png) | ![Biblioteca](docs/img/biblioteca.png) | ![Buscador](docs/img/buscador.png) |
 
 ## Requisitos
 
-- PHP con la extensión `pdo_mysql`
+- PHP 7.3 o superior con la extensión `pdo_mysql`
 - MySQL o MariaDB
 
 ## Instalación en local
 
-1. Crea la base de datos e importa el esquema:
+1. **Crea el usuario de MySQL.** Edita `database/crear-usuario-local.sql`, cambia `CAMBIA_ESTA_CONTRASENA` por tu contraseña y ejecútalo como administrador:
    ```bash
-   mysql -u root -p -e "CREATE DATABASE k_libro CHARACTER SET utf8mb4;"
-   mysql -u root -p k_libro < database/BBDD.sql
+   sudo mysql < database/crear-usuario-local.sql
    ```
-2. Copia `.env.example` a `.env` y rellena tus credenciales.
-3. Arranca el servidor apuntando a `public/` como raíz:
+2. **Importa la base de datos.** Atención: `BBDD.sql` hace `DROP DATABASE IF EXISTS k_libro`, así que borra los datos que hubiera.
    ```bash
-   set -a; source .env; set +a
+   sudo mysql < database/BBDD.sql
+   ```
+3. **Configura las credenciales.** Copia `.env.example` a `.env` y pon la misma contraseña en `DB_PASS`. La aplicación lo carga automáticamente.
+4. **Arranca el servidor** con `public/` como raíz:
+   ```bash
    php -S localhost:8000 -t public
    ```
-4. Abre `http://localhost:8000/pages/login/login.php`.
+5. Abre `http://localhost:8000/pages/login/login.php`, regístrate y conviértete en administrador:
+   ```sql
+   UPDATE usuarios SET rol = 'admin' WHERE email = 'tu@correo.com';
+   ```
 
-> En producción, configura el servidor web (Apache/Nginx) con `public/` como directorio raíz, de modo que `backend/` y `database/` no sean accesibles desde el navegador.
+> En producción, configura Apache/Nginx con `public/` como directorio raíz, de modo que `.env`, `backend/` y `database/` no sean accesibles desde el navegador.
 
 ## Variables de entorno
 
@@ -40,18 +51,20 @@ Aplicación web de gestión de biblioteca personal. Permite registrarse, buscar 
 | --------- | -------------------------- | ----------------- |
 | `DB_HOST` | Host de MySQL              | `localhost`       |
 | `DB_NAME` | Nombre de la base de datos | `k_libro`         |
-| `DB_USER` | Usuario                    | `k_libro`         |
+| `DB_USER` | Usuario                    | *(obligatoria)*   |
 | `DB_PASS` | Contraseña                 | *(obligatoria)*   |
 
 ## Estructura del proyecto
 
 ```
 k-libro/
-├── database/               # Scripts SQL
-│   └── BBDD.sql            # Esquema completo + datos iniciales
+├── database/
+│   ├── BBDD.sql                    # Esquema completo + datos iniciales
+│   ├── 002-add-moderador-role.sql  # Migración: rol moderador
+│   └── crear-usuario-local.sql     # Crea el usuario de MySQL (pon tu contraseña)
 ├── backend/
-│   ├── config/db.php       # Conexión PDO a MySQL
-│   ├── helpers/            # Lógica de logros y retos
+│   ├── config/db.php       # Conexión PDO a MySQL (lee .env / variables de entorno)
+│   ├── helpers/            # Logros y retos, esquema, protección CSRF
 │   ├── validators/         # Validación de contraseñas
 │   ├── actions/            # Procesadores de formularios (POST)
 │   └── noticias.php        # Recomendaciones de la página de inicio

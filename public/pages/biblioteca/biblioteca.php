@@ -7,6 +7,7 @@ if (empty($_SESSION['user_id'])) {
 
 require_once __DIR__ . '/../../../backend/config/db.php';
 require_once __DIR__ . '/../../../backend/helpers/biblioteca_schema.php';
+require_once __DIR__ . '/../../../backend/helpers/csrf.php';
 
 asegurarColumnaFechaLectura($pdo);
 
@@ -92,6 +93,7 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
             echo '<button type="button" class="btn-detalles" onclick="abrirDetallesLibro(this)" data-i18n="biblio-detalles">Detalles</button>';
             echo '<form method="POST" action="../../../backend/actions/eliminar_libro.php" class="form-eliminar" onsubmit="return window.confirm(\'¿Seguro que quieres eliminar este libro de tu biblioteca?\');">';
             echo '<input type="hidden" name="libro_id" value="' . htmlspecialchars($idOpenLibrary, ENT_QUOTES, 'UTF-8') . '">';
+            echo '<input type="hidden" name="csrf_token" value="' . htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') . '">';
             echo '<button type="submit" class="btn-eliminar">';
             echo '<span data-i18n="biblio-eliminar">Eliminar</span>';
             echo '</button>';
@@ -351,7 +353,8 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-                        'Accept': 'application/json'
+                        'Accept': 'application/json',
+                        'X-CSRF-Token': <?= json_encode(csrf_token()) ?>
                     },
                     body: datos.toString()
                 });

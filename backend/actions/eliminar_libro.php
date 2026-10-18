@@ -24,6 +24,13 @@ if (empty($_SESSION['user_id'])) {
     exit;
 }
 
+// PASO 1.5: Verificar método POST y token CSRF (evita borrados lanzados desde otras webs)
+require_once __DIR__ . '/../helpers/csrf.php';
+if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !csrf_valido()) {
+    header('Location: ../../public/pages/biblioteca/biblioteca.php');
+    exit;
+}
+
 // PASO 2: Verificar que se recibió el ID del libro a eliminar
 if (empty($_POST['libro_id'])) {
     // Si no hay libro_id, redirigir a la biblioteca

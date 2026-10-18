@@ -5,6 +5,8 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+require_once __DIR__ . '/../../../backend/helpers/csrf.php';
+
 // Generamos la versión del CSS para evitar problemas de caché
 $cssVersion = @filemtime(__DIR__ . '/../../css/buscador.css') ?: time();
 ?>
@@ -149,6 +151,13 @@ $cssVersion = @filemtime(__DIR__ . '/../../css/buscador.css') ?: time();
             }
         }
 
+        // Escapa texto antes de meterlo en innerHTML (los datos de OpenLibrary son editables por cualquiera)
+        function escapeHtml(texto) {
+            return String(texto).replace(/[&<>"']/g, (c) => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            }[c]));
+        }
+
         // Función para dibujar el HTML de cada libro
         function renderizarLibros(libros) {
             const contenedor = document.getElementById('contenedorResultados');
@@ -170,20 +179,22 @@ $cssVersion = @filemtime(__DIR__ . '/../../css/buscador.css') ?: time();
                 const autor = libro.author_name ? libro.author_name[0] : t('autor-desconocido');
                 
                 const urlPortada = libro.cover_i 
-                    ? `https://covers.openlibrary.org/b/id/${libro.cover_i}-M.jpg` 
+                    ? `https://covers.openlibrary.org/b/id/${encodeURIComponent(libro.cover_i)}-M.jpg` 
                     : '../../assets/img/default_book.png'; // <-- Ruta ajustada al estilo de tu proyecto
 
                 const idSeguro = encodeURIComponent(libro.key || '');
                 const tituloSeguro = libro.title || 'Sin título';
                 const autorSeguro = autor;
                 const portadaSegura = urlPortada;
+                const tituloHtml = escapeHtml(tituloSeguro);
+                const autorHtml = escapeHtml(autorSeguro);
 
                 // Tarjeta HTML adaptada a las clases de tu CSS (Magia Oscura)
                 htmlFinal += `
                     <div class="book-card">
-                        <img src="${urlPortada}" alt="Portada de ${libro.title}" onerror="this.src='../../assets/img/default_book.png'">
-                        <h3>${libro.title}</h3>
-                        <p>${autor}</p>
+                        <img src="${urlPortada}" alt="Portada de ${tituloHtml}" onerror="this.src='../../assets/img/default_book.png'">
+                        <h3>${tituloHtml}</h3>
+                        <p>${autorHtml}</p>
                         
                         <select id="estado-${idSeguro}" class="select-estado">
                             <option value="" selected disabled>${t('card-selecciona')}</option>
@@ -275,7 +286,8 @@ $cssVersion = @filemtime(__DIR__ . '/../../css/buscador.css') ?: time();
                 const respuesta = await fetch('../../../backend/actions/guardar_libro.php', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                        'X-CSRF-Token': <?= json_encode(csrf_token()) ?>
                     },
                     body: datos.toString()
                 });

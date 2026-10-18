@@ -50,6 +50,14 @@ if ($usuario_id_borrar === (int) $_SESSION['user_id']) {
 
 require_once __DIR__ . '/../config/db.php';
 
+// Comprobar en la BD que quien borra sigue siendo admin (la sesión puede estar desfasada)
+$stmtActor = $pdo->prepare('SELECT rol FROM usuarios WHERE id = ?');
+$stmtActor->execute([(int) $_SESSION['user_id']]);
+if ($stmtActor->fetchColumn() !== 'admin') {
+    header('Location: ../../public/pages/login/login.php');
+    exit;
+}
+
 // 6. Verificar que el usuario existe y no es admin
 $stmt = $pdo->prepare("SELECT id, rol FROM usuarios WHERE id = ?");
 $stmt->execute([$usuario_id_borrar]);

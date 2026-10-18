@@ -4,6 +4,14 @@
  * Recibe POST con campo 'accion' = 'registro' | 'login'.
  */
 
+// Cookie de sesión más segura: sin acceso desde JavaScript y sin enviarse en peticiones cruzadas
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path'     => '/',
+    'secure'   => !empty($_SERVER['HTTPS']),
+    'httponly' => true,
+    'samesite' => 'Lax',
+]);
 session_start();
 
 require_once __DIR__ . '/../config/db.php';
@@ -20,9 +28,23 @@ if(isset($_POST['accion'])){
         
         // PASO 1: Obtener datos del formulario
         //         (nombre de usuario, correo, contraseña)
-        $nombre = $_POST['nombre'];
-        $contrasena = $_POST['contrasena'];
-        $correo = $_POST['correo'];
+        $nombre = trim($_POST['nombre'] ?? '');
+        $contrasena = $_POST['contrasena'] ?? '';
+        $correo = trim($_POST['correo'] ?? '');
+
+        // Validar campos básicos (los límites coinciden con la tabla usuarios)
+        if ($nombre === '' || $correo === '' || $contrasena === '') {
+            echo "<script>alert('Por favor completa todos los campos'); window.history.back();</script>";
+            exit;
+        }
+        if (mb_strlen($nombre) > 50) {
+            echo "<script>alert('El nombre no puede superar los 50 caracteres'); window.history.back();</script>";
+            exit;
+        }
+        if (!filter_var($correo, FILTER_VALIDATE_EMAIL) || mb_strlen($correo) > 100) {
+            echo "<script>alert('El email no es válido'); window.history.back();</script>";
+            exit;
+        }
 
         // PASO 2: VALIDAR LA CONTRASEÑA
         // Verificar que cumpla con los requisitos de seguridad
@@ -105,6 +127,9 @@ if(isset($_POST['accion'])){
                 if (password_verify($contrasena, $row['contrasena'])) {
                     
                     // CONTRASEÑA CORRECTA - CREAR SESIÓN
+                    // Nuevo ID de sesión tras el login (evita la fijación de sesión)
+                    session_regenerate_id(true);
+                    unset($_SESSION['csrf_token']);
                     // Guardar datos importantes en $_SESSION
                     $_SESSION['user_id'] = $row['id'];        // ID único del usuario
                     $_SESSION['nombre'] = $row['nombre'];      // Nombre de usuario

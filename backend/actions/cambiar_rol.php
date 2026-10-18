@@ -43,6 +43,17 @@ if ($usuario_id_target === (int) $_SESSION['user_id']) {
 
 require_once __DIR__ . '/../config/db.php';
 
+// Rol real de quien hace la petición, leído de la BD (la sesión puede estar desfasada
+// si a este usuario le han cambiado el rol o lo han eliminado después de iniciar sesión)
+$stmtActor = $pdo->prepare('SELECT rol FROM usuarios WHERE id = ?');
+$stmtActor->execute([(int) $_SESSION['user_id']]);
+$rolActor = (string) ($stmtActor->fetchColumn() ?: '');
+if (!in_array($rolActor, ['admin', 'moderador'], true)) {
+    header('Location: ../../public/pages/login/login.php');
+    exit;
+}
+$_SESSION['rol'] = $rolActor;
+
 // Obtener el rol actual del objetivo
 $stmtCheck = $pdo->prepare('SELECT rol FROM usuarios WHERE id = ?');
 $stmtCheck->execute([$usuario_id_target]);
