@@ -23,6 +23,7 @@ const I18n = {
         });
         document.documentElement.lang = lang;
         localStorage.setItem('klibro-lang', lang);
+        document.dispatchEvent(new CustomEvent('klibro:lang', { detail: lang }));
     },
 
     init(t, titleEs, titleEn) {

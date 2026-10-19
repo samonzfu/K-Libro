@@ -12,10 +12,16 @@ if (!empty($_SESSION['user_id'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | K-Libro</title>
+    <link rel="icon" type="image/png" href="../../assets/img/icono.png">
+    <link rel="stylesheet" href="../../css/theme.css">
+    <script src="../../js/theme.js"></script>
     <link rel="stylesheet" href="../../css/login.css">
 </head>
 <body>
-    <button id="btn-lang" class="btn-lang">🌐 English</button>
+    <div class="barra-sup">
+        <button id="btn-theme" class="btn-lang btn-theme" type="button">☀️ Claro</button>
+        <button id="btn-lang" class="btn-lang">🌐 English</button>
+    </div>
     <h1>K-LIBRO</h1>
     <div class="formulario">
         <h2 data-i18n="login-h2">Inicia Sesión</h2>

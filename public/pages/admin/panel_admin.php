@@ -82,6 +82,9 @@ $feedback    = $feedbackKey ? ($mensajes[$feedbackKey] ?? null) : null;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Admin | K-Libro</title>
+    <link rel="icon" type="image/png" href="../../assets/img/icono.png">
+    <link rel="stylesheet" href="../../css/theme.css">
+    <script src="../../js/theme.js"></script>
     <link rel="stylesheet" href="../../css/panel_admin.css">
 </head>
 <body>
@@ -91,6 +94,7 @@ $feedback    = $feedbackKey ? ($mensajes[$feedbackKey] ?? null) : null;
     <nav>
         <a href="../inicio/inicio.php">← Inicio</a>
         <a href="../../logout.php">Cerrar sesión</a>
+        <button id="btn-theme" class="btn-theme" type="button">☀️ Claro</button>
     </nav>
 </header>
 

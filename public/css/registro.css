@@ -6,15 +6,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap');
 
 /* --- VARIABLES --- */
-:root {
-    --color-fondo: #111814;       
-    --color-magia: #3a1f28; 
-    --color-oscuridad: #0a0e0c;  
-    --color-dorado: #d96c82;  
-    --color-texto: #f2ebeb;    
-    --brillo-dorado: 0 4px 20px rgba(217, 108, 130, 0.3);
-    --fondo-tarjeta: rgba(20, 28, 24, 0.85);
-}
+/* La paleta de colores (modo oscuro y claro) está en theme.css */
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -36,7 +28,7 @@ h1 {
     font-size: 3.5rem;
     color: var(--color-dorado);
     margin-bottom: 2rem;
-    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8), 0 0 20px rgba(217, 108, 130, 0.5);
+    text-shadow: 2px 2px 8px rgba(var(--shadow-rgb), calc(0.8 * var(--shadow-k))), 0 0 20px rgba(var(--accent-rgb), 0.5);
     letter-spacing: 3px;
     animation: aparecer 1s ease-out;
     text-align: center;
@@ -47,13 +39,13 @@ h1 {
     background: var(--fondo-tarjeta);
     padding: 3rem 2.5rem;
     border-radius: 15px;
-    border: 1px solid rgba(217, 108, 130, 0.4);
+    border: 1px solid rgba(var(--accent-rgb), 0.4);
     width: 100%;
     max-width: 420px;
     text-align: center;
     position: relative;
     backdrop-filter: blur(15px);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7), inset 0 0 20px rgba(217, 108, 130, 0.05);
+    box-shadow: 0 15px 40px rgba(var(--shadow-rgb), calc(0.7 * var(--shadow-k))), inset 0 0 20px rgba(var(--accent-rgb), 0.05);
     animation: aparecer 1.2s ease-out;
 }
 
@@ -92,9 +84,9 @@ h2 {
 .campo input[type="password"] {
     width: 100%;
     padding: 12px 15px;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(var(--overlay-rgb), 0.05);
     border: none;
-    border-bottom: 1px solid rgba(217, 108, 130, 0.3);
+    border-bottom: 1px solid rgba(var(--accent-rgb), 0.3);
     border-radius: 4px 4px 0 0;
     color: var(--color-texto);
     font-size: 1rem;
@@ -102,15 +94,15 @@ h2 {
 }
 
 .campo input::placeholder {
-    color: rgba(242, 235, 235, 0.4);
+    color: rgba(var(--texto-rgb), 0.4);
     font-style: italic;
 }
 
 .campo input:focus {
     outline: none;
     border-bottom: 2px solid var(--color-dorado);
-    background: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 10px rgba(217, 108, 130, 0.1);
+    background: rgba(var(--overlay-rgb), 0.1);
+    box-shadow: 0 4px 10px rgba(var(--accent-rgb), 0.1);
 }
 
 /* --- BOTÓN DE REGISTRO --- */
@@ -120,7 +112,7 @@ input[type="submit"] {
     background: var(--color-dorado);
     border: 1px solid transparent;
     border-radius: 30px;
-    color: #111814;
+    color: var(--color-fondo);
     font-family: 'Cinzel', serif;
     font-size: 1.1rem;
     font-weight: bold;
@@ -132,10 +124,10 @@ input[type="submit"] {
 }
 
 input[type="submit"]:hover:not(:disabled) {
-    background: #23362a;
+    background: var(--hover-bg);
     color: var(--color-dorado);
     border: 1px solid var(--color-dorado);
-    box-shadow: 0 8px 25px rgba(35, 54, 42, 0.6);
+    box-shadow: 0 8px 25px rgba(var(--hover-rgb), 0.6);
     transform: scale(1.03);
 }
 
@@ -143,7 +135,7 @@ input[type="submit"]:hover:not(:disabled) {
 
 .recordar{
     font-size: 0.85rem;
-    color: rgba(242, 235, 235, 0.6);
+    color: rgba(var(--texto-rgb), 0.6);
     margin-top: 1.5rem;
     margin-bottom: 0.5rem;
 }
@@ -158,16 +150,16 @@ input[type="submit"]:hover:not(:disabled) {
 }
 
 .iniciar-sesion a:hover {
-    color: #fff;
+    color: var(--texto-fuerte);
     border-bottom: 1px solid var(--color-dorado);
     text-shadow: 0 0 8px var(--color-dorado);
 }
 
 /* ESTADO DESHABILITADO DEL BOTÓN (Controlado por el JS) */
 input[type="submit"]:disabled {
-    background: rgba(255, 255, 255, 0.05);
-    color: rgba(242, 235, 235, 0.3);
-    border: 1px solid rgba(242, 235, 235, 0.1);
+    background: rgba(var(--overlay-rgb), 0.05);
+    color: rgba(var(--texto-rgb), 0.3);
+    border: 1px solid rgba(var(--texto-rgb), 0.1);
     box-shadow: none;
     cursor: not-allowed;
 }
@@ -176,11 +168,11 @@ input[type="submit"]:disabled {
 
 /* Sobreescribimos el color black del div contenedor */
 #requisitos {
-    color: rgba(242, 235, 235, 0.8) !important;
-    background: rgba(0, 0, 0, 0.2);
+    color: rgba(var(--texto-rgb), 0.8) !important;
+    background: rgba(var(--hundido-rgb), 0.2);
     padding: 15px;
     border-radius: 8px;
-    border: 1px dashed rgba(217, 108, 130, 0.3);
+    border: 1px dashed rgba(var(--accent-rgb), 0.3);
 }
 
 #requisitos ul {
@@ -202,13 +194,13 @@ input[type="submit"]:disabled {
 /* Estado inicial (blanco) y estado inválido (gris) */
 #requisitos li[style*="white"], 
 #requisitos li[style*="gray"] {
-    color: rgba(242, 235, 235, 0.4) !important;
+    color: rgba(var(--texto-rgb), 0.4) !important;
 }
 
 /* Estado válido (verde inyectado por JS) lo cambiamos al rosa*/
 #requisitos li[style*="green"] {
     color: var(--color-dorado) !important;
-    text-shadow: 0 0 8px rgba(217, 108, 130, 0.6) !important;
+    text-shadow: 0 0 8px rgba(var(--accent-rgb), 0.6) !important;
     transform: translateX(5px); /* Pequeño salto a la derecha al completarse */
 }
 
@@ -218,8 +210,8 @@ input[type="submit"]:disabled {
     top: 1.2rem;
     right: 1.5rem;
     background: transparent;
-    border: 1px solid rgba(217, 108, 130, 0.5);
-    color: rgba(242, 235, 235, 0.8);
+    border: 1px solid rgba(var(--accent-rgb), 0.5);
+    color: rgba(var(--texto-rgb), 0.8);
     padding: 8px 18px;
     font-family: 'Cinzel', serif;
     font-size: 0.8rem;

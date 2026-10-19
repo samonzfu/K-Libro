@@ -15,7 +15,11 @@ $cssVersion = @filemtime(__DIR__ . '/../../css/buscador.css') ?: time();
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>K-Libro | Buscador</title>
+    <link rel="icon" type="image/png" href="../../assets/img/icono.png">
+    <link rel="stylesheet" href="../../css/theme.css">
+    <script src="../../js/theme.js"></script>
     <link rel="stylesheet" href="../../css/buscador.css?v=<?= $cssVersion ?>">
 </head>
 <body>
@@ -28,8 +32,9 @@ $cssVersion = @filemtime(__DIR__ . '/../../css/buscador.css') ?: time();
             <a href="../mi_cuenta/mi_cuenta.php" data-i18n="nav-cuenta">Mi cuenta</a> 
             <a href="../buscador/buscador.php" data-i18n="nav-buscador">Buscador</a>
         <?php if (!empty($_SESSION['rol']) && in_array($_SESSION['rol'], ['admin', 'moderador'], true)): ?>
-            | <a href="../admin/panel_admin.php" style="color: #e74c3c; font-weight: bold;">Panel Admin</a>
+            | <a href="../admin/panel_admin.php" style="color: var(--link-admin); font-weight: bold;">Panel Admin</a>
         <?php endif; ?>
+            <button id="btn-theme" class="btn-lang btn-theme" type="button">☀️ Claro</button>
             <button id="btn-lang" class="btn-lang">🌐 English</button>
         </nav>
 

@@ -3,17 +3,7 @@
 /* Uso: cabecera admin, tarjetas de métricas y tabla de usuarios.             */
 /* ========================================================================== */
 
-:root {
-    /* Paleta principal del tema admin */
-    --color-fondo: #111814;
-    --color-magia: #3a1f28;
-    --color-oscuridad: #0a0e0c;
-    --color-dorado: #d96c82;
-    --color-texto: #f2ebeb;
-    --panel: rgba(20, 28, 24, 0.9);
-    --panel-sec: rgba(255, 255, 255, 0.03);
-    --linea: rgba(217, 108, 130, 0.2);
-}
+/* La paleta de colores (modo oscuro y claro) está en theme.css */
 
 * {
     margin: 0;
@@ -61,7 +51,7 @@ header nav a {
 }
 
 header nav a:hover {
-    background: rgba(217, 108, 130, 0.15);
+    background: rgba(var(--accent-rgb), 0.15);
     border-color: var(--color-dorado);
 }
 
@@ -102,7 +92,7 @@ section h2 {
 
 .estadistica-card h3 {
     font-size: 0.9rem;
-    color: rgba(242, 235, 235, 0.85);
+    color: rgba(var(--texto-rgb), 0.85);
     font-weight: 600;
     margin-bottom: 0.45rem;
 }
@@ -132,22 +122,22 @@ section h2 {
     letter-spacing: 0.04em;
     color: var(--color-dorado);
     border-bottom: 1px solid var(--linea);
-    background: rgba(217, 108, 130, 0.08);
+    background: rgba(var(--accent-rgb), 0.08);
 }
 
 .tabla-usuarios td {
     padding: 0.75rem;
-    border-bottom: 1px solid rgba(217, 108, 130, 0.12);
-    color: rgba(242, 235, 235, 0.92);
+    border-bottom: 1px solid rgba(var(--accent-rgb), 0.12);
+    color: rgba(var(--texto-rgb), 0.92);
     font-size: 0.92rem;
 }
 
 .tabla-usuarios tbody tr:nth-child(even) {
-    background: rgba(255, 255, 255, 0.02);
+    background: rgba(var(--overlay-rgb), 0.02);
 }
 
 .tabla-usuarios tbody tr:hover {
-    background: rgba(217, 108, 130, 0.09);
+    background: rgba(var(--accent-rgb), 0.09);
 }
 
 .rol-badge {
@@ -162,12 +152,12 @@ section h2 {
 
 .rol-badge.admin {
     color: var(--color-dorado);
-    background: rgba(217, 108, 130, 0.16);
+    background: rgba(var(--accent-rgb), 0.16);
 }
 
 .rol-badge.user {
-    color: rgba(242, 235, 235, 0.88);
-    background: rgba(255, 255, 255, 0.04);
+    color: rgba(var(--texto-rgb), 0.88);
+    background: rgba(var(--overlay-rgb), 0.04);
 }
 
 .libros-leidos {
@@ -177,7 +167,7 @@ section h2 {
 
 .sin-datos {
     text-align: center;
-    color: rgba(242, 235, 235, 0.6);
+    color: rgba(var(--texto-rgb), 0.6);
     padding: 1.2rem;
 }
 
@@ -230,13 +220,13 @@ section h2 {
 }
 
 .btn-rol {
-    background: rgba(217, 108, 130, 0.12);
-    border-color: rgba(217, 108, 130, 0.35);
+    background: rgba(var(--accent-rgb), 0.12);
+    border-color: rgba(var(--accent-rgb), 0.35);
     color: var(--color-dorado);
 }
 
 .btn-rol:hover {
-    background: rgba(217, 108, 130, 0.25);
+    background: rgba(var(--accent-rgb), 0.25);
     border-color: var(--color-dorado);
 }
 
@@ -252,22 +242,22 @@ section h2 {
 }
 
 .sin-acciones {
-    color: rgba(242, 235, 235, 0.35);
+    color: rgba(var(--texto-rgb), 0.35);
     font-size: 0.85rem;
 }
 
 /* ── Fila del admin activo ───────────────────────────────────────────────── */
 
 .fila-self {
-    background: rgba(217, 108, 130, 0.06) !important;
+    background: rgba(var(--accent-rgb), 0.06) !important;
 }
 
 .badge-yo {
     display: inline-block;
     margin-left: 0.4rem;
     padding: 0.1rem 0.45rem;
-    background: rgba(217, 108, 130, 0.18);
-    border: 1px solid rgba(217, 108, 130, 0.4);
+    background: rgba(var(--accent-rgb), 0.18);
+    border: 1px solid rgba(var(--accent-rgb), 0.4);
     border-radius: 999px;
     font-size: 0.68rem;
     font-weight: 700;

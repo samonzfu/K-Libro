@@ -11,16 +11,22 @@ if (!empty($_SESSION['user_id'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro | K-Libro</title>
+    <link rel="icon" type="image/png" href="../../assets/img/icono.png">
+    <link rel="stylesheet" href="../../css/theme.css">
+    <script src="../../js/theme.js"></script>
     <link rel="stylesheet" href="../../css/registro.css">
 </head>
 <body>
-    <button id="btn-lang" class="btn-lang">🌐 English</button>
+    <div class="barra-sup">
+        <button id="btn-theme" class="btn-lang btn-theme" type="button">☀️ Claro</button>
+        <button id="btn-lang" class="btn-lang">🌐 English</button>
+    </div>
     <h1>K-Libro</h1>
     <div class="formulario">
         <h2 data-i18n="reg-h2">Crear una cuenta</h2>
         <form method="post" action="../../../backend/actions/auth.php">
             <div class="nombre campo">
-                <input type="text" name="nombre" data-i18n-ph="ph-usuario" placeholder="Usuario" required>
+                <input type="text" name="nombre" maxlength="50" data-i18n-ph="ph-usuario" placeholder="Usuario" required>
             </div>
             <div class="contrasena campo">
                 <input type="password" name="contrasena" id="contrasena" data-i18n-ph="ph-contrasena" placeholder="Contraseña" required oninput="validarContrasena()">
@@ -36,7 +42,7 @@ if (!empty($_SESSION['user_id'])) {
                 </div>
             </div>
             <div class="correo campo">
-                <input type="text" name="correo" data-i18n-ph="ph-correo" placeholder="Correo" required>
+                <input type="email" name="correo" maxlength="100" autocomplete="email" data-i18n-ph="ph-correo" placeholder="Correo" required>
             </div>
             <input type="hidden" name="accion" value="registro">
             <input type="submit" data-i18n-val="reg-submit" value="Insertar">

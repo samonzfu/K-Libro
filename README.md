@@ -11,6 +11,7 @@ Aplicación web de gestión de biblioteca personal. Permite registrarse, buscar 
 - Logros y retos mensuales
 - Panel de administración (gestión de usuarios y roles: user, moderador, admin)
 - Interfaz en español e inglés
+- Modo claro y oscuro (oscuro por defecto)
 
 ## Requisitos
 
@@ -69,8 +70,8 @@ k-libro/
 │   ├── actions/            # Procesadores de formularios (POST)
 │   └── noticias.php        # Recomendaciones de la página de inicio
 └── public/
-    ├── css/                # Hojas de estilo por página
-    ├── js/i18n.js          # Internacionalización (ES/EN)
+    ├── css/                # Hojas de estilo por página + theme.css (modo claro/oscuro)
+    ├── js/                 # i18n.js (ES/EN) y theme.js (modo claro/oscuro)
     ├── assets/img/
     └── pages/              # registro, login, inicio, biblioteca, mi_cuenta, buscador, admin
 ```

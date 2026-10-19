@@ -8,15 +8,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap');
 
 /* --- VARIABLES DE COLORES --- */
-:root {
-    --color-fondo: #111814;       /* Verde bosque casi negro */
-    --color-magia: #3a1f28;       /* Borgoña/Rosa muy oscuro */
-    --color-oscuridad: #0a0e0c;   /* Sombra total */
-    --color-dorado: #d96c82;      /* Rosa rubor vibrante (Accent color) */
-    --color-texto: #f2ebeb;       /* Crema muy claro */
-    --glass: rgba(20, 28, 24, 0.85); /* Cristal oscuro ahumado */
-    --brillo-dorado: 0 4px 20px rgba(217, 108, 130, 0.3);
-}
+/* La paleta de colores (modo oscuro y claro) está en theme.css */
 
 /* --- RESET BÁSICO --- */
 * {
@@ -58,9 +50,9 @@ nav {
 }
 
 nav a {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(217, 108, 130, 0.3);
-    color: rgba(242, 235, 235, 0.8); /* Le devolvemos el color a las letras */
+    background: rgba(var(--overlay-rgb), 0.05);
+    border: 1px solid rgba(var(--accent-rgb), 0.3);
+    color: rgba(var(--texto-rgb), 0.8); /* Le devolvemos el color a las letras */
     padding: 10px 25px;
     text-decoration: none;
     font-family: 'Cinzel', serif;
@@ -85,7 +77,7 @@ h1 {
     font-size: 3rem;
     color: var(--color-dorado);
     margin-bottom: 1.5rem;
-    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8), 0 0 15px rgba(217, 108, 130, 0.4);
+    text-shadow: 2px 2px 8px rgba(var(--shadow-rgb), calc(0.8 * var(--shadow-k))), 0 0 15px rgba(var(--accent-rgb), 0.4);
     text-align: center;
     letter-spacing: 2px;
     animation: fadeInDown 0.8s ease-out;
@@ -94,7 +86,7 @@ h1 {
 .subtitulo {
     text-align: center;
     font-size: 1.1rem;
-    color: rgba(242, 235, 235, 0.7);
+    color: rgba(var(--texto-rgb), 0.7);
     margin-bottom: 4rem;
     font-style: italic;
 }
@@ -109,13 +101,13 @@ h1 {
 
 .nav-secciones a {
     text-decoration: none;
-    color: rgba(242, 235, 235, 0.85);
-    border: 1px solid rgba(217, 108, 130, 0.35);
+    color: rgba(var(--texto-rgb), 0.85);
+    border: 1px solid rgba(var(--accent-rgb), 0.35);
     border-radius: 999px;
     padding: 8px 16px;
     font-size: 0.9rem;
     transition: all 0.25s ease;
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(var(--overlay-rgb), 0.03);
 }
 
 .nav-secciones a:hover {
@@ -140,11 +132,11 @@ h1 {
 .seccion-estado {
     margin-bottom: 5rem;
     background: var(--glass);
-    border: 1px solid rgba(217, 108, 130, 0.15);
+    border: 1px solid rgba(var(--accent-rgb), 0.15);
     border-radius: 15px;
     padding: 2.5rem;
     backdrop-filter: blur(10px);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 15px 40px rgba(var(--shadow-rgb), calc(0.5 * var(--shadow-k)));
 }
 
 .seccion-estado h2 {
@@ -152,18 +144,18 @@ h1 {
     font-size: 2rem;
     color: var(--color-dorado);
     margin-bottom: 2rem;
-    border-bottom: 1px solid rgba(217, 108, 130, 0.3);
+    border-bottom: 1px solid rgba(var(--accent-rgb), 0.3);
     padding-bottom: 10px;
     letter-spacing: 1px;
 }
 
 .vacio {
     text-align: center;
-    color: rgba(242, 235, 235, 0.5);
+    color: rgba(var(--texto-rgb), 0.5);
     font-style: italic;
     font-size: 1.1rem;
     padding: 2rem;
-    border: 1px dashed rgba(217, 108, 130, 0.3);
+    border: 1px dashed rgba(var(--accent-rgb), 0.3);
     border-radius: 10px;
 }
 
@@ -181,9 +173,9 @@ h1 {
 }
 
 .btn-ver-mas-seccion {
-    border: 1px solid rgba(217, 108, 130, 0.45);
-    background: rgba(255, 255, 255, 0.03);
-    color: rgba(242, 235, 235, 0.9);
+    border: 1px solid rgba(var(--accent-rgb), 0.45);
+    background: rgba(var(--overlay-rgb), 0.03);
+    color: rgba(var(--texto-rgb), 0.9);
     border-radius: 999px;
     padding: 10px 18px;
     cursor: pointer;
@@ -201,8 +193,8 @@ h1 {
 
 /* --- TARJETA DE LIBRO --- */
 .book-card {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(217, 108, 130, 0.1);
+    background: rgba(var(--overlay-rgb), 0.02);
+    border: 1px solid rgba(var(--accent-rgb), 0.1);
     border-radius: 10px;
     padding: 1rem;
     text-align: center;
@@ -219,7 +211,7 @@ h1 {
 .book-card:hover {
     transform: translateY(-10px);
     border-color: var(--color-dorado);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(217, 108, 130, 0.1);
+    box-shadow: 0 10px 30px rgba(var(--shadow-rgb), calc(0.6 * var(--shadow-k))), inset 0 0 15px rgba(var(--accent-rgb), 0.1);
 }
 
 .book-card img {
@@ -227,9 +219,9 @@ h1 {
     aspect-ratio: 2 / 3; 
     object-fit: cover;
     border-radius: 5px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    box-shadow: 0 5px 15px rgba(var(--shadow-rgb), calc(0.5 * var(--shadow-k)));
     margin-bottom: 1rem;
-    border: 1px solid rgba(0,0,0,0.5);
+    border: 1px solid rgba(var(--shadow-rgb), calc(0.5 * var(--shadow-k)));
 }
 
 .book-card h3 {
@@ -244,7 +236,7 @@ h1 {
 
 .book-card p {
     font-size: 0.85rem;
-    color: rgba(242, 235, 235, 0.6);
+    color: rgba(var(--texto-rgb), 0.6);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -259,9 +251,9 @@ h1 {
 
 .btn-detalles {
     width: 100%;
-    border: 1px solid rgba(217, 108, 130, 0.45);
-    background: rgba(255, 255, 255, 0.03);
-    color: rgba(242, 235, 235, 0.9);
+    border: 1px solid rgba(var(--accent-rgb), 0.45);
+    background: rgba(var(--overlay-rgb), 0.03);
+    color: rgba(var(--texto-rgb), 0.9);
     border-radius: 8px;
     padding: 8px 10px;
     cursor: pointer;
@@ -308,7 +300,7 @@ h1 {
 .modal-detalles-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.65);
+    background: rgba(var(--velo-rgb), 0.65);
     backdrop-filter: blur(3px);
 }
 
@@ -316,18 +308,18 @@ h1 {
     position: relative;
     width: min(860px, calc(100% - 2rem));
     margin: 1rem auto;
-    background: #18211d;
-    border: 1px solid rgba(217, 108, 130, 0.35);
+    background: var(--modal-fondo);
+    border: 1px solid rgba(var(--accent-rgb), 0.35);
     border-radius: 16px;
     padding: 1.2rem;
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+    box-shadow: 0 24px 60px rgba(var(--shadow-rgb), calc(0.55 * var(--shadow-k)));
 }
 
 .modal-detalles-cerrar {
     margin-left: auto;
     display: block;
-    border: 1px solid rgba(217, 108, 130, 0.45);
-    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(var(--accent-rgb), 0.45);
+    background: rgba(var(--overlay-rgb), 0.03);
     color: var(--color-texto);
     border-radius: 999px;
     padding: 8px 14px;
@@ -345,18 +337,18 @@ h1 {
     width: 100%;
     border-radius: 10px;
     object-fit: cover;
-    border: 1px solid rgba(217, 108, 130, 0.2);
+    border: 1px solid rgba(var(--accent-rgb), 0.2);
 }
 
 .modal-detalles-autor {
-    color: rgba(242, 235, 235, 0.75);
+    color: rgba(var(--texto-rgb), 0.75);
     margin-bottom: 0.9rem;
 }
 
 .modal-detalles-resena {
     white-space: pre-wrap;
-    background: rgba(0, 0, 0, 0.22);
-    border: 1px solid rgba(217, 108, 130, 0.25);
+    background: rgba(var(--hundido-rgb), 0.22);
+    border: 1px solid rgba(var(--accent-rgb), 0.25);
     border-radius: 8px;
     padding: 0.65rem;
 }
@@ -370,13 +362,13 @@ h1 {
 
 .modal-detalles-label {
     font-size: 0.85rem;
-    color: rgba(242, 235, 235, 0.85);
+    color: rgba(var(--texto-rgb), 0.85);
 }
 
 .modal-detalles-input {
     width: 100%;
-    border: 1px solid rgba(217, 108, 130, 0.35);
-    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(var(--accent-rgb), 0.35);
+    background: rgba(var(--hundido-rgb), 0.3);
     color: var(--color-texto);
     border-radius: 8px;
     padding: 8px 10px;
@@ -386,9 +378,9 @@ h1 {
 .btn-modal-editar {
     display: block;
     margin-top: 1rem;
-    border: 1px solid rgba(217, 108, 130, 0.45);
-    background: rgba(255, 255, 255, 0.03);
-    color: rgba(242, 235, 235, 0.9);
+    border: 1px solid rgba(var(--accent-rgb), 0.45);
+    background: rgba(var(--overlay-rgb), 0.03);
+    color: rgba(var(--texto-rgb), 0.9);
     border-radius: 8px;
     padding: 9px 14px;
     cursor: pointer;
@@ -406,9 +398,9 @@ h1 {
 
 .btn-modal-guardar {
     margin-top: 0.35rem;
-    border: 1px solid rgba(217, 108, 130, 0.45);
-    background: rgba(255, 255, 255, 0.03);
-    color: rgba(242, 235, 235, 0.9);
+    border: 1px solid rgba(var(--accent-rgb), 0.45);
+    background: rgba(var(--overlay-rgb), 0.03);
+    color: rgba(var(--texto-rgb), 0.9);
     border-radius: 8px;
     padding: 9px 11px;
     cursor: pointer;
@@ -438,8 +430,8 @@ h1 {
 /* --- BOTÓN DE IDIOMA --- */
 .btn-lang {
     background: transparent;
-    border: 1px solid rgba(217, 108, 130, 0.5);
-    color: rgba(242, 235, 235, 0.8);
+    border: 1px solid rgba(var(--accent-rgb), 0.5);
+    color: rgba(var(--texto-rgb), 0.8);
     padding: 10px 20px;
     font-family: 'Cinzel', serif;
     font-size: 0.85rem;
