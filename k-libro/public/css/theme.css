@@ -1,0 +1,157 @@
+/* ==========================================================================
+   TEMA DE K-LIBRO · modo oscuro (por defecto) y modo claro
+   --------------------------------------------------------------------------
+   - El modo oscuro es la paleta original del proyecto.
+   - El modo claro se activa con <html data-theme="light"> (lo pone js/theme.js).
+   - Los CSS de cada página solo usan estas variables; para cambiar un color
+     del tema se toca aquí.
+   - Los canales RGB (--accent-rgb, ...) permiten usar transparencias:
+       rgba(var(--accent-rgb), 0.3)
+   ========================================================================== */
+
+:root {
+    color-scheme: dark;
+
+    /* Paleta base */
+    --color-fondo: #111814;       /* Verde bosque casi negro */
+    --color-magia: #3a1f28;       /* Borgoña/Rosa muy oscuro */
+    --color-oscuridad: #0a0e0c;   /* Sombra total */
+    --color-dorado: #d96c82;      /* Rosa rubor vibrante (acento) */
+    --color-texto: #f2ebeb;       /* Crema muy claro */
+
+    /* Canales RGB para transparencias */
+    --accent-rgb: 217, 108, 130;  /* = --color-dorado */
+    --texto-rgb: 242, 235, 235;   /* = --color-texto */
+    --glass-rgb: 20, 28, 24;      /* Cristal ahumado (tarjetas y paneles) */
+    --overlay-rgb: 255, 255, 255; /* Velos sutiles sobre el fondo */
+    --hundido-rgb: 0, 0, 0;       /* Campos y cajas "hundidos" */
+    --input-rgb: 10, 14, 12;      /* Campos de formulario */
+    --shadow-rgb: 0, 0, 0;        /* Sombras */
+    --shadow-k: 1;                /* Intensidad de las sombras (0-1) */
+    --velo-rgb: 0, 0, 0;          /* Fondo oscurecido detrás de los modales */
+    --hover-rgb: 35, 54, 42;      /* Sombra del botón al pasar el ratón */
+
+    /* Colores derivados */
+    --glass: rgba(var(--glass-rgb), 0.85);
+    --fondo-tarjeta: rgba(var(--glass-rgb), 0.85);
+    --panel: rgba(var(--glass-rgb), 0.9);
+    --panel-sec: rgba(var(--overlay-rgb), 0.03);
+    --linea: rgba(var(--accent-rgb), 0.2);
+    --brillo-dorado: 0 4px 20px rgba(var(--accent-rgb), 0.3);
+
+    /* Otros */
+    --hover-bg: #23362a;          /* Botón principal al pasar el ratón */
+    --modal-fondo: #18211d;
+    --texto-fuerte: #fff;         /* Enlaces al pasar el ratón */
+    --link-admin: #e74c3c;        /* Enlace "Panel Admin" */
+}
+
+:root[data-theme="light"] {
+    color-scheme: light;
+
+    /* Paleta base: tonos crema manteniendo el rosa y el verde bosque */
+    --color-fondo: #f6efe4;       /* Crema */
+    --color-magia: #f0d9d6;       /* Rosa empolvado */
+    --color-oscuridad: #e9dcc8;   /* Arena */
+    --color-dorado: #a03356;      /* Rosa frambuesa (contraste suficiente sobre crema) */
+    --color-texto: #1f2a24;       /* Verde bosque oscuro */
+
+    --accent-rgb: 160, 51, 86;
+    --texto-rgb: 31, 42, 36;
+    --glass-rgb: 255, 250, 242;   /* Crema claro */
+    --overlay-rgb: 90, 55, 45;
+    --hundido-rgb: 255, 255, 255;
+    --input-rgb: 255, 255, 255;
+    --shadow-rgb: 90, 50, 45;
+    --shadow-k: 0.3;
+    --velo-rgb: 58, 36, 32;
+    --hover-rgb: 160, 51, 86;
+
+    --hover-bg: #fffaf2;
+    --modal-fondo: #fffaf2;
+    --texto-fuerte: #6e1530;
+    --link-admin: #b8321f;
+}
+
+/* ---- Avisos y botones de estado en modo claro (los tonos pastel del modo
+        oscuro no se leen sobre fondo crema) ---- */
+[data-theme="light"] .error {
+    background: rgba(190, 40, 50, 0.08);
+    border-color: #b3273a;
+    color: #8c1d2c;
+}
+[data-theme="light"] .btn-eliminar {
+    background: rgba(179, 39, 58, 0.07);
+    border-color: rgba(179, 39, 58, 0.55);
+    color: #9b1c2c;
+}
+[data-theme="light"] .btn-eliminar:hover {
+    background: #b3273a;
+    border-color: transparent;
+    color: #fff;
+}
+[data-theme="light"] .flash-success {
+    background: rgba(46, 125, 70, 0.12);
+    border-color: rgba(46, 125, 70, 0.45);
+    color: #1d5a32;
+}
+[data-theme="light"] .flash-error { color: #7d1f3b; }
+[data-theme="light"] .reto-completado { color: #1f7a3d; }
+[data-theme="light"] .alerta-ok {
+    background: rgba(30, 130, 70, 0.12);
+    border-color: rgba(30, 130, 70, 0.4);
+    color: #1a6a3a;
+}
+[data-theme="light"] .alerta-error {
+    background: rgba(190, 40, 50, 0.1);
+    border-color: rgba(190, 40, 50, 0.4);
+    color: #8c1d2c;
+}
+
+/* ---- Botón de cambio de tema ---- */
+.btn-theme {
+    /* Aspecto base (en las páginas con .btn-lang se hereda el de cada página) */
+    background: transparent;
+    border: 1px solid rgba(var(--accent-rgb), 0.5);
+    color: rgba(var(--texto-rgb), 0.8);
+    padding: 0.5rem 1rem;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: bold;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    letter-spacing: 1px;
+}
+.btn-theme:hover {
+    background: var(--color-dorado);
+    color: var(--color-fondo);
+    border-color: transparent;
+    box-shadow: var(--brillo-dorado);
+}
+/* En las barras de navegación: a la derecha, justo antes del botón de idioma */
+nav .btn-lang.btn-theme { margin-left: auto; }
+nav .btn-theme + .btn-lang { margin-left: 0.6rem; }
+
+/* Login y registro: los dos botones juntos en la esquina superior derecha */
+.barra-sup {
+    position: fixed;
+    top: 1.2rem;
+    right: 1.5rem;
+    display: flex;
+    gap: 0.6rem;
+    z-index: 100;
+}
+.barra-sup .btn-lang { position: static; }
+
+/* Requisitos de contraseña (registro): el gris tenue del modo oscuro es demasiado claro sobre crema */
+[data-theme="light"] #requisitos li[style*="white"],
+[data-theme="light"] #requisitos li[style*="gray"] {
+    color: rgba(var(--texto-rgb), 0.6) !important;
+}
+
+/* Color de fondo de respaldo: si la página es más alta que el degradado, el resto
+   no se queda en blanco (modo claro) ni en gris (modo oscuro) */
+html body {
+    background-color: var(--color-fondo);
+}

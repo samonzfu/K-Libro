@@ -1,0 +1,198 @@
+/* ==========================================================================
+   K-Libro - Estilo de Inicio y Noticias
+   Temática: Magia Oscura y Romance (Grimorio Antiguo)
+    Uso: menú principal y tarjetas de noticias/recomendaciones
+   ========================================================================== */
+
+/* --- IMPORTAMOS LAS FUENTES MÁGICAS --- */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap');
+
+/* --- VARIABLES DE COLORES --- */
+/* La paleta de colores (modo oscuro y claro) está en theme.css */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Lato', sans-serif;
+    background: linear-gradient(135deg, var(--color-fondo), var(--color-magia), var(--color-oscuridad));
+    background-attachment: fixed;
+    color: var(--color-texto);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 3rem 2rem;
+}
+
+/* --- TÍTULO PRINCIPAL --- */
+h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 3rem;
+    color: var(--color-dorado);
+    margin-bottom: 1.5rem;
+    text-shadow: 2px 2px 8px rgba(var(--shadow-rgb), calc(0.8 * var(--shadow-k))), 0 0 15px rgba(var(--accent-rgb), 0.4);
+    text-align: center;
+    letter-spacing: 2px;
+    animation: fadeInDown 0.8s ease-out;
+}
+
+/* --- MENÚ DE NAVEGACIÓN --- */
+nav {
+    color: transparent; 
+    margin-bottom: 3.5rem;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    /* Limitamos el ancho para que el botón de idioma se alinee bien a la derecha */
+    width: 100%;
+    max-width: 1000px; 
+}
+
+nav a {
+    background: rgba(var(--overlay-rgb), 0.05);
+    border: 1px solid rgba(var(--accent-rgb), 0.3);
+    color: rgba(var(--texto-rgb), 0.8);
+    padding: 10px 25px;
+    text-decoration: none;
+    font-family: 'Cinzel', serif;
+    font-weight: bold;
+    border-radius: 30px;
+    transition: all 0.4s ease;
+    backdrop-filter: blur(5px);
+    letter-spacing: 1px;
+}
+
+nav a:hover {
+    background: var(--color-dorado);
+    color: var(--color-fondo);
+    border-color: transparent;
+    box-shadow: var(--brillo-dorado);
+    transform: translateY(-3px);
+}
+
+/* --- BOTÓN DE IDIOMA --- */
+.btn-lang {
+    background: transparent;
+    border: 1px solid rgba(var(--accent-rgb), 0.5);
+    color: rgba(var(--texto-rgb), 0.8);
+    padding: 10px 20px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    font-weight: bold;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    backdrop-filter: blur(5px);
+    letter-spacing: 1px;
+    margin-left: auto; /* Truco de flexbox: Empuja el botón al extremo derecho */
+}
+
+.btn-lang:hover {
+    background: var(--color-dorado);
+    color: var(--color-fondo);
+    border-color: transparent;
+    box-shadow: var(--brillo-dorado);
+    transform: translateY(-3px);
+}
+
+/* --- SECCIÓN DE NOTICIAS --- */
+#noticias {
+    width: 100%;
+    max-width: 1000px;
+    background: var(--glass);
+    border: 1px solid rgba(var(--accent-rgb), 0.2);
+    border-radius: 15px;
+    padding: 3rem;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 15px 40px rgba(var(--shadow-rgb), calc(0.6 * var(--shadow-k)));
+    animation: fadeInUp 1s ease-out;
+}
+
+#noticias h2 {
+    font-family: 'Cinzel', serif;
+    color: var(--color-dorado);
+    font-size: 2.2rem;
+    margin-bottom: 2.5rem;
+    text-align: center;
+    border-bottom: 1px solid rgba(var(--accent-rgb), 0.3);
+    padding-bottom: 15px;
+}
+
+ul {
+    list-style: none; 
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+li {
+    background: rgba(var(--overlay-rgb), 0.03);
+    border: 1px solid rgba(var(--accent-rgb), 0.15);
+    border-radius: 10px;
+    padding: 1.8rem;
+    transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+li:hover {
+    transform: translateY(-8px);
+    border-color: var(--color-dorado);
+    box-shadow: 0 10px 30px rgba(var(--shadow-rgb), calc(0.5 * var(--shadow-k))), inset 0 0 15px rgba(var(--accent-rgb), 0.1);
+}
+
+li strong {
+    font-family: 'Cinzel', serif;
+    font-size: 1.25rem;
+    color: var(--color-texto);
+    margin-bottom: 12px;
+    display: block;
+    line-height: 1.3;
+}
+
+li span {
+    font-size: 0.95rem;
+    color: rgba(var(--texto-rgb), 0.7);
+    margin-bottom: 1.5rem;
+    display: block;
+    flex-grow: 1; 
+    line-height: 1.6;
+}
+
+li a {
+    color: var(--color-dorado);
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.95rem;
+    align-self: flex-start;
+    border-bottom: 1px dashed transparent;
+    transition: all 0.3s ease;
+}
+
+li a:hover {
+    color: var(--texto-fuerte);
+    border-bottom: 1px solid var(--color-dorado);
+    text-shadow: 0 0 8px var(--color-dorado);
+}
+
+#noticias > p {
+    text-align: center;
+    color: rgba(var(--texto-rgb), 0.6);
+    font-style: italic;
+    font-size: 1.1rem;
+    padding: 2rem;
+    border: 1px dashed rgba(var(--accent-rgb), 0.3);
+    border-radius: 10px;
+}
+
+/* Animaciones suaves */
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
