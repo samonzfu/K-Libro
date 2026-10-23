@@ -18,8 +18,8 @@ $cssVersion = @filemtime(__DIR__ . '/../../css/buscador.css') ?: time();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>K-Libro | Buscador</title>
     <link rel="icon" type="image/png" href="../../assets/img/icono.png">
-    <link rel="stylesheet" href="../../css/theme.css">
-    <script src="../../js/theme.js"></script>
+    <link rel="stylesheet" href="../../css/theme.css?v=<?= @filemtime(__DIR__ . '/../../css/theme.css') ?: time() ?>">
+    <script src="../../js/theme.js?v=<?= @filemtime(__DIR__ . '/../../js/theme.js') ?: time() ?>"></script>
     <link rel="stylesheet" href="../../css/buscador.css?v=<?= $cssVersion ?>">
 </head>
 <body>
@@ -34,8 +34,10 @@ $cssVersion = @filemtime(__DIR__ . '/../../css/buscador.css') ?: time();
         <?php if (!empty($_SESSION['rol']) && in_array($_SESSION['rol'], ['admin', 'moderador'], true)): ?>
             | <a href="../admin/panel_admin.php" style="color: var(--link-admin); font-weight: bold;">Panel Admin</a>
         <?php endif; ?>
-            <button id="btn-theme" class="btn-lang btn-theme" type="button">☀️ Claro</button>
-            <button id="btn-lang" class="btn-lang">🌐 English</button>
+            <div class="barra-ajustes">
+                <button id="btn-theme" class="btn-lang btn-theme" type="button">☀️ Claro</button>
+                <button id="btn-lang" class="btn-lang">🌐 English</button>
+            </div>
         </nav>
 
         <h1 data-i18n="busca-h1">Busca un libro</h1>
@@ -51,7 +53,7 @@ $cssVersion = @filemtime(__DIR__ . '/../../css/buscador.css') ?: time();
             </div>
     </div>
 
-    <script src="../../js/i18n.js"></script>
+    <script src="../../js/i18n.js?v=<?= @filemtime(__DIR__ . '/../../js/i18n.js') ?: time() ?>"></script>
     <script>
     // Traducciones globales accesibles desde las funciones de búsqueda
     const T = {

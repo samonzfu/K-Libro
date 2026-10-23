@@ -83,9 +83,9 @@ $feedback    = $feedbackKey ? ($mensajes[$feedbackKey] ?? null) : null;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Admin | K-Libro</title>
     <link rel="icon" type="image/png" href="../../assets/img/icono.png">
-    <link rel="stylesheet" href="../../css/theme.css">
-    <script src="../../js/theme.js"></script>
-    <link rel="stylesheet" href="../../css/panel_admin.css">
+    <link rel="stylesheet" href="../../css/theme.css?v=<?= @filemtime(__DIR__ . '/../../css/theme.css') ?: time() ?>">
+    <script src="../../js/theme.js?v=<?= @filemtime(__DIR__ . '/../../js/theme.js') ?: time() ?>"></script>
+    <link rel="stylesheet" href="../../css/panel_admin.css?v=<?= @filemtime(__DIR__ . '/../../css/panel_admin.css') ?: time() ?>">
 </head>
 <body>
 
@@ -249,6 +249,6 @@ function confirmarCambioRol(selectElement, nombreUsuario) {
 }
 </script>
 
-<script src="../../js/i18n.js"></script>
+<script src="../../js/i18n.js?v=<?= @filemtime(__DIR__ . '/../../js/i18n.js') ?: time() ?>"></script>
 </body>
 </html>

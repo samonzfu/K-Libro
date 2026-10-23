@@ -35,16 +35,17 @@ Aplicación web de gestión de biblioteca personal. Permite registrarse, buscar 
    DB_USER=k_libro
    DB_PASS=tu_contraseña
    ```
-4. **Arranca el servidor** con `public/` como raíz:
+4. **Arranca el servidor** desde la raíz del proyecto (la carpeta que contiene `backend/` y `public/`):
    ```bash
-   php -S localhost:8000 -t public
+   php -S localhost:8000
    ```
-5. Abre `http://localhost:8000/pages/login/login.php`, regístrate y conviértete en administrador:
+   Con XAMPP, copia la carpeta del proyecto dentro de `htdocs` y usa Apache.
+5. Abre `http://localhost:8000/public/pages/login/login.php` (con XAMPP: `http://localhost/<carpeta-del-proyecto>/public/pages/login/login.php`), regístrate y conviértete en administrador:
    ```sql
    UPDATE usuarios SET rol = 'admin' WHERE email = 'tu@correo.com';
    ```
 
-> En producción, configura Apache/Nginx con `public/` como directorio raíz, de modo que `.env`, `backend/` y `database/` no sean accesibles desde el navegador.
+> Los formularios envían a `backend/actions/`, así que la raíz del servidor es la carpeta del proyecto, no `public/`. Si lo publicas, bloquea el acceso web a `.env`, `database/` y `.git` (por ejemplo con un `.htaccess`) y comprueba que `https://tu-sitio/.env` da error 403 o 404.
 
 ## Variables de entorno
 

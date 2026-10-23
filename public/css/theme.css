@@ -129,9 +129,13 @@
     border-color: transparent;
     box-shadow: var(--brillo-dorado);
 }
-/* En las barras de navegación: a la derecha, justo antes del botón de idioma */
-nav .btn-lang.btn-theme { margin-left: auto; }
-nav .btn-theme + .btn-lang { margin-left: 0.6rem; }
+/* En las barras de navegación: tema + idioma juntos, a la derecha.
+   Al ser un solo bloque, si la ventana es estrecha bajan los dos a la vez. */
+.barra-ajustes { display: flex; gap: 0.6rem; margin-left: auto; }
+.barra-ajustes .btn-lang { margin-left: 0; }
+@media (max-width: 900px) {
+    .barra-ajustes { margin-left: 0; }
+}
 
 /* Login y registro: los dos botones juntos en la esquina superior derecha */
 .barra-sup {
