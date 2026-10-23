@@ -40,7 +40,7 @@ Aplicación web de gestión de biblioteca personal. Permite registrarse, buscar 
    php -S localhost:8000
    ```
    Con XAMPP, copia la carpeta del proyecto dentro de `htdocs` y usa Apache.
-5. Abre `http://localhost:8000/public/pages/login/login.php` (con XAMPP: `http://localhost/<carpeta-del-proyecto>/public/pages/login/login.php`), regístrate y conviértete en administrador:
+5. Abre la ruta relativa `public/pages/login/login.php` desde la raíz del proyecto en tu servidor local, regístrate y conviértete en administrador:
    ```sql
    UPDATE usuarios SET rol = 'admin' WHERE email = 'tu@correo.com';
    ```

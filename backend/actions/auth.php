@@ -5,9 +5,11 @@
  */
 
 // Cookie de sesión más segura: sin acceso desde JavaScript y sin enviarse en peticiones cruzadas
+$appRoot = dirname(dirname(dirname($_SERVER['SCRIPT_NAME'] ?? '/')));
+$cookiePath = rtrim($appRoot, '/') . '/';
 session_set_cookie_params([
     'lifetime' => 0,
-    'path'     => '/',
+    'path'     => $cookiePath,
     'secure'   => !empty($_SERVER['HTTPS']),
     'httponly' => true,
     'samesite' => 'Lax',
