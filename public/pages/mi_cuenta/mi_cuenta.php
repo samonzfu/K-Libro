@@ -143,7 +143,7 @@ $mis_logros = $stmtLogros->fetchAll();
             <?php 
             // Mapeo de nombres/descripciones de logros a claves de traducción
             $logrosMap = [
-                'Lector Iniciado' => ['nombre-key' => 'logro-lector-iniciado-nombre', 'desc-key' => 'logro-lector-iniciado-desc'],
+                'Lector Principiante' => ['nombre-key' => 'logro-lector-principiante-nombre', 'desc-key' => 'logro-lector-principiante-desc'],
                 'Ratón de Biblioteca' => ['nombre-key' => 'logro-raton-libreria-nombre', 'desc-key' => 'logro-raton-libreria-desc'],
                 'Devorador de Mundos' => ['nombre-key' => 'logro-devorador-mundos-nombre', 'desc-key' => 'logro-devorador-mundos-desc'],
                 'Campeón Mensual' => ['nombre-key' => 'logro-campeon-mensual-nombre', 'desc-key' => 'logro-campeon-mensual-desc'],
@@ -211,8 +211,8 @@ $mis_logros = $stmtLogros->fetchAll();
             'reto-success-guardado': 'Reto mensual guardado correctamente.',
             'reto-error-duplicado': 'Ya tienes un reto fijado para este mes.',
             'reto-error-guardado': 'No se pudo guardar el reto mensual. Inténtalo de nuevo.',
-            'logro-lector-iniciado-nombre': 'Lector Iniciado',
-            'logro-lector-iniciado-desc': 'Has leído tu primer libro en K-Libro',
+            'logro-lector-principiante-nombre': 'Lector principiante',
+            'logro-lector-principiante-desc': 'Has leído tu primer libro en K-Libro',
             'logro-raton-libreria-nombre': 'Ratón de Biblioteca',
             'logro-raton-libreria-desc': 'Has leído 5 libros',
             'logro-devorador-mundos-nombre': 'Devorador de Mundos',
@@ -248,8 +248,8 @@ $mis_logros = $stmtLogros->fetchAll();
             'reto-success-guardado': 'Monthly reading goal saved successfully.',
             'reto-error-duplicado': 'You already have a reading goal set for this month.',
             'reto-error-guardado': 'Could not save the reading goal. Try again.',
-            'logro-lector-iniciado-nombre': 'Beginner Reader',
-            'logro-lector-iniciado-desc': 'You have read your first book in K-Libro',
+            'logro-lector-principiante-nombre': 'Beginner Reader',
+            'logro-lector-principiante-desc': 'You have read your first book in K-Libro',
             'logro-raton-libreria-nombre': 'Library Mouse',
             'logro-raton-libreria-desc': 'You have read 5 books',
             'logro-devorador-mundos-nombre': 'World Devourer',
