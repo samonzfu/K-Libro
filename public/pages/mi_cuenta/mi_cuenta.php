@@ -145,8 +145,8 @@ $mis_logros = $stmtLogros->fetchAll();
             $logrosMap = [
                 'Lector Principiante' => ['nombre-key' => 'logro-lector-principiante-nombre', 'desc-key' => 'logro-lector-principiante-desc'],
                 'Ratón de Biblioteca' => ['nombre-key' => 'logro-raton-libreria-nombre', 'desc-key' => 'logro-raton-libreria-desc'],
-                'Devorador de Mundos' => ['nombre-key' => 'logro-devorador-mundos-nombre', 'desc-key' => 'logro-devorador-mundos-desc'],
-                'Campeón Mensual' => ['nombre-key' => 'logro-campeon-mensual-nombre', 'desc-key' => 'logro-campeon-mensual-desc'],
+                'Bibliófilo' => ['nombre-key' => 'logro-bibliofilo-nombre', 'desc-key' => 'logro-bibliofilo-desc'],
+                'Reto Mensual' => ['nombre-key' => 'logro-reto-mensual-nombre', 'desc-key' => 'logro-reto-mensual-desc'],
             ];
             foreach ($mis_logros as $logro): ?>
                 <?php
@@ -215,10 +215,10 @@ $mis_logros = $stmtLogros->fetchAll();
             'logro-lector-principiante-desc': 'Has leído tu primer libro en K-Libro',
             'logro-raton-libreria-nombre': 'Ratón de Biblioteca',
             'logro-raton-libreria-desc': 'Has leído 5 libros',
-            'logro-devorador-mundos-nombre': 'Devorador de Mundos',
-            'logro-devorador-mundos-desc': 'Has leído 20 libros',
-            'logro-campeon-mensual-nombre': 'Campeón Mensual',
-            'logro-campeon-mensual-desc': '¡Has completado tu reto de lectura del mes!',
+            'logro-bibliofilo-nombre': 'Bibliófilo',
+            'logro-bibliofilo-desc': 'Has leído 20 libros',
+            'logro-reto-mensual-nombre': 'reto Mensual',
+            'logro-reto-mensual-desc': '¡Has completado tu reto de lectura del mes!',
         },
         en: {
             'inicio-h1':       'K-Libro',
@@ -252,10 +252,10 @@ $mis_logros = $stmtLogros->fetchAll();
             'logro-lector-principiante-desc': 'You have read your first book in K-Libro',
             'logro-raton-libreria-nombre': 'Library Mouse',
             'logro-raton-libreria-desc': 'You have read 5 books',
-            'logro-devorador-mundos-nombre': 'World Devourer',
-            'logro-devorador-mundos-desc': 'You have read 20 books',
-            'logro-campeon-mensual-nombre': 'Monthly Champion',
-            'logro-campeon-mensual-desc': 'You have completed your monthly reading challenge!',
+            'logro-bibliofilo-nombre': 'Bibliophile',
+            'logro-bibliofilo-desc': 'You have read 20 books',
+            'logro-reto-mensual-nombre': 'Monthly Challenge',
+            'logro-reto-mensual-desc': 'You have completed your monthly reading challenge!',
         }
     };
 
