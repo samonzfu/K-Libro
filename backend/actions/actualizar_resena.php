@@ -142,7 +142,7 @@ try {
         }
 
         // Validar formato de fecha (YYYY-MM-DD)
-        $fechaLecturaObj = DateTime::createFromFormat('Y-m-d', $fechaLecturaRaw);
+        $fechaLecturaObj = DateTime::createFromFormat('!Y-m-d', $fechaLecturaRaw); // '!' = hora 00:00 (sin ella, hoy contaría como futuro)
         $fechaValida = $fechaLecturaObj && $fechaLecturaObj->format('Y-m-d') === $fechaLecturaRaw;
         if (!$fechaValida) {
             http_response_code(400);
@@ -193,15 +193,9 @@ try {
             ':libro_id_openlibrary' => $idOpenLibrary
         ]);
 
-        // Verificar que al menos 1 fila fue actualizada
-        if ($stmt->rowCount() === 0) {
-            if ($pdo->inTransaction()) {
-                $pdo->rollBack();  // Deshacer cambios
-            }
-            http_response_code(404);
-            echo json_encode(['ok' => false, 'mensaje' => 'No se encontro el libro en tu biblioteca']);
-            exit;
-        }
+        // Nota: no se comprueba rowCount(). MySQL devuelve 0 filas afectadas cuando se guarda
+        // exactamente lo mismo que ya había, y eso no es un error (la existencia del libro
+        // ya se ha verificado arriba).
     }
 
     // PASO 9: SINCRONIZAR LOGROS Y RETOS

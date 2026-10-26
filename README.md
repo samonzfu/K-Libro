@@ -12,6 +12,8 @@ Aplicación web de gestión de biblioteca personal. Permite registrarse, buscar 
 - Panel de administración (gestión de usuarios y roles: user, moderador, admin)
 - Interfaz en español e inglés
 - Modo claro y oscuro (oscuro por defecto)
+- Avisos y confirmaciones visuales (sin cuadros `alert()` del navegador)
+- Botón para mostrar u ocultar la contraseña en login y registro
 
 ## Requisitos
 
@@ -45,6 +47,8 @@ Aplicación web de gestión de biblioteca personal. Permite registrarse, buscar 
    UPDATE usuarios SET rol = 'admin' WHERE email = 'tu@correo.com';
    ```
 
+**¿Ya tenías la base de datos creada?** No vuelvas a importar `BBDD.sql` (borra los datos). Ejecuta solo `database/003-renombrar-logros.sql` en phpMyAdmin para actualizar los nombres de los logros (Lector Principiante, Bibliófilo y Reto Mensual).
+
 > Los formularios envían a `backend/actions/`, así que la raíz del servidor es la carpeta del proyecto, no `public/`. Si lo publicas, bloquea el acceso web a `.env`, `database/` y `.git` (por ejemplo con un `.htaccess`) y comprueba que `https://tu-sitio/.env` da error 403 o 404.
 
 ## Variables de entorno
@@ -63,16 +67,17 @@ k-libro/
 ├── database/
 │   ├── BBDD.sql                    # Esquema completo + datos iniciales
 │   ├── 002-add-moderador-role.sql  # Migración: rol moderador
+│   ├── 003-renombrar-logros.sql    # Migración: nuevos nombres de logros
 │   └── crear-usuario-local.sql     # Crea el usuario de MySQL (pon tu contraseña)
 ├── backend/
 │   ├── config/db.php       # Conexión PDO a MySQL (lee .env / variables de entorno)
-│   ├── helpers/            # Logros y retos, esquema, protección CSRF
+│   ├── helpers/            # Logros y retos, esquema, protección CSRF, avisos (flash)
 │   ├── validators/         # Validación de contraseñas
 │   ├── actions/            # Procesadores de formularios (POST)
 │   └── noticias.php        # Recomendaciones de la página de inicio
 └── public/
-    ├── css/                # Hojas de estilo por página + theme.css (modo claro/oscuro)
-    ├── js/                 # i18n.js (ES/EN) y theme.js (modo claro/oscuro)
+    ├── css/                # Hojas de estilo por página + theme.css (modo claro/oscuro) y ui.css (avisos, confirmaciones)
+    ├── js/                 # i18n.js (ES/EN), theme.js (modo claro/oscuro), notify.js (avisos), password-toggle.js
     ├── assets/img/
     └── pages/              # registro, login, inicio, biblioteca, mi_cuenta, buscador, admin
 ```

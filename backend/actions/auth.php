@@ -18,6 +18,22 @@ session_start();
 
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../validators/validar_contrasena.php';
+require_once __DIR__ . '/../helpers/flash.php';
+
+/** Longitud en caracteres (usa mbstring si está disponible; algunos hostings no lo traen). */
+function auth_longitud(string $texto): int
+{
+    return function_exists('mb_strlen') ? mb_strlen($texto) : strlen($texto);
+}
+
+/** Vuelve a login/registro mostrando un aviso (y conservando lo escrito, salvo la contraseña). */
+function auth_volver(string $pagina, string $es, string $en, array $viejo = []): void
+{
+    flash_set('error', $es, $en);
+    $_SESSION['flash_old'] = $viejo;
+    header('Location: ../../public/pages/' . $pagina . '/' . $pagina . '.php');
+    exit;
+}
 
 if(isset($_POST['accion'])){
 
@@ -35,17 +51,15 @@ if(isset($_POST['accion'])){
         $correo = trim($_POST['correo'] ?? '');
 
         // Validar campos básicos (los límites coinciden con la tabla usuarios)
+        $viejo = ['nombre' => $nombre, 'correo' => $correo];
         if ($nombre === '' || $correo === '' || $contrasena === '') {
-            echo "<script>alert('Por favor completa todos los campos'); window.history.back();</script>";
-            exit;
+            auth_volver('registro', 'Completa todos los campos.', 'Please fill in all fields.', $viejo);
         }
-        if (mb_strlen($nombre) > 50) {
-            echo "<script>alert('El nombre no puede superar los 50 caracteres'); window.history.back();</script>";
-            exit;
+        if (auth_longitud($nombre) > 50) {
+            auth_volver('registro', 'El nombre de usuario no puede superar los 50 caracteres.', 'The username cannot be longer than 50 characters.', $viejo);
         }
-        if (!filter_var($correo, FILTER_VALIDATE_EMAIL) || mb_strlen($correo) > 100) {
-            echo "<script>alert('El email no es válido'); window.history.back();</script>";
-            exit;
+        if (!filter_var($correo, FILTER_VALIDATE_EMAIL) || auth_longitud($correo) > 100) {
+            auth_volver('registro', 'Introduce un correo electrónico válido.', 'Enter a valid email address.', $viejo);
         }
 
         // PASO 2: VALIDAR LA CONTRASEÑA
@@ -53,11 +67,8 @@ if(isset($_POST['accion'])){
         // (8+ caracteres, mayúscula, minúscula, número, carácter especial)
         $validacion = validar_contrasena($contrasena);
         if(!$validacion['valida']){
-            // Si la contraseña no es válida, mostrar errores en alert
-            // y devolver al usuario a la página anterior
-            $errores = implode('\n', $validacion['errores']);
-            echo "<script>alert('Contraseña no segura:\\n\\n" . $errores . "'); window.history.back();</script>";
-            exit;
+            // Si la contraseña no es válida, avisar y devolver al usuario al formulario
+            auth_volver('registro', 'La contraseña no cumple los requisitos de seguridad.', 'The password does not meet the security requirements.', $viejo);
         }
 
         // PASO 3: HASHEAR LA CONTRASEÑA
@@ -72,9 +83,8 @@ if(isset($_POST['accion'])){
         $checkEmail->execute([$correo]);
         $resultado = $checkEmail->fetchAll();
         if(count($resultado) > 0){
-            // Email ya registrado - Mostrar error y salir
-            echo "<script>alert('El email ya está registrado'); window.history.back();</script>";
-            exit;
+            // Email ya registrado - Avisar y volver al formulario
+            auth_volver('registro', 'Ya existe una cuenta con ese correo electrónico.', 'An account with that email address already exists.', $viejo);
         }
 
         // PASO 5: INSERTAR NUEVO USUARIO EN LA BASE DE DATOS
@@ -84,17 +94,14 @@ if(isset($_POST['accion'])){
             // Ejecutar la query con los 3 valores: nombre, correo, contraseña hasheada
             if($stmt->execute([$nombre, $correo, $contrasena])){
                 // ÉXITO: Usuario registrado correctamente
-                // Redirigir a la página de login
+                // Redirigir a la página de login con un aviso
+                flash_set('success', 'Cuenta creada correctamente. Ya puedes iniciar sesión.', 'Account created successfully. You can now log in.');
                 header('Location: ../../public/pages/login/login.php');
                 exit;
-            }else{
-                // ERROR: Algo salió mal en la inserción
-                echo "Error al registrar: " . htmlspecialchars($stmt->errorInfo()[2]);
             }
-        }else{
-            // ERROR: No se pudo preparar la query
-            echo "Error al preparar la consulta.";
         }
+        // ERROR: no se pudo crear la cuenta
+        auth_volver('registro', 'No se pudo crear la cuenta. Inténtalo de nuevo.', 'The account could not be created. Please try again.', $viejo);
 
     /**
      * ========== ACCIÓN 2: INICIO DE SESIÓN ==========
@@ -108,8 +115,7 @@ if(isset($_POST['accion'])){
 
         // PASO 2: Verificar que NO estén vacíos
         if ($nombre === '' || $contrasena === ''){
-            echo "<script>alert('Por favor completa todos los campos'); window.history.back();</script>";
-            exit;
+            auth_volver('login', 'Introduce tu usuario y tu contraseña.', 'Enter your username and password.', ['nombre' => $nombre]);
         }
 
         // PASO 3: BUSCAR USUARIO EN LA BBDD
@@ -148,18 +154,15 @@ if(isset($_POST['accion'])){
                     exit;
                 } else {
                     // CONTRASEÑA INCORRECTA
-                    echo "<script>alert('Usuario o contraseña incorrectos.'); window.history.back();</script>";
-                    exit;
+                    auth_volver('login', 'Usuario o contraseña incorrectos.', 'Incorrect username or password.', ['nombre' => $nombre]);
                 }
             } else {
                 // USUARIO NO ENCONTRADO
-                echo "<script>alert('Usuario o contraseña incorrectos.'); window.history.back();</script>";
-                exit;
+                auth_volver('login', 'Usuario o contraseña incorrectos.', 'Incorrect username or password.', ['nombre' => $nombre]);
             }
         } else {
             // ERROR EN EL SERVIDOR
-            echo "Error en el servidor. Inténtalo más tarde.";
-            exit;
+            auth_volver('login', 'Error en el servidor. Inténtalo más tarde.', 'Server error. Please try again later.', ['nombre' => $nombre]);
         }
     }
 }

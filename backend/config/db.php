@@ -24,6 +24,9 @@ if (is_readable($envFile)) {
     }
 }
 
+// Zona horaria de la aplicación: así "hoy" coincide con el día del usuario (importante para las fechas de lectura)
+date_default_timezone_set('Europe/Madrid');
+
 $dbHost = getenv('DB_HOST') ?: 'localhost';
 $dbName = getenv('DB_NAME') ?: 'k_libro';
 $dbUser = getenv('DB_USER');

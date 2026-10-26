@@ -110,10 +110,10 @@ CREATE TABLE retos_mensuales (
 -- 7. SEEDERS (Datos de prueba)
 -- Para no empezar con la base de datos vacía.
 INSERT INTO logros (nombre, descripcion, icono, criterio) VALUES 
-('Lector Iniciado', 'Has leído tu primer libro en K-Libro', 'novato.png', 1),
+('Lector Principiante', 'Has leído tu primer libro en K-Libro', 'novato.png', 1),
 ('Ratón de Biblioteca', 'Has leído 5 libros', 'intermedio.png', 5),
-('Devorador de Mundos', 'Has leído 20 libros', 'experto.png', 20),
-('Campeón Mensual', '¡Has completado tu reto de lectura del mes!', 'trofeo_mensual.png', 0)
+('Bibliófilo', 'Has leído 20 libros', 'experto.png', 20),
+('Reto Mensual', 'Has completado tu reto de lectura del mes.', 'trofeo_mensual.png', 0)
 ON DUPLICATE KEY UPDATE
     descripcion = VALUES(descripcion),
     icono = VALUES(icono),

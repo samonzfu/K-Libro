@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once __DIR__ . '/../../../backend/helpers/flash.php';
 
 // Verificar que el usuario esté registrado
 if (empty($_SESSION['user_id'])) {
@@ -9,7 +10,8 @@ if (empty($_SESSION['user_id'])) {
 
 // Verificar que el usuario sea admin
 if (!in_array($_SESSION['rol'] ?? '', ['admin', 'moderador'], true)) {
-    echo "<script>alert('No tienes permisos para acceder a esta página.'); window.location.href = '../inicio/inicio.php';</script>";
+    flash_set('error', 'No tienes permisos para acceder a esta página.', 'You do not have permission to access this page.');
+    header('Location: ../inicio/inicio.php');
     exit;
 }
 
@@ -84,7 +86,9 @@ $feedback    = $feedbackKey ? ($mensajes[$feedbackKey] ?? null) : null;
     <title>Panel Admin | K-Libro</title>
     <link rel="icon" type="image/png" href="../../assets/img/icono.png">
     <link rel="stylesheet" href="../../css/theme.css?v=<?= @filemtime(__DIR__ . '/../../css/theme.css') ?: time() ?>">
+    <link rel="stylesheet" href="../../css/ui.css?v=<?= @filemtime(__DIR__ . '/../../css/ui.css') ?: time() ?>">
     <script src="../../js/theme.js?v=<?= @filemtime(__DIR__ . '/../../js/theme.js') ?: time() ?>"></script>
+    <script src="../../js/notify.js?v=<?= @filemtime(__DIR__ . '/../../js/notify.js') ?: time() ?>"></script>
     <link rel="stylesheet" href="../../css/panel_admin.css?v=<?= @filemtime(__DIR__ . '/../../css/panel_admin.css') ?: time() ?>">
 </head>
 <body>
@@ -182,10 +186,13 @@ $feedback    = $feedbackKey ? ($mensajes[$feedbackKey] ?? null) : null;
                                 <?php if (!$esSelf): ?>
 
                                     <?php if ($_SESSION['rol'] === 'admin'): ?>
-                                        <form method="POST" action="../../../backend/actions/cambiar_rol.php" class="form-cambiar-rol">
+                                        <form method="POST" action="../../../backend/actions/cambiar_rol.php" class="form-cambiar-rol"
+                                              data-confirm-es="¿Cambiar el rol de «<?php echo htmlspecialchars($u['nombre'], ENT_QUOTES, 'UTF-8'); ?>» a «{rol}»?"
+                                              data-confirm-en="Change the role of “<?php echo htmlspecialchars($u['nombre'], ENT_QUOTES, 'UTF-8'); ?>” to “{rol}”?"
+                                              data-confirm-ok-es="Cambiar rol" data-confirm-ok-en="Change role">
                                             <input type="hidden" name="csrf_token" value="<?php echo $csrf; ?>">
                                             <input type="hidden" name="usuario_id" value="<?php echo (int)$u['id']; ?>">
-                                            <select name="nuevo_rol" class="select-rol" onchange="return confirmarCambioRol(this, '<?php echo htmlspecialchars(addslashes($u['nombre'])); ?>')">
+                                            <select name="nuevo_rol" class="select-rol">
                                                 <option value="user" <?php echo $u['rol'] === 'user' ? 'selected' : ''; ?>>Usuario</option>
                                                 <option value="moderador" <?php echo $u['rol'] === 'moderador' ? 'selected' : ''; ?>>Moderador</option>
                                                 <option value="admin" <?php echo $u['rol'] === 'admin' ? 'selected' : ''; ?>>Admin</option>
@@ -195,7 +202,9 @@ $feedback    = $feedbackKey ? ($mensajes[$feedbackKey] ?? null) : null;
                                         <?php if ($u['rol'] !== 'admin'): ?>
                                         <form method="POST"
                                               action="../../../backend/actions/eliminar_usuario.php"
-                                              onsubmit="return confirmarEliminar('<?php echo htmlspecialchars(addslashes($u['nombre'])); ?>', <?php echo (int)$u['libros_totales']; ?>)">
+                                              data-confirm-es="¿Eliminar a «<?php echo htmlspecialchars($u['nombre'], ENT_QUOTES, 'UTF-8'); ?>»? Esta acción no se puede deshacer.<?php echo (int)$u['libros_totales'] > 0 ? ' Este usuario tiene ' . (int)$u['libros_totales'] . ' libro(s) en su biblioteca que también se eliminarán.' : ''; ?>"
+                                              data-confirm-en="Delete “<?php echo htmlspecialchars($u['nombre'], ENT_QUOTES, 'UTF-8'); ?>”? This action cannot be undone.<?php echo (int)$u['libros_totales'] > 0 ? ' This user has ' . (int)$u['libros_totales'] . ' book(s) in their library that will also be deleted.' : ''; ?>"
+                                              data-confirm-ok-es="Eliminar" data-confirm-ok-en="Delete" data-confirm-danger>
                                             <input type="hidden" name="csrf_token" value="<?php echo $csrf; ?>">
                                             <input type="hidden" name="usuario_id" value="<?php echo (int)$u['id']; ?>">
                                             <button type="submit" class="btn btn-eliminar" title="Eliminar usuario">
@@ -204,12 +213,14 @@ $feedback    = $feedbackKey ? ($mensajes[$feedbackKey] ?? null) : null;
                                         </form>
                                         <?php endif; ?>
                                     <?php elseif ($_SESSION['rol'] === 'moderador' && $u['rol'] === 'user'): ?>
-                                        <form method="POST" action="../../../backend/actions/cambiar_rol.php" class="form-cambiar-rol">
+                                        <form method="POST" action="../../../backend/actions/cambiar_rol.php" class="form-cambiar-rol"
+                                              data-confirm-es="¿Promover a «<?php echo htmlspecialchars($u['nombre'], ENT_QUOTES, 'UTF-8'); ?>» a Moderador?"
+                                              data-confirm-en="Promote “<?php echo htmlspecialchars($u['nombre'], ENT_QUOTES, 'UTF-8'); ?>” to Moderator?"
+                                              data-confirm-ok-es="Promover" data-confirm-ok-en="Promote">
                                             <input type="hidden" name="csrf_token" value="<?php echo $csrf; ?>">
                                             <input type="hidden" name="usuario_id" value="<?php echo (int)$u['id']; ?>">
                                             <input type="hidden" name="nuevo_rol" value="moderador">
-                                            <button type="submit" class="btn btn-rol-actualizar"
-                                                    onclick="return confirm('¿Promover a "<?php echo htmlspecialchars(addslashes($u['nombre'])); ?>" a Moderador?')">
+                                            <button type="submit" class="btn btn-rol-actualizar">
                                                 ♘ Hacer Moderador
                                             </button>
                                         </form>
@@ -234,21 +245,7 @@ $feedback    = $feedbackKey ? ($mensajes[$feedbackKey] ?? null) : null;
 
 </main>
 
-<script>
-function confirmarEliminar(nombre, totalLibros) {
-    const aviso = totalLibros > 0
-        ? '\n\u26A0\uFE0F Este usuario tiene ' + totalLibros + ' libro(s) en su biblioteca que también se eliminarán.'
-        : '';
-    return confirm('¿Eliminar a "' + nombre + '"? Esta acción no se puede deshacer.' + aviso);
-}
-
-// NUEVA: Función JS para confirmar los cambios de rol desde el selector
-function confirmarCambioRol(selectElement, nombreUsuario) {
-    const rolSeleccionado = selectElement.options[selectElement.selectedIndex].text;
-    return confirm('¿Estás seguro de cambiar el rol de "' + nombreUsuario + '" a "' + rolSeleccionado + '"?');
-}
-</script>
-
 <script src="../../js/i18n.js?v=<?= @filemtime(__DIR__ . '/../../js/i18n.js') ?: time() ?>"></script>
+    <?= flash_render() ?>
 </body>
 </html>

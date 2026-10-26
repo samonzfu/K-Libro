@@ -98,7 +98,7 @@ if ($estado === 'leido') {
     }
 
     // Validar que la fecha sea válida (formato YYYY-MM-DD)
-    $fechaLecturaObj = DateTime::createFromFormat('Y-m-d', $fechaLecturaRaw);
+    $fechaLecturaObj = DateTime::createFromFormat('!Y-m-d', $fechaLecturaRaw); // '!' = hora 00:00 (sin ella, hoy contaría como futuro)
     $fechaValida = $fechaLecturaObj && $fechaLecturaObj->format('Y-m-d') === $fechaLecturaRaw;
 
     if (!$fechaValida) {

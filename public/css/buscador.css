@@ -210,23 +210,80 @@ h1 {
 }
 
 /* --- FORMULARIO DENTRO DE LA TARJETA --- */
-.select-estado {
-    width: 100%;
-    padding: 10px;
-    margin-top: auto; /* Empuja el select y el botón hacia abajo */
+/* Selección del estado de lectura: tres opciones, una sola elegible */
+.estado-bloque {
+    margin-top: auto; /* Empuja el bloque de estado y el botón hacia abajo */
     margin-bottom: 10px;
-    background: rgba(var(--hundido-rgb), 0.6);
-    border: 1px solid rgba(var(--accent-rgb), 0.3);
-    color: var(--color-texto);
-    border-radius: 8px;
-    cursor: pointer;
-    font-family: 'Lato', sans-serif;
-    outline: none;
-    transition: border-color 0.3s ease;
+    text-align: left;
 }
 
-.select-estado:focus {
+.estado-opciones {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.estado-opcion {
+    position: relative;
+    display: block;
+    cursor: pointer;
+}
+
+/* El radio real queda encima (invisible) para que toda la fila sea pulsable y accesible */
+.estado-opcion input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.estado-etiqueta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    background: rgba(var(--hundido-rgb), 0.25);
+    border: 1px solid rgba(var(--accent-rgb), 0.3);
+    border-radius: 8px;
+    color: rgba(var(--texto-rgb), 0.85);
+    font-family: 'Lato', sans-serif;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.estado-etiqueta::before {
+    content: '';
+    flex: 0 0 auto;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(var(--accent-rgb), 0.6);
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.estado-opcion:hover .estado-etiqueta {
     border-color: var(--color-dorado);
+}
+
+.estado-opcion input:checked + .estado-etiqueta {
+    background: rgba(var(--accent-rgb), 0.14);
+    border-color: var(--color-dorado);
+    color: var(--color-texto);
+    font-weight: bold;
+}
+
+.estado-opcion input:checked + .estado-etiqueta::before {
+    background: var(--color-dorado);
+    border-color: var(--color-dorado);
+    box-shadow: inset 0 0 0 2px var(--color-fondo);
+}
+
+.estado-opcion input:focus-visible + .estado-etiqueta {
+    outline: 2px solid var(--color-dorado);
+    outline-offset: 2px;
 }
 
 .campos-leido {
@@ -290,21 +347,29 @@ h1 {
 
 .btn-guardar {
     width: 100%;
-    padding: 10px;
-    background: transparent;
+    padding: 11px 12px;
+    background: var(--color-dorado);
     border: 1px solid var(--color-dorado);
-    color: var(--color-dorado);
+    color: var(--color-fondo);
     cursor: pointer;
     border-radius: 8px;
     font-family: 'Lato', sans-serif;
     font-weight: bold;
+    letter-spacing: 0.3px;
     transition: all 0.3s ease;
 }
 
-.btn-guardar:hover {
-    background: var(--color-dorado);
-    color: var(--color-fondo);
+.btn-guardar:hover:not(:disabled) {
     box-shadow: var(--brillo-dorado);
+    transform: translateY(-1px);
+}
+
+/* Hasta que no se elige un estado, el botón queda apagado */
+.btn-guardar:disabled {
+    background: transparent;
+    border-color: rgba(var(--accent-rgb), 0.3);
+    color: rgba(var(--texto-rgb), 0.4);
+    cursor: not-allowed;
 }
 
 /* --- ANIMACIONES --- */

@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once __DIR__ . '/../../../backend/helpers/flash.php';
 if (empty($_SESSION['user_id'])) {
     header('Location: ../login/login.php');
     exit;
@@ -91,7 +92,7 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
         if ($idOpenLibrary !== '') {
             echo '<div class="book-acciones">';
             echo '<button type="button" class="btn-detalles" onclick="abrirDetallesLibro(this)" data-i18n="biblio-detalles">Detalles</button>';
-            echo '<form method="POST" action="../../../backend/actions/eliminar_libro.php" class="form-eliminar" onsubmit="return window.confirm(\'¿Seguro que quieres eliminar este libro de tu biblioteca?\');">';
+            echo '<form method="POST" action="../../../backend/actions/eliminar_libro.php" class="form-eliminar" data-confirm-es="¿Quieres eliminar este libro de tu biblioteca?" data-confirm-en="Do you want to remove this book from your library?" data-confirm-ok-es="Eliminar" data-confirm-ok-en="Remove" data-confirm-danger>';
             echo '<input type="hidden" name="libro_id" value="' . htmlspecialchars($idOpenLibrary, ENT_QUOTES, 'UTF-8') . '">';
             echo '<input type="hidden" name="csrf_token" value="' . htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') . '">';
             echo '<button type="submit" class="btn-eliminar">';
@@ -126,7 +127,9 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
     <title>Mi biblioteca | K-Libro</title>
     <link rel="icon" type="image/png" href="../../assets/img/icono.png">
     <link rel="stylesheet" href="../../css/theme.css?v=<?= @filemtime(__DIR__ . '/../../css/theme.css') ?: time() ?>">
+    <link rel="stylesheet" href="../../css/ui.css?v=<?= @filemtime(__DIR__ . '/../../css/ui.css') ?: time() ?>">
     <script src="../../js/theme.js?v=<?= @filemtime(__DIR__ . '/../../js/theme.js') ?: time() ?>"></script>
+    <script src="../../js/notify.js?v=<?= @filemtime(__DIR__ . '/../../js/notify.js') ?: time() ?>"></script>
     <link rel="stylesheet" href="../../css/biblioteca.css?v=<?= $cssVersion ?>">
 </head>
 <body>
@@ -199,7 +202,8 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
             'biblio-leyendo':    'Leyendo:',
             'biblio-leido':      'Leídos:',
             'biblio-vacio':      'Todavía no tienes libros en este apartado.',
-            'biblio-modal-editar': '📝 Editar',
+            'biblio-modal-editar': 'Editar',
+            'biblio-modal-cancel': 'Cancelar',
         },
         en: {
             'inicio-h1':       'K-Libro',
@@ -233,7 +237,8 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
             'biblio-pendiente':  'To read:',
             'biblio-leyendo':    'Reading:',
             'biblio-leido':      'Read:',
-            'biblio-modal-editar': '📝 Edit',
+            'biblio-modal-editar': 'Edit',
+            'biblio-modal-cancel': 'Cancel',
             'biblio-vacio':      'You have no books in this section yet.',
         }
     }, 'Mi biblioteca | K-Libro', 'My library | K-Libro');
@@ -245,6 +250,7 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
     const modalTitulo = document.getElementById('modal-detalles-titulo');
     const modalAutor = document.getElementById('modal-detalles-autor');
     const modalCalificacion = document.getElementById('modal-detalles-calificacion');
+    const modalEstrellas = document.getElementById('modal-detalles-estrellas');
     const modalResena = document.getElementById('modal-detalles-resena');
     const modalFechaLectura = document.getElementById('modal-detalles-fecha-lectura');
     const modalFechaLecturaBloque = document.getElementById('modal-detalles-fecha-bloque');
@@ -254,6 +260,25 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
     const modalInputFechaLectura = document.getElementById('modal-detalles-input-fecha-lectura');
     const modalInputFechaGrupo = document.getElementById('modal-detalles-input-fecha-grupo');
     const modalForm = document.getElementById('modal-detalles-form');
+    let cardActual = null;
+
+    // Puntuación: estrellas + texto (o "Sin puntuar")
+    const pintarCalificacion = (valor) => {
+        const n = Number.parseInt(valor, 10);
+        const tiene = n >= 1 && n <= 5;
+        if (modalEstrellas) {
+            modalEstrellas.innerHTML = tiene ? '★'.repeat(n) + '<span class="vacia">' + '★'.repeat(5 - n) + '</span>' : '';
+            modalEstrellas.hidden = !tiene;
+        }
+        modalCalificacion.textContent = tiene ? `${n}/5` : I18n.t('biblio-sin-calificacion');
+        modalCalificacion.classList.toggle('vacia', !tiene);
+    };
+
+    // Reseña (o "Sin reseña" con aspecto atenuado)
+    const pintarResena = (review) => {
+        modalResena.textContent = review !== '' ? review : I18n.t('biblio-sin-resena');
+        modalResena.classList.toggle('vacia', review === '');
+    };
 
     const abrirModalDetalles = (card) => {
         if (!modal || !card) return;
@@ -273,8 +298,9 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
         modalAutor.textContent = autor;
         modalPortada.src = portada;
         modalPortada.alt = `Portada de ${titulo}`;
-        modalCalificacion.textContent = calificacion >= 1 && calificacion <= 5 ? `${calificacion}/5` : I18n.t('biblio-sin-calificacion');
-        modalResena.textContent = review !== '' ? review : I18n.t('biblio-sin-resena');
+        cardActual = card;
+        pintarCalificacion(calificacion);
+        pintarResena(review);
         if (modalFechaLectura) {
             modalFechaLectura.textContent = fechaLectura !== '' ? fechaLectura.split('-').reverse().join('/') : I18n.t('biblio-modal-read-date-empty');
         }
@@ -300,16 +326,16 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
     const cerrarEdicion = () => {
         const btnEditar = document.getElementById('modal-detalles-btn-editar');
         if (btnEditar && modalForm) {
-            btnEditar.style.display = 'block';
-            modalForm.style.display = 'none';
+            btnEditar.hidden = false;
+            modalForm.hidden = true;
         }
     };
 
     const abrirEdicion = () => {
         const btnEditar = document.getElementById('modal-detalles-btn-editar');
         if (btnEditar && modalForm) {
-            btnEditar.style.display = 'none';
-            modalForm.style.display = 'flex';
+            btnEditar.hidden = true;
+            modalForm.hidden = false;
         }
     };
 
@@ -332,6 +358,21 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
         btnEditarModal.addEventListener('click', abrirEdicion);
     }
 
+    // Cancelar: descarta los cambios y vuelve a mostrar los datos guardados
+    const btnCancelarModal = document.getElementById('modal-detalles-btn-cancelar');
+    if (btnCancelarModal) {
+        btnCancelarModal.addEventListener('click', () => {
+            if (cardActual) { abrirModalDetalles(cardActual); } else { cerrarEdicion(); }
+        });
+    }
+
+    // Esc cierra el detalle (si no hay una ventana de confirmación encima)
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && modal && !modal.hidden && !document.querySelector('.ui-modal-overlay')) {
+            cerrarModalDetalles();
+        }
+    });
+
     if (modalForm) {
         modalForm.addEventListener('submit', async (event) => {
             event.preventDefault();
@@ -344,7 +385,7 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
             const fechaLectura = modalInputFechaLectura ? modalInputFechaLectura.value.trim() : '';
 
             if (modalInputFechaGrupo && !modalInputFechaGrupo.hidden && fechaLectura === '') {
-                alert(I18n.t('biblio-modal-date-error'));
+                Notify.warning(I18n.t('biblio-modal-date-error'));
                 return;
             }
 
@@ -377,18 +418,17 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
                     card.setAttribute('data-libro-fecha-lectura', fechaLectura);
                 }
 
-                const calificacionNum = Number.parseInt(calificacion, 10);
-                modalCalificacion.textContent = calificacionNum >= 1 && calificacionNum <= 5 ? `${calificacionNum}/5` : I18n.t('biblio-sin-calificacion');
-                modalResena.textContent = review !== '' ? review : I18n.t('biblio-sin-resena');
+                pintarCalificacion(calificacion);
+                pintarResena(review);
                 if (modalFechaLectura && modalInputFechaGrupo && !modalInputFechaGrupo.hidden) {
                     modalFechaLectura.textContent = fechaLectura !== '' ? fechaLectura.split('-').reverse().join('/') : I18n.t('biblio-modal-read-date-empty');
                 }
 
-                alert(I18n.t('biblio-modal-guardado'));
+                Notify.success(I18n.t('biblio-modal-guardado'));
                 cerrarEdicion();
             } catch (error) {
                 console.error('Error al guardar detalles del libro:', error);
-                alert(I18n.t('biblio-modal-error'));
+                Notify.error(I18n.t('biblio-modal-error'));
             }
         });
     }
@@ -423,46 +463,73 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
     <div id="modal-detalles-libro" class="modal-detalles-libro" hidden>
         <div id="modal-detalles-overlay" class="modal-detalles-overlay"></div>
         <div class="modal-detalles-contenido" role="dialog" aria-modal="true" aria-labelledby="modal-detalles-titulo">
-            <button id="modal-detalles-cerrar" type="button" class="modal-detalles-cerrar" data-i18n="biblio-cerrar">Cerrar</button>
+            <button id="modal-detalles-cerrar" type="button" class="modal-detalles-cerrar">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+                <span class="sr-only" data-i18n="biblio-cerrar">Cerrar</span>
+            </button>
 
             <div class="modal-detalles-grid">
                 <img id="modal-detalles-portada" src="" alt="Portada del libro">
                 <div class="modal-detalles-info">
                     <h2 id="modal-detalles-titulo"></h2>
                     <p id="modal-detalles-autor" class="modal-detalles-autor"></p>
-                    <p><strong data-i18n="biblio-modal-rating">Puntuación</strong>: <span id="modal-detalles-calificacion"></span></p>
-                    <p id="modal-detalles-fecha-bloque"><strong data-i18n="biblio-modal-read-date">Fecha de lectura</strong>: <span id="modal-detalles-fecha-lectura"></span></p>
-                    <p><strong data-i18n="biblio-modal-review">Reseña</strong>:</p>
+
+                    <dl class="modal-detalles-datos">
+                        <div>
+                            <dt data-i18n="biblio-modal-rating">Puntuación</dt>
+                            <dd>
+                                <span id="modal-detalles-estrellas" class="estrellas" aria-hidden="true"></span>
+                                <span id="modal-detalles-calificacion"></span>
+                            </dd>
+                        </div>
+                        <div id="modal-detalles-fecha-bloque">
+                            <dt data-i18n="biblio-modal-read-date">Fecha de lectura</dt>
+                            <dd id="modal-detalles-fecha-lectura"></dd>
+                        </div>
+                    </dl>
+
+                    <h3 class="modal-detalles-subtitulo" data-i18n="biblio-modal-review">Reseña</h3>
                     <p id="modal-detalles-resena" class="modal-detalles-resena"></p>
 
-                    <button id="modal-detalles-btn-editar" type="button" class="btn-modal-editar" data-i18n="biblio-modal-editar">📝 Editar</button>
+                    <button id="modal-detalles-btn-editar" type="button" class="btn-modal-editar">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
+                        <span data-i18n="biblio-modal-editar">Editar</span>
+                    </button>
 
-                    <form id="modal-detalles-form" class="modal-detalles-form" style="display: none;">
+                    <form id="modal-detalles-form" class="modal-detalles-form" hidden>
                         <input id="modal-detalles-id" type="hidden" name="id_openlibrary" value="">
 
-                        <label for="modal-detalles-input-calificacion" class="modal-detalles-label" data-i18n="biblio-modal-rating">Puntuación</label>
-                        <select id="modal-detalles-input-calificacion" class="modal-detalles-input" name="calificacion">
-                            <option value="" data-i18n="biblio-modal-rating-empty">Sin puntuar</option>
-                            <option value="1">1/5</option>
-                            <option value="2">2/5</option>
-                            <option value="3">3/5</option>
-                            <option value="4">4/5</option>
-                            <option value="5">5/5</option>
-                        </select>
-
-                        <label for="modal-detalles-input-resena" class="modal-detalles-label" data-i18n="biblio-modal-review">Reseña</label>
-                        <textarea id="modal-detalles-input-resena" class="modal-detalles-input" name="review" rows="4" maxlength="2000" data-i18n-ph="biblio-modal-review-ph" placeholder="Escribe una reseña o déjala vacía para eliminarla"></textarea>
-
-                        <div id="modal-detalles-input-fecha-grupo">
-                            <label for="modal-detalles-input-fecha-lectura" class="modal-detalles-label" data-i18n="biblio-modal-read-date">Fecha de lectura</label>
-                            <input id="modal-detalles-input-fecha-lectura" type="date" class="modal-detalles-input" name="fecha_lectura" max="<?= date('Y-m-d') ?>" data-i18n-ph="biblio-modal-read-date-ph">
+                        <div class="campo-modal">
+                            <label for="modal-detalles-input-calificacion" class="modal-detalles-label" data-i18n="biblio-modal-rating">Puntuación</label>
+                            <select id="modal-detalles-input-calificacion" class="modal-detalles-input" name="calificacion">
+                                <option value="" data-i18n="biblio-modal-rating-empty">Sin puntuar</option>
+                                <option value="1">1/5</option>
+                                <option value="2">2/5</option>
+                                <option value="3">3/5</option>
+                                <option value="4">4/5</option>
+                                <option value="5">5/5</option>
+                            </select>
                         </div>
 
-                        <button type="submit" class="btn-modal-guardar" data-i18n="biblio-modal-save">Guardar cambios</button>
+                        <div id="modal-detalles-input-fecha-grupo" class="campo-modal">
+                            <label for="modal-detalles-input-fecha-lectura" class="modal-detalles-label" data-i18n="biblio-modal-read-date">Fecha de lectura</label>
+                            <input id="modal-detalles-input-fecha-lectura" type="date" class="modal-detalles-input" name="fecha_lectura" max="<?= date('Y-m-d') ?>">
+                        </div>
+
+                        <div class="campo-modal campo-modal-ancho">
+                            <label for="modal-detalles-input-resena" class="modal-detalles-label" data-i18n="biblio-modal-review">Reseña</label>
+                            <textarea id="modal-detalles-input-resena" class="modal-detalles-input" name="review" rows="4" maxlength="2000" data-i18n-ph="biblio-modal-review-ph" placeholder="Escribe una reseña o déjala vacía para eliminarla"></textarea>
+                        </div>
+
+                        <div class="modal-detalles-acciones">
+                            <button type="button" id="modal-detalles-btn-cancelar" class="btn-modal-cancelar" data-i18n="biblio-modal-cancel">Cancelar</button>
+                            <button type="submit" class="btn-modal-guardar" data-i18n="biblio-modal-save">Guardar cambios</button>
+                        </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+    <?= flash_render() ?>
 </body>
 </html>

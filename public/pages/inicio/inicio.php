@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once __DIR__ . '/../../../backend/helpers/flash.php';
 if (empty($_SESSION['user_id'])) {
     header('Location: ../login/login.php');
     exit;
@@ -13,7 +14,9 @@ if (empty($_SESSION['user_id'])) {
     <title>Inicio | K-Libro</title>
     <link rel="icon" type="image/png" href="../../assets/img/icono.png">
     <link rel="stylesheet" href="../../css/theme.css?v=<?= @filemtime(__DIR__ . '/../../css/theme.css') ?: time() ?>">
+    <link rel="stylesheet" href="../../css/ui.css?v=<?= @filemtime(__DIR__ . '/../../css/ui.css') ?: time() ?>">
     <script src="../../js/theme.js?v=<?= @filemtime(__DIR__ . '/../../js/theme.js') ?: time() ?>"></script>
+    <script src="../../js/notify.js?v=<?= @filemtime(__DIR__ . '/../../js/notify.js') ?: time() ?>"></script>
     <link rel="stylesheet" href="../../css/inicio.css?v=<?= @filemtime(__DIR__ . '/../../css/inicio.css') ?: time() ?>">
 </head>
 <body>
@@ -110,5 +113,6 @@ if (empty($_SESSION['user_id'])) {
     }, 'Inicio | K-Libro', 'Home | K-Libro');
     </script>
 
+    <?= flash_render() ?>
 </body>
 </html>

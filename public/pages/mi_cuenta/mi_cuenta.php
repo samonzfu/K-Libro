@@ -1,6 +1,7 @@
 <?php
 // 1. PROTECCIÓN DE SESIÓN Y CONEXIÓN
 session_start();
+require_once __DIR__ . '/../../../backend/helpers/flash.php';
 
 // 🛑 APLICADO TU CAMBIO AQUÍ 🛑
 if (empty($_SESSION['user_id'])) {
@@ -72,7 +73,9 @@ $mis_logros = $stmtLogros->fetchAll();
     <title>K-Libro | Mi Cuenta</title>
     <link rel="icon" type="image/png" href="../../assets/img/icono.png">
     <link rel="stylesheet" href="../../css/theme.css?v=<?= @filemtime(__DIR__ . '/../../css/theme.css') ?: time() ?>">
+    <link rel="stylesheet" href="../../css/ui.css?v=<?= @filemtime(__DIR__ . '/../../css/ui.css') ?: time() ?>">
     <script src="../../js/theme.js?v=<?= @filemtime(__DIR__ . '/../../js/theme.js') ?: time() ?>"></script>
+    <script src="../../js/notify.js?v=<?= @filemtime(__DIR__ . '/../../js/notify.js') ?: time() ?>"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../css/mi_cuenta.css?v=<?= @filemtime(__DIR__ . '/../../css/mi_cuenta.css') ?: time() ?>">
 </head>
@@ -144,9 +147,12 @@ $mis_logros = $stmtLogros->fetchAll();
             // Mapeo de nombres/descripciones de logros a claves de traducción
             $logrosMap = [
                 'Lector Principiante' => ['nombre-key' => 'logro-lector-principiante-nombre', 'desc-key' => 'logro-lector-principiante-desc'],
+                'Lector Iniciado' => ['nombre-key' => 'logro-lector-principiante-nombre', 'desc-key' => 'logro-lector-principiante-desc'], // nombre antiguo (por si la BD aún no se ha actualizado)
                 'Ratón de Biblioteca' => ['nombre-key' => 'logro-raton-libreria-nombre', 'desc-key' => 'logro-raton-libreria-desc'],
                 'Bibliófilo' => ['nombre-key' => 'logro-bibliofilo-nombre', 'desc-key' => 'logro-bibliofilo-desc'],
+                'Devorador de Mundos' => ['nombre-key' => 'logro-bibliofilo-nombre', 'desc-key' => 'logro-bibliofilo-desc'], // nombre antiguo
                 'Reto Mensual' => ['nombre-key' => 'logro-reto-mensual-nombre', 'desc-key' => 'logro-reto-mensual-desc'],
+                'Campeón Mensual' => ['nombre-key' => 'logro-reto-mensual-nombre', 'desc-key' => 'logro-reto-mensual-desc'], // nombre antiguo
             ];
             foreach ($mis_logros as $logro): ?>
                 <?php
@@ -211,14 +217,14 @@ $mis_logros = $stmtLogros->fetchAll();
             'reto-success-guardado': 'Reto mensual guardado correctamente.',
             'reto-error-duplicado': 'Ya tienes un reto fijado para este mes.',
             'reto-error-guardado': 'No se pudo guardar el reto mensual. Inténtalo de nuevo.',
-            'logro-lector-principiante-nombre': 'Lector principiante',
+            'logro-lector-principiante-nombre': 'Lector Principiante',
             'logro-lector-principiante-desc': 'Has leído tu primer libro en K-Libro',
             'logro-raton-libreria-nombre': 'Ratón de Biblioteca',
             'logro-raton-libreria-desc': 'Has leído 5 libros',
             'logro-bibliofilo-nombre': 'Bibliófilo',
             'logro-bibliofilo-desc': 'Has leído 20 libros',
-            'logro-reto-mensual-nombre': 'reto Mensual',
-            'logro-reto-mensual-desc': '¡Has completado tu reto de lectura del mes!',
+            'logro-reto-mensual-nombre': 'Reto Mensual',
+            'logro-reto-mensual-desc': 'Has completado tu reto de lectura del mes.',
         },
         en: {
             'inicio-h1':       'K-Libro',
@@ -255,7 +261,7 @@ $mis_logros = $stmtLogros->fetchAll();
             'logro-bibliofilo-nombre': 'Bibliophile',
             'logro-bibliofilo-desc': 'You have read 20 books',
             'logro-reto-mensual-nombre': 'Monthly Challenge',
-            'logro-reto-mensual-desc': 'You have completed your monthly reading challenge!',
+            'logro-reto-mensual-desc': 'You have completed your monthly reading challenge.',
         }
     };
 
@@ -284,5 +290,6 @@ $mis_logros = $stmtLogros->fetchAll();
     I18n.init(translations, 'K-Libro | Mi Cuenta', 'K-Libro | My Account');
     </script>
 
+    <?= flash_render() ?>
 </body>
 </html>

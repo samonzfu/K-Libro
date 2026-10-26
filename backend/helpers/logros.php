@@ -172,7 +172,7 @@ function sincronizarLogrosUsuario(PDO $pdo, int $usuarioId): array
         }
     }
 
-    // PASO 3: Verificar si tiene derecho a "Campeón Mensual"
+    // PASO 3: Verificar si tiene derecho al logro "Reto Mensual"
     // (por completar retos mensuales)
     $stmtReto = $pdo->prepare(
         'SELECT COUNT(*)
@@ -184,12 +184,13 @@ function sincronizarLogrosUsuario(PDO $pdo, int $usuarioId): array
 
     // Si completó al menos 1 reto mensual
     if ($retosConseguidos > 0) {
-        // Obtener el logro "Campeón Mensual"
+        // Obtener el logro de retos mensuales: es el único sin criterio de libros (criterio = 0),
+        // así no depende del nombre que tenga
         $stmtCampeon = $pdo->prepare(
-            "SELECT MIN(id) AS id, nombre
+            "SELECT id, nombre
              FROM logros
-             WHERE nombre = 'Campeón Mensual'
-             GROUP BY nombre
+             WHERE criterio = 0
+             ORDER BY id ASC
              LIMIT 1"
         );
         $stmtCampeon->execute();
