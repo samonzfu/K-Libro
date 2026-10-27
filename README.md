@@ -6,7 +6,7 @@ Aplicación web de gestión de biblioteca personal. Permite registrarse, buscar 
 
 - Registro e inicio de sesión
 - Buscador de libros (OpenLibrary)
-- Biblioteca personal con estados de lectura
+- Biblioteca personal con estados de lectura y botón para actualizar el estado de cada libro (Leyendo / Leído)
 - Reseñas de los libros
 - Logros y retos mensuales
 - Panel de administración (gestión de usuarios y roles: user, moderador, admin)

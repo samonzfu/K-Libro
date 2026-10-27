@@ -268,6 +268,25 @@ h1 {
     border-color: transparent;
 }
 
+.btn-actualizar {
+    width: 100%;
+    border: 1px solid var(--color-dorado);
+    background: transparent;
+    color: var(--color-dorado);
+    border-radius: 8px;
+    padding: 8px 10px;
+    cursor: pointer;
+    font-family: 'Lato', sans-serif;
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
+
+.btn-actualizar:hover {
+    background: var(--color-dorado);
+    color: var(--color-fondo);
+    box-shadow: var(--brillo-dorado);
+}
+
 .btn-eliminar {
     width: 100%;
     border: 1px solid rgba(255, 125, 125, 0.55);
@@ -655,4 +674,43 @@ textarea.modal-detalles-input {
     .modal-detalles-form {
         grid-template-columns: 1fr;
     }
+}
+
+/* --- Ventana "Actualizar estado" --- */
+.modal-estado {
+    width: min(440px, 100%);
+}
+
+.modal-estado-libro {
+    margin: 0 0 1.1rem;
+    font-style: italic;
+    color: rgba(var(--texto-rgb), 0.75);
+    overflow-wrap: anywhere;
+}
+
+.modal-estado .modal-detalles-label {
+    display: block;
+    margin-bottom: 0.45rem;
+}
+
+.modal-estado .estado-opciones {
+    margin-bottom: 1rem;
+}
+
+.modal-estado-fecha {
+    margin-bottom: 1rem;
+}
+
+.modal-estado-aviso {
+    margin: 0 0 1rem;
+    padding: 0.7rem 0.9rem;
+    font-size: 0.9rem;
+    line-height: 1.45;
+    background: rgba(var(--hundido-rgb), 0.15);
+    border-left: 3px solid var(--ui-warn);
+    border-radius: 6px;
+}
+
+.modal-estado [hidden] {
+    display: none !important;
 }

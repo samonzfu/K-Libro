@@ -92,6 +92,7 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
         if ($idOpenLibrary !== '') {
             echo '<div class="book-acciones">';
             echo '<button type="button" class="btn-detalles" onclick="abrirDetallesLibro(this)" data-i18n="biblio-detalles">Detalles</button>';
+            echo '<button type="button" class="btn-actualizar" onclick="abrirActualizarEstado(this)" data-i18n="biblio-actualizar">Actualizar estado</button>';
             echo '<form method="POST" action="../../../backend/actions/eliminar_libro.php" class="form-eliminar" data-confirm-es="¿Quieres eliminar este libro de tu biblioteca?" data-confirm-en="Do you want to remove this book from your library?" data-confirm-ok-es="Eliminar" data-confirm-ok-en="Remove" data-confirm-danger>';
             echo '<input type="hidden" name="libro_id" value="' . htmlspecialchars($idOpenLibrary, ENT_QUOTES, 'UTF-8') . '">';
             echo '<input type="hidden" name="csrf_token" value="' . htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') . '">';
@@ -182,6 +183,15 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
             'biblio-nav-leido': 'Leídos',
             'biblio-detalles': 'Detalles',
             'biblio-eliminar': 'Eliminar',
+            'biblio-actualizar': 'Actualizar estado',
+            'biblio-estado-titulo': 'Actualizar estado',
+            'biblio-estado-nuevo': 'Nuevo estado',
+            'biblio-estado-leyendo': 'Leyendo',
+            'biblio-estado-leido': 'Leído',
+            'biblio-estado-actual': 'Estado actual',
+            'biblio-estado-guardar': 'Guardar',
+            'biblio-estado-aviso': 'Al volver a «Leyendo» se eliminarán la fecha de lectura, la puntuación y la reseña de este libro.',
+            'biblio-estado-error': 'No se ha podido actualizar el estado del libro.',
             'biblio-ver-mas': 'Ver más',
             'biblio-ver-menos': 'Ver menos',
             'biblio-modal-rating': 'Puntuación',
@@ -218,6 +228,15 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
             'biblio-nav-leido': 'Read',
             'biblio-detalles': 'Details',
             'biblio-eliminar': 'Delete',
+            'biblio-actualizar': 'Update status',
+            'biblio-estado-titulo': 'Update status',
+            'biblio-estado-nuevo': 'New status',
+            'biblio-estado-leyendo': 'Reading',
+            'biblio-estado-leido': 'Read',
+            'biblio-estado-actual': 'Current status',
+            'biblio-estado-guardar': 'Save',
+            'biblio-estado-aviso': 'Going back to “Reading” will remove the read date, the rating and the review of this book.',
+            'biblio-estado-error': 'The book status could not be updated.',
             'biblio-ver-mas': 'Show more',
             'biblio-ver-menos': 'Show less',
             'biblio-modal-rating': 'Rating',
@@ -530,6 +549,199 @@ function renderizarSeccion(string $titulo, string $key, string $estadoActual, st
             </div>
         </div>
     </div>
+    <!-- Ventana para actualizar el estado de un libro (Leyendo / Leído) -->
+    <div id="modal-estado" class="ui-modal-overlay" hidden>
+        <div class="ui-modal modal-estado" role="dialog" aria-modal="true" aria-labelledby="modal-estado-titulo">
+            <h2 id="modal-estado-titulo" class="ui-modal-titulo" data-i18n="biblio-estado-titulo">Actualizar estado</h2>
+            <p id="modal-estado-libro" class="modal-estado-libro"></p>
+
+            <form id="modal-estado-form" novalidate>
+                <span class="modal-detalles-label" data-i18n="biblio-estado-nuevo">Nuevo estado</span>
+                <div class="estado-opciones" role="radiogroup">
+                    <label class="estado-opcion">
+                        <input type="radio" name="estado-nuevo" value="leyendo">
+                        <span class="estado-etiqueta">
+                            <span data-i18n="biblio-estado-leyendo">Leyendo</span>
+                            <span class="estado-actual" data-i18n="biblio-estado-actual" hidden>Estado actual</span>
+                        </span>
+                    </label>
+                    <label class="estado-opcion">
+                        <input type="radio" name="estado-nuevo" value="leido">
+                        <span class="estado-etiqueta">
+                            <span data-i18n="biblio-estado-leido">Leído</span>
+                            <span class="estado-actual" data-i18n="biblio-estado-actual" hidden>Estado actual</span>
+                        </span>
+                    </label>
+                </div>
+
+                <div id="modal-estado-fecha" class="modal-estado-fecha" hidden>
+                    <label for="modal-estado-input-fecha" class="modal-detalles-label" data-i18n="biblio-modal-read-date">Fecha de lectura</label>
+                    <input id="modal-estado-input-fecha" type="date" class="modal-detalles-input" max="<?= date('Y-m-d') ?>">
+                </div>
+
+                <p id="modal-estado-aviso" class="modal-estado-aviso" data-i18n="biblio-estado-aviso" hidden>Al volver a «Leyendo» se eliminarán la fecha de lectura, la puntuación y la reseña de este libro.</p>
+
+                <div class="ui-modal-acciones">
+                    <button type="button" id="modal-estado-cancelar" class="ui-btn ui-btn-secundario" data-i18n="biblio-modal-cancel">Cancelar</button>
+                    <button type="submit" id="modal-estado-guardar" class="ui-btn ui-btn-primario" data-i18n="biblio-estado-guardar">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+    // Actualizar estado de un libro: Leyendo <-> Leído (reutiliza guardar_libro.php, que también recalcula retos y logros)
+    (function () {
+        const AVISOS_KEY = 'klibro-avisos';
+        const CSRF = <?= json_encode(csrf_token()) ?>;
+        const ETIQUETA = {
+            leyendo: { es: 'Leyendo', en: 'Reading' },
+            leido: { es: 'Leídos', en: 'Read' }
+        };
+        const overlay = document.getElementById('modal-estado');
+        const form = document.getElementById('modal-estado-form');
+        const tituloEl = document.getElementById('modal-estado-libro');
+        const fechaWrap = document.getElementById('modal-estado-fecha');
+        const fechaInput = document.getElementById('modal-estado-input-fecha');
+        const aviso = document.getElementById('modal-estado-aviso');
+        const btnGuardar = document.getElementById('modal-estado-guardar');
+        const radios = Array.from(form.querySelectorAll('input[name="estado-nuevo"]'));
+        let cardActual = null;
+        let estadoActual = '';
+        let previo = null;
+
+        // Fecha de hoy en la zona horaria del usuario (YYYY-MM-DD)
+        const hoyLocal = () => {
+            const d = new Date();
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        };
+        const seleccionado = () => {
+            const r = radios.find((x) => x.checked);
+            return r ? r.value : '';
+        };
+
+        const actualizarCampos = () => {
+            const sel = seleccionado();
+            fechaWrap.hidden = sel !== 'leido';
+            aviso.hidden = !(estadoActual === 'leido' && sel === 'leyendo');
+            btnGuardar.disabled = sel === '';
+        };
+
+        const cerrar = () => {
+            overlay.hidden = true;
+            document.body.classList.remove('ui-modal-abierto');
+            if (previo && previo.focus) { previo.focus(); }
+        };
+
+        window.abrirActualizarEstado = (btn) => {
+            const card = btn.closest('.book-card');
+            if (!card) { return; }
+            previo = btn;
+            cardActual = card;
+            estadoActual = card.dataset.libroEstado || '';
+            tituloEl.textContent = card.dataset.libroTitulo || '';
+
+            // Por defecto se propone el paso lógico: pendiente -> leyendo, leyendo -> leído, leído -> leyendo
+            const propuesto = estadoActual === 'leyendo' ? 'leido' : 'leyendo';
+            radios.forEach((r) => {
+                r.disabled = r.value === estadoActual;
+                r.checked = r.value === propuesto;
+                const actual = r.closest('.estado-opcion').querySelector('.estado-actual');
+                if (actual) { actual.hidden = r.value !== estadoActual; }
+            });
+
+            fechaInput.max = hoyLocal();
+            fechaInput.value = hoyLocal();
+            actualizarCampos();
+
+            overlay.hidden = false;
+            document.body.classList.add('ui-modal-abierto');
+            const marcado = radios.find((r) => r.checked);
+            if (marcado) { marcado.focus(); }
+        };
+
+        radios.forEach((r) => r.addEventListener('change', actualizarCampos));
+        document.getElementById('modal-estado-cancelar').addEventListener('click', cerrar);
+        overlay.addEventListener('mousedown', (e) => { if (e.target === overlay) { cerrar(); } });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !overlay.hidden) { e.preventDefault(); cerrar(); }
+        });
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const estado = seleccionado();
+            if (!cardActual || estado === '') { return; }
+
+            const fecha = estado === 'leido' ? fechaInput.value.trim() : '';
+            if (estado === 'leido' && fecha === '') {
+                Notify.warning(I18n.t('biblio-modal-date-error'));
+                return;
+            }
+
+            const titulo = cardActual.dataset.libroTitulo || '';
+            let portada = cardActual.dataset.libroPortada || '';
+            if (portada.indexOf('via.placeholder.com') !== -1) { portada = ''; } // no guardar la imagen de relleno
+
+            btnGuardar.disabled = true;
+            try {
+                const datos = new URLSearchParams();
+                datos.append('id_openlibrary', cardActual.dataset.libroId || '');
+                datos.append('titulo', titulo);
+                datos.append('autor', cardActual.dataset.libroAutor || '');
+                datos.append('portada', portada);
+                datos.append('estado', estado);
+                datos.append('fecha_lectura', fecha);
+
+                const respuesta = await fetch('../../../backend/actions/guardar_libro.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                        'X-CSRF-Token': CSRF
+                    },
+                    body: datos.toString()
+                });
+                let resultado = null;
+                try { resultado = JSON.parse(await respuesta.text()); } catch (e) { resultado = null; }
+                if (!respuesta.ok || !resultado || !resultado.ok) {
+                    throw new Error((resultado && resultado.mensaje) || I18n.t('biblio-estado-error'));
+                }
+
+                // La página se recarga para que el libro aparezca en su nuevo apartado; el aviso se muestra después
+                const avisos = [{
+                    tipo: 'success',
+                    mensaje: {
+                        es: `«${titulo}» ahora está en «${ETIQUETA[estado].es}».`,
+                        en: `“${titulo}” is now in “${ETIQUETA[estado].en}”.`
+                    }
+                }];
+                if (resultado.reto_recien_completado) {
+                    avisos.push({
+                        tipo: 'success',
+                        mensaje: { es: 'Has completado tu reto de lectura de este mes.', en: 'You have completed this month’s reading challenge.' }
+                    });
+                }
+                try { sessionStorage.setItem(AVISOS_KEY, JSON.stringify(avisos)); } catch (e) { /* sin sessionStorage: no se muestra el aviso */ }
+                window.location.reload();
+            } catch (error) {
+                console.error('Error al actualizar el estado:', error);
+                Notify.error(error.message || I18n.t('biblio-estado-error'));
+                btnGuardar.disabled = false;
+            }
+        });
+
+        // Avisos pendientes de la acción anterior (tras recargar)
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                const pendientes = sessionStorage.getItem(AVISOS_KEY);
+                if (pendientes) {
+                    sessionStorage.removeItem(AVISOS_KEY);
+                    JSON.parse(pendientes).forEach((a) => Notify.show(a.mensaje, { type: a.tipo }));
+                }
+            } catch (e) { /* ignorar */ }
+        });
+    })();
+    </script>
+
     <?= flash_render() ?>
 </body>
 </html>
